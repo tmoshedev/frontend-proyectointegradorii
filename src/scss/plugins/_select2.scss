@@ -1,0 +1,72 @@
+.css-13cymwt-control,
+.css-t3ipsp-control,
+.css-16xfy0z-control {
+  border: 1px solid var(--input-border) !important;
+  border-radius: 0.35rem !important;
+  min-height: 29.7px !important;
+}
+.css-art2ul-ValueContainer2,
+.css-hlgwow {
+  padding: 0.275rem 2.25rem 0.275rem 0.75rem !important;
+  font-size: 0.7875rem !important;
+}
+.css-t3ipsp-control {
+  color: var(--default-text-color);
+  box-shadow: 0 0.0625rem 0.125rem 0 rgba(0, 0, 0, 0.05) !important;
+}
+.css-1jqq78o-placeholder {
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--default-body-bg-color) !important;
+  line-height: 10px !important;
+}
+.css-qbdosj-Input,
+.css-1h01tm3-Input,
+.css-19bb58m,
+.css-1mkvw8y,
+.css-1cfo1cf {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.css-w9q2zk-Input2,
+.css-feonkk-Input2,
+.css-42axt2-Input2 {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.css-1u9des2-indicatorSeparator,
+.css-15lsz6c-indicatorContainer {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #fff !important;
+}
+.css-15lsz6c-indicatorContainer {
+  padding-right: 0.5rem !important;
+}
+.css-1xc3v61-indicatorContainer {
+  padding: 0rem 0.5rem 0rem 0rem !important;
+}
+
+.css-tr4s17-option:hover,
+.css-d7l1ni-option:hover {
+  background-color: var(--default-background) !important;
+  color: var((--default-text-color)) !important;
+}
+
+.css-tr4s17-option,
+.css-d7l1ni-option {
+  background-color: $primary !important;
+  color: $white !important;
+}
+
+.css-tj5bde-Svg {
+  color: transparent !important;
+  background-image: url('/svg/select.svg') !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 12px;
+}
+
+.react-select-container.is-invalid > .react-select__control {
+  border: 1px solid var(--bs-form-invalid-border-color) !important;
+}

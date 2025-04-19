@@ -1,0 +1,108 @@
+.login-page {
+    background-image: url("/images/login.jpg");
+    background-size: contain; /* Hace que la imagen se ajuste dentro del contenedor */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  background-position: center center; /* Centra la imagen dentro del contenedor */
+  display: block;
+}
+
+
+.login-card {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 30px 12px;
+}
+.login-card.login-bg {
+    background: rgba(var(--primary-rgb), 0.06) !important;
+}
+.login-card .logo {
+    display: block;
+    margin-bottom: 30px;
+}
+.login-card .logo .for-light {
+    display: none;
+}
+
+.login-card .login-main {
+    width: 450px;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 37px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
+    background-color: var(--bs-body-bg);
+}
+
+.login-card .logo {
+    display: block;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.login-card .logo .for-light {
+    display: none;
+}
+.for-dark {
+    width: 250px;
+}
+.login-card .login-main .theme-form p {
+    font-size: 13px;
+    color: #aaa3a0;
+}
+
+
+@media (max-width: 1199.98px) {
+    .login_bs_validation {
+        top: 0;
+        height: 100vh;
+        opacity: 0.5;
+        position: fixed;
+    }
+}
+
+
+@media (max-width: 1199.98px) {
+    .login-card {
+        background: transparent;
+    }
+}
+@media (max-width: 575.98px) {
+    .login-card {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .login-card .login-main {
+        width: 380px;
+    }
+}
+@media (max-width: 1199.98px) {
+    .login-card .login-main {
+        position: relative;
+    }
+}
+@media (max-width: 575.98px) {
+    .login-card .login-main {
+        width: auto;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .login-page {
+        display: none;
+    }
+    .login-card .logo {
+        position: relative;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-card .logo {
+        margin-bottom: 10px;
+    }
+}

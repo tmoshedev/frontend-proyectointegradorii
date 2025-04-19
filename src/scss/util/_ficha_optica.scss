@@ -1,0 +1,99 @@
+
+.identification-sheet {
+  /* Usamos flex para poner las columnas una al lado de la otra */
+  display: flex;
+  gap: 0.3rem; // Espacio entre columnas
+
+  &__column {
+    display: flex;
+    flex-direction: column; // Para que los círculos vayan de arriba hacia abajo
+    align-items: center; // Centra horizontalmente los círculos en la columna
+  }
+
+  .circle {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    margin: 1px 0; // Espacio vertical entre círculos
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+
+    &.selected {
+      background-color: var(--primary06);
+      color: #fff;
+      font-weight: bold;
+    }
+  }
+}
+
+/* 
+  Panel derecho de la hoja de respuestas, en 4 columnas.
+  Nombres de clase distintos para no chocar con estilos del lado izquierdo.
+*/
+.bubble-sheet-new {
+  &__grid {
+    display: grid;
+    /* 4 columnas en ancho mínimo que ocupe su contenido */
+    grid-template-columns: repeat(4, min-content);
+    /* Espacio horizontal entre las columnas */
+    column-gap: 1.5rem;
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Cada fila de pregunta: "01. (A) (B) (C) (D) (E)" */
+.question-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1px; // Espacio vertical entre preguntas
+}
+
+/* Número de pregunta: "01.", "02.", etc. */
+.question-number {
+  width: 30px; // Ajusta para alinear con tus círculos
+  text-align: right;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+/* Contenedor de las 5 burbujas (A-E) */
+.bubbles {
+  display: flex;
+  gap: 1px;
+}
+
+/* Cada burbuja */
+.bubble-circle {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--primary-color);
+
+  &.selected {
+    background-color: var(--primary06);
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+/* Tu estilo para el título a la izquierda (si lo deseas) */
+.title-omr {
+  border: 1px solid rgb(var(--primary-rgb));
+  text-align: center;
+  padding: 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+}

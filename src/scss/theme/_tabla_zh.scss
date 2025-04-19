@@ -1,0 +1,162 @@
+/* MiTabla.scss */
+
+.tabla-container {
+  width: 100%;
+  /* Si deseas un scroll horizontal para muchas columnas, descomenta:
+    overflow-x: auto;
+    */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.tabla-row {
+  /* Cada fila será un grid con X columnas */
+  display: grid;
+  grid-template-columns: 70px 2fr 170px 170px 170px 170px 170px 170px;
+  border-bottom: 1px solid #ddd;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.tabla-cell {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  /* para centrar verticalmente */
+
+  /* Opcional: para texto muy largo, controla el overflow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Encabezado */
+.tabla-header {
+  background-color: rgba(0, 0, 0, 0.07);
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #000;
+  border-bottom: 1px solid #ddd;
+}
+
+.zh-tabla-body {
+  height: calc(100vh - 28.4rem);
+}
+.zh-tabla-checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.zh-tabla-body .tabla-row {
+  cursor: pointer;
+}
+
+.zh-tabla-body .tabla-row:nth-child(2n + 1) > * {
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.03);
+}
+
+.zh-tabla-body .tabla-row:hover > * {
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.05);
+}
+
+.tabla-row-seleccionado > *,
+.tabla-row-seleccionado:hover > * {
+  box-shadow: inset 0 0 0 9999px rgba(var(--primary-rgb), 0.2) !important;
+}
+
+.tabla-zize-resource {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+.tabla-zize-header {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  color: #000;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+}
+.tabla-zize-body {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  overflow-y: auto;
+  height: calc(100vh);
+}
+.tabla-zize-body-item {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ddd;
+  &:last-child {
+    border-bottom: none;
+  }
+  &.selected {
+    background-color: rgba(var(--primary-rgb), 0.2);
+  }
+}
+
+.tabla-zize-body-reports .tabla-zize-body-item:nth-child(2n + 1) > * {
+  background-color: rgba(var(--primary-rgb), 0.04);
+}
+
+.tabla-zize-body-reports .tabla-zize-body-item:hover > * {
+  background-color: rgba(var(--primary-rgb), 0.2);
+}
+
+.tabla-zize-body-reports.selected > * {
+  background-color: rgba(var(--primary-rgb), 0.2) !important;
+}
+
+.tabla-zize-col {
+  padding: 0 0.5rem;
+  white-space: nowrap; // Que no se divida el texto
+  overflow: hidden; // Que no se salga del contenedor
+  text-overflow: ellipsis;
+}
+.tabla-zize-col-100 {
+  flex: 0 0 100%;
+}
+.tabla-zize-col-30 {
+  flex: 0 0 30%;
+}
+.tabla-zize-col-25 {
+  flex: 0 0 25%;
+}
+.tabla-zize-col-20 {
+  flex: 0 0 20%;
+}
+.tabla-zize-col-15 {
+  flex: 0 0 15%;
+}
+.tabla-zize-col-10 {
+  flex: 0 0 10%;
+}
+.tabla-zize-col-5 {
+  flex: 0 0 5%;
+}
+.tabla-zize-footer {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  color: #000;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  justify-content: end;
+  font-size: 1.5rem;
+}
+.tabla-zize-header-item > * {
+  background-color: rgba(var(--primary-rgb), 0.1) !important;
+  color: #000;
+  font-weight: bold;
+}
