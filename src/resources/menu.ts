@@ -15,6 +15,12 @@ const Menu: MenuItem[] = [
     permission: 'home-index',
   },
   {
+    name: 'Leads',
+    path: '/leads',
+    icon: 'ri-trophy-line',
+    permission: 'leads-index',
+  },
+  {
     name: 'Gestión accesos',
     icon: 'ri-group-line',
     permissions: ['access-users-index'],

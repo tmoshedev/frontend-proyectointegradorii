@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 /**Reduxs */
-import store from "./redux/store";
+import store from './redux/store';
 /**Layouts */
-import AuthLayout from "./layouts/auth.layout";
+import AuthLayout from './layouts/auth.layout';
 /**Pages */
-import { LoginPage, HomePage, ChangePasswordPage } from "./pages";
+import { LoginPage, HomePage, ChangePasswordPage, LeadsPage } from './pages';
 
 function App() {
   return (
@@ -19,11 +19,11 @@ function App() {
               <Route path="/" element={<HomePage />} />
               {/*ChangePasswordPage*/}
               <Route element={<ProtectedRoute permission="change-password" />}>
-                <Route
-                  path="change-password"
-                  element={<ChangePasswordPage />}
-                />
-                {/*EnrollmentsRegisterPage*/}
+                <Route path="change-password" element={<ChangePasswordPage />} />
+                {/*LeadsPage*/}
+                <Route element={<ProtectedRoute permission="leads-index" />}>
+                  <Route path="leads" element={<LeadsPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>
@@ -34,5 +34,3 @@ function App() {
     </Provider>
   );
 }
-
-export default App;
