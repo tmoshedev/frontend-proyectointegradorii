@@ -1,0 +1,303 @@
+$arrow-width: 0.7rem;
+.kanban-board {
+  height: calc(100vh - 4.7rem);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  .kanban-columns {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    .kanban-column {
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      margin-left: 8px;
+      .kanban-column-header {
+        background-color: #fff;
+        height: 62px;
+        position: sticky;
+        display: flex;
+        z-index: 1;
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0px;
+          right: -7.8px;
+          width: 8px;
+          height: 100%;
+          background-color: #ececec;
+          clip-path: polygon(0px 0px, 100% 50%, 0px 100%);
+        }
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0px;
+          left: -0.2px;
+          width: 8px;
+          height: 100%;
+          background-color: #fff;
+          clip-path: polygon(0px 0px, 100% 50%, 0px 100%);
+        }
+        .kanban-column-header-stage {
+          display: flex;
+          background-color: #ececec;
+          width: 100%;
+          align-items: start;
+          justify-content: center;
+          flex-direction: column;
+          height: 62px;
+          padding: 0px 6px 0px 12px;
+        }
+      }
+      .kanban-column-content {
+        background-color: #ececec;
+        flex: 1;
+        overflow-y: auto;
+        padding: 0rem 0.5rem;
+        .kanban-card {
+          cursor: pointer;
+          padding: 8px 10px;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08);
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+          &:first-child {
+            margin-top: 0px;
+          }
+          .kanban-card-header {
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 0.5rem;
+            h4 {
+              font-weight: 600;
+              font-size: 1rem;
+              white-space: nowrap; // ❄️ evita que el texto baje de línea
+              overflow: hidden; // 💥 oculta lo que se sale
+              text-overflow: ellipsis; // ✂️ agrega los ...
+              max-width: 100%; // asegura que no crezca más de su contenedor
+              display: block;
+              padding: 0;
+              margin: 0;
+            }
+            small {
+              color: #555555;
+              font-size: 0.8rem;
+            }
+          }
+          .kanban-card-body {
+            p {
+              margin: 0;
+              font-size: 0.875rem;
+            }
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid #e0e0e0;
+          }
+          .kanban-card-footer {
+            margin-top: 0.4rem;
+            .kanban-card-footer-user {
+              p {
+                margin: 0;
+                font-size: 0.75rem;
+                font-weight: 500;
+              }
+              small {
+                color: #888888;
+                font-size: 0.725rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .kanban-footer {
+    padding: 1rem;
+    box-shadow: 0 -4px 6px -2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.kanban-column:first-child {
+  margin-left: 0px !important;
+  .kanban-column-header {
+    &::before {
+      display: none;
+    }
+    .kanban-column-header-stage {
+      border-radius: 2px 2px 0 0;
+    }
+  }
+}
+
+.kanban-column:last-child {
+  .kanban-column-header {
+    &::after {
+      display: none;
+    }
+    .kanban-column-header-stage {
+      border-radius: 0 2px 0 0;
+    }
+  }
+}
+
+.ghost {
+  opacity: 0.4;
+}
+
+.drag {
+  background-color: #ffc107;
+}
+
+.lead-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  &.caliente {
+    background-color: #ffe5d9;
+    color: #d90429;
+
+    i {
+      animation: pulseFire 1.2s infinite;
+    }
+  }
+
+  &.tibio {
+    background-color: #fff3cd;
+    color: #856404;
+
+    i {
+      animation: blink 2s infinite;
+    }
+  }
+
+  &.frio {
+    background-color: #e0f7fa;
+    color: #007bff;
+
+    i {
+      animation: frostFade 3s ease-in-out infinite;
+    }
+  }
+}
+
+.btn-border {
+  border: 1px solid $color-primary;
+}
+
+.btn-group-lg > .btn {
+  border-radius: 4px;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cards-footer {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  background: #fff;
+  /* Empieza abajo y sube */
+  transform: translateY(100%);
+  opacity: 0;
+
+  /* Ajusta duración y timing a tu gusto */
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.dropzone-footer {
+  flex: 1;
+  min-height: 50px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
+  color: #6d6d6d;
+  &:hover {
+    transform: scale(1.05);
+  }
+  &.lead-perdido-text:hover {
+    background-color: $color-lead-perdido;
+    color: #fff;
+    border: none;
+  }
+  &.lead-ganado-text:hover {
+    background-color: $color-lead-ganado;
+    color: #fff;
+    border: none;
+  }
+
+  /* Oculta cualquier kanban-card o fantasma que meta SortableJS */
+  .kanban-card,
+  .ghost,
+  .sortable-chosen {
+    display: none !important;
+  }
+}
+
+.lead-perdido-text {
+  color: $color-lead-perdido;
+}
+.lead-ganado-text {
+  color: $color-lead-ganado;
+}
+
+/* 🔥 pulso para "caliente" */
+@keyframes pulseFire {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+    color: #ff4500;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 🌡 parpadeo leve para "tibio" */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ❄️ desvanecido para "frío" */
+@keyframes frostFade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

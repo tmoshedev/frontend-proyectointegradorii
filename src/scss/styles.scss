@@ -67,6 +67,8 @@
 @import "util/typography";
 @import "util/loading";
 @import "util/ficha_optica";
+@import "theme/kanban";
+@import "theme//icons-inmocloud";
 
 .user-avatar {
   display: flex;
@@ -269,12 +271,11 @@
   align-items: center;
 }
 
-@media screen and (max-width: 991px) {
-  .main-content--page {
-    height: calc(100vh);
-  }
-  .importa-data {
-    margin-inline-start: 0;
+@media screen and (min-width: 992px) {
+  .main-content--page{
+    background-color: #fff;
+    margin-block-start: 4.7rem;
+    min-height: calc(100vh - 4.7rem)!important;
   }
 }
 

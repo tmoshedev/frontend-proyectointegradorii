@@ -7,6 +7,7 @@ import Header from '../../components/header';
 import { LoadingState } from '../../components/shared';
 import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
+import { Tooltip } from 'react-tooltip';
 
 const DefaultLayout = () => {
   const loadingState = useSelector((store: AppStore) => store.loading);
@@ -91,6 +92,7 @@ const DefaultLayout = () => {
 
   return (
     <>
+      <Tooltip id="tooltip-component" place="bottom" style={{ zIndex: 9999 }} />
       <ToastContainer />
       <Header openToggled={openToggled} />
       <Sidebar />
