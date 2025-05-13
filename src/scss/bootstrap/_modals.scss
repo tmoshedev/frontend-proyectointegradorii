@@ -24,7 +24,7 @@
   }
 }
 .modal-footer {
-  padding: 1rem 1.25rem;
+  padding: 0.4rem 1rem;
   border-block-start: 1px solid $default-border;
 }
 
@@ -186,4 +186,23 @@
   .modal-gg-80 {
     max-width: 80%;
   }
+}
+
+.modal.modal-nested {
+  z-index: 1060;
+}
+.modal-backdrop.modal-nested-backdrop {
+  z-index: 1059;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-no-scroll .form-scrollable {
+  height: auto;
+  max-height: calc(100vh - 6.7rem) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-no-scroll .form-scrollable .modal-body {
+  overflow: auto;
 }

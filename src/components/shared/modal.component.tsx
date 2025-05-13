@@ -10,6 +10,8 @@ interface Props {
   stateModal: boolean;
   size?: string;
   vHactive?: boolean;
+  className?: string;
+  vHactiveHeight?: string;
 }
 
 const ModalComponent = (props: Props) => {
@@ -43,17 +45,21 @@ const ModalComponent = (props: Props) => {
   return (
     <div
       data-bs-focus="false"
-      className="modal fade"
+      className={`modal fade ${props.className ?? ''}`}
       ref={modalRef}
       tabIndex={-1}
       aria-labelledby="modalResource"
       aria-hidden={!props.stateModal}
     >
       <div
-        className={`modal-dialog modal-dialog-scrollable ${props.size ? props.size : ''}`}
+        className={`modal-dialog ${props.size ? props.size : ''}`}
         role="document"
+        style={{ height: props.vHactive ? 'calc(100vh - 3.5rem)' : '' }}
       >
-        <div className="modal-content" style={{ height: props.vHactive ? '100vh' : 'auto' }}>
+        <div
+          className={`modal-content ${props.vHactive ? '' : 'modal-no-scroll'}`}
+          style={{ height: props.vHactive ? 'calc(100vh - 3.5rem)' : 'auto' }}
+        >
           <div className="modal-header">
             <h5 className="modal-title">{props.title}</h5>
             <button type="button" className="btn-close" onClick={handleClose}></button>

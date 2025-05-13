@@ -1,4 +1,4 @@
-import { ImportarLeadRequest } from '../models/requests';
+import { ImportarLeadRequest, LeadFormRequest } from '../models/requests';
 import { LeadResponse, SuccessResponse } from '../models/responses';
 import apiInstance from './api';
 
@@ -27,6 +27,13 @@ export const requirements = async () => {
 export const importLeads = async (data: ImportarLeadRequest) => {
   const response = await apiInstance.post<SuccessResponse>(`/leads/import`, {
     data,
+  });
+  return response;
+};
+
+export const storeLead = async (data: LeadFormRequest) => {
+  const response = await apiInstance.post<LeadResponse>(`/leads`, {
+    lead: data,
   });
   return response;
 };

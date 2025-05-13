@@ -53,10 +53,22 @@ export function useLeads() {
     }
   };
 
+  //POST - STORE LEAD
+  const storeLead = async (data: any, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.storeLead(data);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
     requirements,
     importLeads,
+    storeLead,
   };
 }

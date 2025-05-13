@@ -3,6 +3,7 @@ import { KanbanSquare, AlignJustify, RefreshCw, ListFilter, CloudDownload } from
 interface LeadHeaderComponentProps {
   onRefreshLeads: () => void;
   handleStateView: (view: string) => void;
+  handleModalLeadForm: (type: string) => void;
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
@@ -36,7 +37,10 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             <RefreshCw height={20} />
           </button>
         </div>
-        <button className="btn btn-primary btn-sm ms-2">
+        <button
+          onClick={() => props.handleModalLeadForm('STORE')}
+          className="btn btn-primary btn-sm ms-2"
+        >
           <i className="fa-solid fa-plus me-2"></i>
           Lead
         </button>

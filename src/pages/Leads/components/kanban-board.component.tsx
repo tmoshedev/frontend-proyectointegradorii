@@ -11,16 +11,20 @@ import { LeadStatusResponse } from '../../../models/responses';
 
 interface KanbanBoardComponentProps {
   handleStateView: (view: string) => void;
+  handleModalLeadForm: (type: string) => void;
+  onRefreshLeads: () => void;
+  etapas: LeadStatus[];
+  setEtapas: React.Dispatch<React.SetStateAction<LeadStatus[]>>;
 }
 
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const { getLeadStatus } = useLeadStatus();
   const { changeState, updateLead } = useLeads();
-  const [etapas, setEtapas] = useState<LeadStatus[]>([]);
+
   const [isDragging, setIsDragging] = useState(false);
 
   const handleLeadsChange = useCallback((etapaId: string, newLeads: Lead[]) => {
-    setEtapas((prev) => prev.map((e) => (e.id === etapaId ? { ...e, leads: newLeads } : e)));
+    props.setEtapas((prev) => prev.map((e) => (e.id === etapaId ? { ...e, leads: newLeads } : e)));
   }, []);
 
   const handleDragEnd = useCallback((evt: SortableEvent) => {
@@ -50,7 +54,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const handleDropAction = (leadId: number, action: DropActionFooter) => {
     console.log(`Lead ${leadId} dropped in action ${action}`);
     //ELIMINAR EL CARD PRIMERO
-    setEtapas((prev) =>
+    props.setEtapas((prev) =>
       prev.map((etapa) => ({
         ...etapa,
         leads: etapa.leads.filter((lead) => lead.id !== leadId),
@@ -66,16 +70,10 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     setIsDragging(true); // <<< enciende la barra
   }, []);
 
-  const onRefreshLeads = () => {
-    getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
-      setEtapas(response.data);
-    });
-  };
-
   useEffect(() => {
     const dataInicial = () => {
       getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
-        setEtapas(response.data);
+        props.setEtapas(response.data);
       });
     };
 
@@ -85,11 +83,12 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   return (
     <div className="kanban-board">
       <LeadHeaderComponent
-        onRefreshLeads={onRefreshLeads}
+        onRefreshLeads={props.onRefreshLeads}
         handleStateView={props.handleStateView}
+        handleModalLeadForm={props.handleModalLeadForm}
       />
       <div className="kanban-columns">
-        {etapas.map((etapa) => (
+        {props.etapas.map((etapa) => (
           <div key={etapa.id} className="kanban-column" data-etapa-id={etapa.id}>
             <div className="kanban-column-header">
               <div className="kanban-column-header-stage">
