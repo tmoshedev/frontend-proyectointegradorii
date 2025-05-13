@@ -21,6 +21,12 @@ const Menu: MenuItem[] = [
     permission: 'leads-index',
   },
   {
+    name: 'Formularios',
+    path: '/forms',
+    icon: 'ri-window-line',
+    permission: 'leads-index',
+  },
+  {
     name: 'Gestión accesos',
     icon: 'ri-group-line',
     permissions: ['access-users-index'],

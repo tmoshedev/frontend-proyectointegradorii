@@ -7,6 +7,7 @@ export interface Lead {
   channel_name: string;
   prediccion_ia: string;
   interes: string;
+  estado_final: string;
   user_id: string;
   user_names: string;
   user_father_last_name: string;

@@ -7,7 +7,7 @@ import store from './redux/store';
 /**Layouts */
 import AuthLayout from './layouts/auth.layout';
 /**Pages */
-import { LoginPage, HomePage, ChangePasswordPage, LeadsPage } from './pages';
+import { LoginPage, HomePage, ChangePasswordPage, LeadsPage, FormulariosPage } from './pages';
 
 function App() {
   return (
@@ -23,6 +23,10 @@ function App() {
                 {/*LeadsPage*/}
                 <Route element={<ProtectedRoute permission="leads-index" />}>
                   <Route path="leads" element={<LeadsPage />} />
+                </Route>
+                {/*FormulariosPage*/}
+                <Route element={<ProtectedRoute permission="leads-index" />}>
+                  <Route path="forms" element={<FormulariosPage />} />
                 </Route>
               </Route>
             </Route>

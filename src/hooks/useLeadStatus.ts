@@ -10,10 +10,15 @@ export function useLeadStatus() {
   const dispatch = useDispatch();
 
   //GET - LEAD STATUS
-  const getLeadStatus = async (business_id: string, type: string, loading: boolean) => {
+  const getLeadStatus = async (
+    business_id: string,
+    lead_activos: string,
+    type: string,
+    loading: boolean
+  ) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadStatusService.getLeadStatus(business_id, type);
+      const response = await leadStatusService.getLeadStatus(business_id, lead_activos, type);
       return response;
     } finally {
       dispatch(setLoading(false));

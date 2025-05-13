@@ -1,6 +1,10 @@
 import { KanbanSquare, AlignJustify, RefreshCw, ListFilter, Plus } from 'lucide-react';
 
-export const LeadHeaderComponent = () => {
+interface LeadHeaderComponentProps {
+  onRefreshLeads: () => void;
+}
+
+export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
   return (
     <div className="d-flex justify-content-between align-items-center mt-1 mb-1">
       <div className="d-flex justify-content-center align-items-center">
@@ -22,6 +26,7 @@ export const LeadHeaderComponent = () => {
             <AlignJustify height={20} />
           </button>
           <button
+            onClick={props.onRefreshLeads}
             data-tooltip-id="tooltip-component"
             data-tooltip-content={'Actualizar'}
             type="button"

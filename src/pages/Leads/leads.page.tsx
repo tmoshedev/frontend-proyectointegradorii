@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLeadStatus, useSidebarResponsive } from '../../hooks';
+import { useLeads, useLeadStatus, useSidebarResponsive } from '../../hooks';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import LeadHeaderComponent from './components/lead-header.component';
 import LeadFooterComponent, {
@@ -9,27 +9,11 @@ import LeadCardComponent from './components/lead-card.component';
 import { LeadStatusResponse } from '../../models/responses';
 import { Lead, LeadStatus } from '../../models';
 
-// Define DropAction type
-
-/* const etapasIniciales = [
-  {
-    id: 1,
-    name: 'Nuevos',
-    leads: [
-      { id: 101, name: 'Jose Guillermo Santisteban Guerrero', interes: 'frio' },
-      { id: 102, name: 'Lead B', interes: 'frio' },
-    ],
-  },
-  { id: 2, name: 'Contactados', leads: [{ id: 201, name: 'Lead C', interes: 'frio' }] },
-  { id: 3, name: 'En seguimiento', leads: [{ id: 301, name: 'Lead D', interes: 'tibio' }] },
-  { id: 4, name: 'Visita agendada', leads: [] },
-  { id: 5, name: 'Cierre en proceso', leads: [{ id: 308, name: 'Lead F', interes: 'caliente' }] },
-]; */
-
 export const LeadsPage = () => {
   useSidebarResponsive(true);
 
-  const {getLeadStatus} = useLeadStatus();
+  const { getLeadStatus } = useLeadStatus();
+  const { changeState, updateLead } = useLeads();
   const [etapas, setEtapas] = useState<LeadStatus[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -52,9 +36,12 @@ export const LeadsPage = () => {
         `to etapa ${destColumn} index ${newIndex}`
     );
 
-    // Aquí podrías llamar a la API con:
-    // { leadId, fromStage: sourceColumn, toStage: destColumn, toPosition: newIndex }
-    // y después, si quieres, refrescar todo el estado o confiar en lo que ya hizo ReactSortable.
+    if (destColumn) {
+      changeState(String(destColumn), String(leadId), false).then(() => {
+        // Aquí podrías manejar la respuesta de la API si es necesario
+      });
+    }
+
     setIsDragging(false);
   }, []);
 
@@ -67,15 +54,25 @@ export const LeadsPage = () => {
         leads: etapa.leads.filter((lead) => lead.id !== leadId),
       }))
     );
+
+    updateLead(String(leadId), { estado_final: action }, false).then(() => {
+      // Aquí podrías manejar la respuesta de la API si es necesario
+    });
   };
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true); // <<< enciende la barra
   }, []);
 
+  const onRefreshLeads = () => {
+    getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
+      setEtapas(response.data);
+    });
+  };
+
   useEffect(() => {
     const dataInicial = () => {
-      getLeadStatus('1', 'get', true).then((response: LeadStatusResponse) => {
+      getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
         setEtapas(response.data);
       });
     };
@@ -90,7 +87,7 @@ export const LeadsPage = () => {
     >
       <div className="container-fluid">
         <div className="kanban-board">
-          <LeadHeaderComponent />
+          <LeadHeaderComponent onRefreshLeads={onRefreshLeads} />
 
           <div className="kanban-columns">
             {etapas.map((etapa) => (
