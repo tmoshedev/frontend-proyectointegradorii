@@ -31,8 +31,32 @@ export function useLeads() {
     }
   };
 
+  //GET - REQUIREMENTS
+  const requirements = async (loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.requirements();
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - IMPORT LEADS
+  const importLeads = async (data: any, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.importLeads(data);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
+    requirements,
+    importLeads,
   };
 }

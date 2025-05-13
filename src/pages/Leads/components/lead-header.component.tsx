@@ -1,7 +1,8 @@
-import { KanbanSquare, AlignJustify, RefreshCw, ListFilter, Plus } from 'lucide-react';
+import { KanbanSquare, AlignJustify, RefreshCw, ListFilter, CloudDownload } from 'lucide-react';
 
 interface LeadHeaderComponentProps {
   onRefreshLeads: () => void;
+  handleStateView: (view: string) => void;
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
@@ -39,12 +40,16 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           <i className="fa-solid fa-plus me-2"></i>
           Lead
         </button>
+        <button
+          onClick={() => props.handleStateView('IMPORTAR')}
+          className="btn btn-success btn-sm ms-2"
+        >
+          <CloudDownload height={20} /> Importar
+        </button>
       </div>
 
       <div className="d-flex justify-content-center align-items-center">
-        <button className="btn btn-outline-primary btn-xs">
-          <ListFilter height={20} /> Filtro
-        </button>
+        <button className="btn btn-outline-primary btn-xs">Filtro</button>
       </div>
     </div>
   );
