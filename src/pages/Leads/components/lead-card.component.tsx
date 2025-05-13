@@ -26,7 +26,7 @@ export const LeadCardComponent = (props: LeacCardProps) => {
         <div className="d-flex flex-wrap gap-2 mt-1">
           {props.lead.lead_projects.map((project) => (
             <span key={project.id} className="badge bg-light text-dark">
-              {project.name}
+              {project.names}
             </span>
           ))}
           {props.lead.lead_projects.length === 0 && (
