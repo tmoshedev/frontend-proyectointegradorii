@@ -7,7 +7,14 @@ import store from './redux/store';
 /**Layouts */
 import AuthLayout from './layouts/auth.layout';
 /**Pages */
-import { LoginPage, HomePage, ChangePasswordPage, LeadsPage, FormulariosPage } from './pages';
+import {
+  LoginPage,
+  HomePage,
+  ChangePasswordPage,
+  LeadsPage,
+  FormulariosPage,
+  UsuariosPage,
+} from './pages';
 
 function App() {
   return (
@@ -27,6 +34,10 @@ function App() {
                 {/*FormulariosPage*/}
                 <Route element={<ProtectedRoute permission="leads-index" />}>
                   <Route path="forms" element={<FormulariosPage />} />
+                </Route>
+                {/*UsuariosPage*/}
+                <Route element={<ProtectedRoute permission="access-users-index" />}>
+                  <Route path="access-users" element={<UsuariosPage />} />
                 </Route>
               </Route>
             </Route>
