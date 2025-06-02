@@ -64,11 +64,35 @@ export function useLeads() {
     }
   };
 
+  //GET - GET LEAD
+  const getLead = async (lead_uuid: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.getLead(lead_uuid);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //GET - GET LEAD HISTORIAL
+  const getLeadHistorial = async (lead_uuid: string, type: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.getLeadHistorial(lead_uuid, type);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
     requirements,
     importLeads,
     storeLead,
+    getLead,
+    getLeadHistorial,
   };
 }

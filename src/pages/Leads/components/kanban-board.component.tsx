@@ -8,6 +8,7 @@ import { useLeads, useLeadStatus } from '../../../hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { Lead, LeadStatus } from '../../../models';
 import { LeadStatusResponse } from '../../../models/responses';
+import { useNavigate } from 'react-router-dom';
 
 interface KanbanBoardComponentProps {
   handleStateView: (view: string) => void;
@@ -20,6 +21,7 @@ interface KanbanBoardComponentProps {
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const { getLeadStatus } = useLeadStatus();
   const { changeState, updateLead } = useLeads();
+  const navigate = useNavigate();
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -37,11 +39,6 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     // ID del lead movido
     const leadId = Number(item.getAttribute('data-id'));
 
-    console.log(
-      `Lead ${leadId} moved from etapa ${sourceColumn} index ${oldIndex} ` +
-        `to etapa ${destColumn} index ${newIndex}`
-    );
-
     if (destColumn) {
       changeState(String(destColumn), String(leadId), false).then(() => {
         // Aquí podrías manejar la respuesta de la API si es necesario
@@ -52,7 +49,6 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   }, []);
 
   const handleDropAction = (leadId: number, action: DropActionFooter) => {
-    console.log(`Lead ${leadId} dropped in action ${action}`);
     //ELIMINAR EL CARD PRIMERO
     props.setEtapas((prev) =>
       prev.map((etapa) => ({
@@ -69,6 +65,10 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const handleDragStart = useCallback(() => {
     setIsDragging(true); // <<< enciende la barra
   }, []);
+
+  const onClickLead = (lead_uuid: string) => {
+    navigate(`/leads/${lead_uuid}`);
+  };
 
   useEffect(() => {
     const dataInicial = () => {
@@ -109,7 +109,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
               onEnd={handleDragEnd}
             >
               {etapa.leads.map((lead) => (
-                <LeadCardComponent lead={lead} key={lead.id} />
+                <LeadCardComponent lead={lead} key={lead.id} onClickLead={onClickLead} />
               ))}
             </ReactSortable>
           </div>

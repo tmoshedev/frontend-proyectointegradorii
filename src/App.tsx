@@ -14,6 +14,7 @@ import {
   LeadsPage,
   FormulariosPage,
   UsuariosPage,
+  LeadPage,
 } from './pages';
 
 function App() {
@@ -38,6 +39,10 @@ function App() {
                 {/*UsuariosPage*/}
                 <Route element={<ProtectedRoute permission="access-users-index" />}>
                   <Route path="access-users" element={<UsuariosPage />} />
+                </Route>
+                {/*LeadPage*/}
+                <Route element={<ProtectedRoute permission="leads-index" />}>
+                  <Route path="leads/:uuid" element={<LeadPage />} />
                 </Route>
               </Route>
             </Route>

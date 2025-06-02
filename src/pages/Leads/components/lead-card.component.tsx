@@ -2,6 +2,7 @@ import { Lead } from '../../../models';
 
 interface LeacCardProps {
   lead: Lead;
+  onClickLead: (lead_uuid: string) => void;
 }
 export const LeadCardComponent = (props: LeacCardProps) => {
   const getInitials = (user_names: string, user_father_names: string) => {
@@ -12,7 +13,11 @@ export const LeadCardComponent = (props: LeacCardProps) => {
   };
 
   return (
-    <div className="kanban-card" data-id={props.lead.id}>
+    <div
+      className="kanban-card"
+      data-id={props.lead.id}
+      onClick={() => props.onClickLead(props.lead.uuid)}
+    >
       <div className="kanban-card-header">
         <h4>
           {props.lead.names} {props.lead.last_names}
@@ -72,7 +77,7 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           </p>
         </div>
       </div>
-      <div className="kanban-card-footer">
+      <div className="kanban-card-footer mt-2">
         <div className="d-flex align-items-center kanban-card-footer-user">
           {props.lead.user_id ? (
             <>
