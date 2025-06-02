@@ -1,0 +1,148 @@
+/* MultiSelect.scss */
+
+.multi-select {
+  position: relative;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.multi-select__control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  min-height: 40px;
+  position: relative;
+}
+
+.multi-select__tag {
+  display: flex;
+  align-items: center;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 12px;
+  padding: 2px 8px;
+  margin: 2px;
+}
+
+.multi-select__tag-close {
+  background: none;
+  border: none;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  color: #888;
+}
+
+.multi-select__tag-close:hover {
+  color: #333;
+}
+
+.multi-select__placeholder {
+  color: #6c757d;
+  margin-left: 2px;
+}
+
+.multi-select__arrow {
+  margin-left: auto;
+  font-size: 12px;
+  color: #666;
+}
+
+.multi-select__dropdown {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.multi-select__dropdown.up {
+  bottom: 100%;
+  margin-bottom: 4px;
+}
+
+.multi-select__dropdown.down {
+  top: 100%;
+  margin-top: 4px;
+}
+
+.multi-select__search-wrapper {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.multi-select__search {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.multi-select__options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.multi-select__option {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.multi-select__option:hover {
+  background-color: #f8f9fa;
+}
+
+.multi-select__option.selected {
+  background-color: #e2e6ea;
+}
+
+.multi-select__checkbox {
+  width: 16px;
+  display: inline-block;
+  text-align: center;
+  margin-right: 8px;
+  color: #007bff;
+}
+
+.multi-select__label {
+  flex: 1;
+}
+
+.multi-select__no-results {
+  padding: 8px;
+  text-align: center;
+  color: #6c757d;
+}
+
+/* Scrollbar styling */
+.multi-select__dropdown .multi-select__options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.multi-select__dropdown .multi-select__options::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.multi-select__dropdown .multi-select__options::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}

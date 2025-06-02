@@ -5,3 +5,5 @@ export * from './person.model';
 export * from './access-user.model';
 export * from './lead-status.model';
 export * from './lead.model';
+export * from './lead-history.model';
+export * from './lead-note.model';

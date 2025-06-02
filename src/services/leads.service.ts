@@ -37,3 +37,15 @@ export const storeLead = async (data: LeadFormRequest) => {
   });
   return response;
 };
+
+export const getLead = async (lead_uuid: string) => {
+  const response = await apiInstance.get<LeadResponse>(`/leads/${lead_uuid}`);
+  return response;
+};
+
+export const getLeadHistorial = async (lead_uuid: string, type: string) => {
+  const response = await apiInstance.get<LeadResponse>(
+    `/leads/${lead_uuid}/historial?type=${type}`
+  );
+  return response;
+};
