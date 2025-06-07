@@ -1,16 +1,17 @@
+import { useSelector } from 'react-redux';
 import { Lead, LeadHistory } from '../../../models';
+import { AppStore } from '../../../redux/store';
 
-interface Props {
-  lead: Lead;
-}
-export const LeadEtapasComponent = (props: Props) => {
+export const LeadEtapasComponent = () => {
+  const lead: Lead = useSelector((store: AppStore) => store.lead.lead);
+
   return (
     <div className="list-etapas">
-      {props.lead.state_histories?.map((history: LeadHistory, index: number) => (
+      {lead.state_histories?.map((history: LeadHistory, index: number) => (
         <button
           key={index}
           className={`button__stage ${
-            props.lead.lead_state_id == String(history.id) ? 'button__stage--current' : ''
+            lead.lead_state_id == String(history.id) ? 'button__stage--current' : ''
           }`}
         >
           {history.name.charAt(0).toUpperCase() + history.name.slice(1).toLowerCase()}:{' '}

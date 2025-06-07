@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useLeads, useSidebarResponsive } from '../../hooks';
-import { LeadHistorialResponse, LeadResponse } from '../../models/responses';
-import { Lead } from '../../models';
+import { LeadHistorialResponse, LeadResponse, SuccessResponse } from '../../models/responses';
+import { Lead, LeadLabel, LeadProject } from '../../models';
 import { useParams } from 'react-router-dom';
+
+//Redux
+import { AppStore } from '../../redux/store';
 
 import { LeadTabsComponent } from './components/lead-tabs.component';
 import LeadAddNoteComponent from './components/lead-add-note.component';
@@ -10,39 +13,48 @@ import LeadDetailsComponent from './components/lead-details.component';
 import LeadEtapasComponent from './components/lead-etapas.component';
 import LeadHeaderComponent from './components/lead-header.component';
 import LeadHistoriaComponent from './components/lead-historia.component';
+import { SweetAlert } from '../../utilities';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setLeadFullData,
+  setOnlyHistorialData,
+  setStateViewHistorial,
+} from '../../redux/states/lead.slice';
 
 export const LeadPage = () => {
   useSidebarResponsive(true);
   const { uuid } = useParams();
-  const { getLead, getLeadHistorial } = useLeads();
-  const [lead, setLead] = useState<Lead>({} as Lead);
-  const [lead_historial, setLeadHistorial] = useState<LeadHistorialResponse[]>([]);
   const [stateMenu, setStateMenu] = useState('Notas');
-  const [count_historial, setCountHistorial] = useState({
-    notes: 0,
-    state_changes: 0,
-  });
-  const [stateViewHistorial, setStateViewHistorial] = useState('alls');
+  const { getLead, getLeadHistorial, updateProjects, updateLabels } = useLeads();
+  const dispatch = useDispatch();
+  const { lead, stateViewHistorial } = useSelector((store: AppStore) => store.lead);
 
   const changeHistorialView = (view: string) => {
-    const stateView = view == '' ? stateViewHistorial : view;
-    setStateViewHistorial(stateView);
+    const stateView = view === '' ? stateViewHistorial : view;
+    dispatch(setStateViewHistorial(stateView));
+
     getLeadHistorial(uuid ?? '', stateView, false).then((response: LeadResponse) => {
-      setLeadHistorial(response.lead_historial);
-      setCountHistorial(response.count_historial);
+      dispatch(
+        setOnlyHistorialData({
+          lead_historial: response.lead_historial,
+          count_historial: response.count_historial,
+        })
+      );
     });
   };
 
   useEffect(() => {
-    const dataInicial = () => {
-      getLead(uuid ?? '', true).then((response: LeadResponse) => {
-        setLead(response.lead);
-        setLeadHistorial(response.lead_historial);
-        setCountHistorial(response.count_historial);
-      });
-    };
-
-    dataInicial();
+    getLead(uuid ?? '', true).then((response: LeadResponse) => {
+      dispatch(
+        setLeadFullData({
+          lead: response.lead,
+          lead_historial: response.lead_historial,
+          count_historial: response.count_historial,
+          projects_available: response.projects_available,
+          labels_available: response.labels_available,
+        })
+      );
+    });
   }, []);
 
   return (
@@ -55,13 +67,13 @@ export const LeadPage = () => {
         style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.4rem)' }}
       >
         <div className="lead-header">
-          <LeadHeaderComponent lead={lead} />
+          <LeadHeaderComponent />
           <div className="lead-header__etapas mt-4 mb-2">
-            <LeadEtapasComponent lead={lead} />
+            <LeadEtapasComponent />
           </div>
         </div>
         <div className="lead-content">
-          <LeadDetailsComponent lead={lead} />
+          <LeadDetailsComponent />
           <div className="lead-content__content scroll-personalizado">
             <div className="timeline-content">
               <div className="w-100">
@@ -72,22 +84,14 @@ export const LeadPage = () => {
                       <LeadTabsComponent stateMenu={stateMenu} setStateMenu={setStateMenu} />
                       <div className="timeline_tabs__content">
                         {stateMenu == 'Notas' && (
-                          <LeadAddNoteComponent
-                            changeHistorialView={changeHistorialView}
-                            lead={lead}
-                          />
+                          <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
                 {/*Historial*/}
-                <LeadHistoriaComponent
-                  stateViewHistorial={stateViewHistorial}
-                  changeHistorialView={changeHistorialView}
-                  lead_historial={lead_historial}
-                  count_historial={count_historial}
-                />
+                <LeadHistoriaComponent changeHistorialView={changeHistorialView} />
               </div>
             </div>
           </div>

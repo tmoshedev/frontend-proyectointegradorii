@@ -49,3 +49,26 @@ export const getLeadHistorial = async (lead_uuid: string, type: string) => {
   );
   return response;
 };
+
+export const updateProjects = async (lead_uuid: string, projects: any[]) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-projects`, {
+    projects,
+  });
+  return response;
+};
+
+export const updateLabels = async (lead_uuid: string, labels: any[]) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-labels`, {
+    labels,
+  });
+  return response;
+};
+
+export const updateLeadValue = async (lead_uuid: string, label: string, value: string) => {
+  const response = await apiInstance.patch<LeadResponse>(`/leads/${lead_uuid}`, {
+    lead: {
+      [label]: value,
+    },
+  });
+  return response;
+};

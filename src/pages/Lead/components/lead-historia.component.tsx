@@ -4,17 +4,39 @@ import LeadNoteComponent from '../historia-components/lead-note.component';
 import LeadItemActividad from '../historia-components/lead-item-actividad.component';
 import { LeadHistorialResponse } from '../../../models/responses';
 import LeadCreated from '../historia-components/lead-created.component';
+//Redux
+import { AppStore } from '../../../redux/store';
+import { setOnlyHistorialData, setStateViewHistorial } from '../../../redux/states/lead.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useLeads } from '../../../hooks';
 
 interface LeadHistoriaComponentProps {
-  stateViewHistorial: string;
   changeHistorialView: (view: string) => void;
-  lead_historial: LeadHistorialResponse[];
-  count_historial: {
-    notes: number;
-    state_changes: number;
-  };
 }
 export const LeadHistoriaComponent = (props: LeadHistoriaComponentProps) => {
+  const dispatch = useDispatch();
+  const { uuid } = useParams();
+  const { getLeadHistorial } = useLeads();
+
+  const { lead, historial, count_historial, stateViewHistorial } = useSelector(
+    (store: AppStore) => store.lead
+  );
+
+  const changeHistorialView = (view: string) => {
+    const selectedView = view === '' ? stateViewHistorial : view;
+    dispatch(setStateViewHistorial(selectedView));
+
+    getLeadHistorial(uuid ?? '', selectedView, false).then((response: any) => {
+      dispatch(
+        setOnlyHistorialData({
+          lead_historial: response.lead_historial,
+          count_historial: response.count_historial,
+        })
+      );
+    });
+  };
+
   return (
     <div className="area-historial">
       <div className="area-historial__header">
@@ -23,13 +45,13 @@ export const LeadHistoriaComponent = (props: LeadHistoriaComponentProps) => {
         </div>
       </div>
       <ListHistorialLeadComponent
-        count_historial={props.count_historial}
-        stateViewHistorial={props.stateViewHistorial}
-        changeHistorialView={props.changeHistorialView}
+        count_historial={count_historial}
+        stateViewHistorial={stateViewHistorial}
+        changeHistorialView={changeHistorialView}
       />
       <div className="historial-content">
-        {props.lead_historial.map((item: LeadHistorialResponse, idx: number) => {
-          const stateUltimo = idx === props.lead_historial.length - 1;
+        {historial.map((item: LeadHistorialResponse, idx: number) => {
+          const stateUltimo = idx === historial.length - 1;
           switch (item.type) {
             case 'created':
               return <LeadCreated key={idx} {...item} stateUltimo={stateUltimo} />;

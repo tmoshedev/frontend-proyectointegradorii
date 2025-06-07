@@ -86,6 +86,44 @@ export function useLeads() {
     }
   };
 
+  //POST - UPDATE PROJECTS
+  const updateProjects = async (lead_uuid: string, projects: any[], loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateProjects(lead_uuid, projects);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - UPDATE LABELS
+  const updateLabels = async (lead_uuid: string, labels: any[], loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLabels(lead_uuid, labels);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //PATCH - UPDATE LEAD VALUE
+  const updateLeadValue = async (
+    lead_id: string,
+    name: string,
+    value: string,
+    loading: boolean
+  ) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLeadValue(lead_id, name, value);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
@@ -94,5 +132,8 @@ export function useLeads() {
     storeLead,
     getLead,
     getLeadHistorial,
+    updateProjects,
+    updateLabels,
+    updateLeadValue,
   };
 }

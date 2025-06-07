@@ -1,4 +1,4 @@
-import { Lead } from '../../../models';
+import { Lead, LeadProject } from '../../../models';
 
 interface LeacCardProps {
   lead: Lead;
@@ -29,9 +29,9 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           <b>Proyectos interesados:</b>
         </p>
         <div className="d-flex flex-wrap gap-2 mt-1">
-          {props.lead.lead_projects.map((project) => (
+          {props.lead.lead_projects.map((project: LeadProject) => (
             <span key={project.id} className="badge bg-light text-dark">
-              {project.names}
+              {project.name}
             </span>
           ))}
           {props.lead.lead_projects.length === 0 && (

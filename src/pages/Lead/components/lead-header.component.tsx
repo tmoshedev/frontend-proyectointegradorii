@@ -1,8 +1,6 @@
 import { Lead } from '../../../models';
-
-interface Props {
-  lead: Lead;
-}
+import { useSelector } from 'react-redux';
+import { AppStore } from '../../../redux/store';
 
 const getInitials = (user_names: string, user_father_names: string) => {
   if (user_names && user_father_names) {
@@ -11,12 +9,14 @@ const getInitials = (user_names: string, user_father_names: string) => {
   return '-'; // Si no hay datos, usa 'U' por defecto
 };
 
-export const LeadHeaderComponent = (props: Props) => {
+export const LeadHeaderComponent = () => {
+  const lead: Lead = useSelector((store: AppStore) => store.lead.lead);
+
   return (
     <div className="lead-header__title">
       <div className="lead-header__text">
         <h1>
-          LEAD: {props.lead.names} {props.lead.last_names}
+          LEAD: {lead.names} {lead.last_names}
         </h1>
       </div>
       <div className="lead-header__buttons">
@@ -25,15 +25,14 @@ export const LeadHeaderComponent = (props: Props) => {
             className="avatar user-avatar user-avatar-menu mb-0"
             style={{ height: '1.8rem', width: '1.8rem' }}
           >
-            {getInitials(props.lead.user_names, props.lead.user_father_last_name)}
+            {getInitials(lead.user_names, lead.user_father_last_name)}
           </div>
           <div className="ms-2">
             <div className="d-flex flex-column">
               <p>
-                {props.lead.user_names} {props.lead.user_father_last_name}{' '}
-                {props.lead.user_mother_last_name}
+                {lead.user_names} {lead.user_father_last_name} {lead.user_mother_last_name}
               </p>
-              <small>{props.lead.user_rol_name}</small>
+              <small>{lead.user_rol_name}</small>
             </div>
           </div>
         </div>
