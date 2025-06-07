@@ -6,6 +6,7 @@ import ModalComponent from '../../components/shared/modal.component';
 import LeadFormComponent from './components/form-lead.component';
 import { LeadStatusResponse } from '../../models/responses';
 import { LeadStatus } from '../../models';
+import DistribuirLeadComponent from './components/distrubir-leads.component';
 
 interface DataModalState {
   type: string;
@@ -81,6 +82,7 @@ export const LeadsPage = () => {
           />
         )}
         {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
+        {stateView == 'DISTRIBUIR' && <DistribuirLeadComponent handleStateView={handleStateView} />}
       </div>
       {/* MODAL NUEVO LEAD*/}
       {isOpenModal && (

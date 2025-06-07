@@ -1,5 +1,6 @@
+import { Lead, UserSelect2 } from '../models';
 import { ImportarLeadRequest, LeadFormRequest } from '../models/requests';
-import { LeadResponse, SuccessResponse } from '../models/responses';
+import { LeadDistribucionResponse, LeadResponse, SuccessResponse } from '../models/responses';
 import apiInstance from './api';
 
 export const postChangeState = async (lead_state_id: string, lead_id: string) => {
@@ -69,6 +70,20 @@ export const updateLeadValue = async (lead_uuid: string, label: string, value: s
     lead: {
       [label]: value,
     },
+  });
+  return response;
+};
+
+export const getDistribucion = async () => {
+  const response = await apiInstance.get<LeadDistribucionResponse>(`/leads/distribucion`);
+  return response;
+};
+
+export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios: UserSelect2[]) => {
+  const response = await apiInstance.post<LeadDistribucionResponse>(`/leads/distribuir`, {
+    type,
+    leads,
+    usuarios,
   });
   return response;
 };

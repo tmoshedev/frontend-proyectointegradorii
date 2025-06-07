@@ -5,3 +5,4 @@ export * from './lead-status.response';
 export * from './lead.response';
 export * from './lead-note.response';
 export * from './lead-historial.response';
+export * from './lead-distribucion.response';

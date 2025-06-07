@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import * as leadsService from '../services/leads.service';
 /**Redux */
 import { setLoading } from '../redux/states/loading.slice';
+import { Lead, UserSelect2 } from '../models';
 
 export function useLeads() {
   const dispatch = useDispatch();
@@ -124,6 +125,33 @@ export function useLeads() {
     }
   };
 
+  //GET - LEADS DISTRIBUTION
+  const getDistribucion = async (loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.getDistribucion();
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - LEAD DISTRIBUTION
+  const postDistribuirLeads = async (
+    type: string,
+    leads: Lead[],
+    usuarios: UserSelect2[],
+    loading: boolean
+  ) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.postDistribuirLeads(type, leads, usuarios);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
@@ -135,5 +163,7 @@ export function useLeads() {
     updateProjects,
     updateLabels,
     updateLeadValue,
+    getDistribucion,
+    postDistribuirLeads,
   };
 }

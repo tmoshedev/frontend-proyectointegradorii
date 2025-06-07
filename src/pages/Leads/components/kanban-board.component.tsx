@@ -33,7 +33,6 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     const { to, from, oldIndex, newIndex, item } = evt;
 
     // Detectamos etapas
-    const sourceColumn = Number(from.closest('.kanban-column')?.getAttribute('data-etapa-id'));
     const destColumn = Number(to.closest('.kanban-column')?.getAttribute('data-etapa-id'));
 
     // ID del lead movido
