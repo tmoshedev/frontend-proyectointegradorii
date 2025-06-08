@@ -75,15 +75,22 @@ export const updateLeadValue = async (lead_uuid: string, label: string, value: s
 };
 
 export const getDistribucion = async () => {
-  const response = await apiInstance.get<LeadDistribucionResponse>(`/leads/distribucion`);
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<LeadDistribucionResponse>(
+    `/leads/distribucion?rolActual=${rolActual}`
+  );
   return response;
 };
 
 export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios: UserSelect2[]) => {
-  const response = await apiInstance.post<LeadDistribucionResponse>(`/leads/distribuir`, {
-    type,
-    leads,
-    usuarios,
-  });
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post<LeadDistribucionResponse>(
+    `/leads/distribuir?rolActual=${rolActual}`,
+    {
+      type,
+      leads,
+      usuarios,
+    }
+  );
   return response;
 };
