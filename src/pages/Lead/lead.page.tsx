@@ -25,7 +25,7 @@ export const LeadPage = () => {
   useSidebarResponsive(true);
   const { uuid } = useParams();
   const [stateMenu, setStateMenu] = useState('Notas');
-  const { getLead, getLeadHistorial, updateProjects, updateLabels } = useLeads();
+  const { getLead, getLeadHistorial } = useLeads();
   const dispatch = useDispatch();
   const { lead, stateViewHistorial } = useSelector((store: AppStore) => store.lead);
 
@@ -52,6 +52,7 @@ export const LeadPage = () => {
           count_historial: response.count_historial,
           projects_available: response.projects_available,
           labels_available: response.labels_available,
+          users: response.users,
         })
       );
     });
@@ -78,18 +79,20 @@ export const LeadPage = () => {
             <div className="timeline-content">
               <div className="w-100">
                 {/* Timeline Header */}
-                <div className="timeline-content__header">
-                  <div className="timeline-content__content">
-                    <div className="timeline_tabs">
-                      <LeadTabsComponent stateMenu={stateMenu} setStateMenu={setStateMenu} />
-                      <div className="timeline_tabs__content">
-                        {stateMenu == 'Notas' && (
-                          <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
-                        )}
+                {lead.estado_final == null && (
+                  <div className="timeline-content__header">
+                    <div className="timeline-content__content">
+                      <div className="timeline_tabs">
+                        <LeadTabsComponent stateMenu={stateMenu} setStateMenu={setStateMenu} />
+                        <div className="timeline_tabs__content">
+                          {stateMenu == 'Notas' && (
+                            <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
                 {/*Historial*/}
                 <LeadHistoriaComponent changeHistorialView={changeHistorialView} />
               </div>

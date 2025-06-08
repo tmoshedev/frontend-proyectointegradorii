@@ -40,7 +40,10 @@ export const storeLead = async (data: LeadFormRequest) => {
 };
 
 export const getLead = async (lead_uuid: string) => {
-  const response = await apiInstance.get<LeadResponse>(`/leads/${lead_uuid}`);
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<LeadResponse>(
+    `/leads/${lead_uuid}?rolActual=${rolActual}`
+  );
   return response;
 };
 
@@ -92,5 +95,27 @@ export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios:
       usuarios,
     }
   );
+  return response;
+};
+
+export const updateLeadAsesor = async (lead_uuid: string, assigned_to: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.patch<LeadResponse>(
+    `/leads/${lead_uuid}/update-asesor?rolActual=${rolActual}`,
+    {
+      lead: {
+        assigned_to,
+      },
+    }
+  );
+  return response;
+};
+
+export const changeEstadoFinal = async (id: string, estado_final: string) => {
+  const response = await apiInstance.patch<LeadResponse>(`/leads/${id}/change-estado-final`, {
+    lead: {
+      estado_final,
+    },
+  });
   return response;
 };

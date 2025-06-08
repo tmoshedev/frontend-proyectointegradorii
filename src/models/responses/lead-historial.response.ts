@@ -9,5 +9,6 @@ export interface LeadHistorialResponse {
     state_current: string;
     state_moved: string;
     note: string;
+    text: string;
   };
 }

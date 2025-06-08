@@ -16,12 +16,14 @@ interface KanbanBoardComponentProps {
   onRefreshLeads: () => void;
   etapas: LeadStatus[];
   setEtapas: React.Dispatch<React.SetStateAction<LeadStatus[]>>;
+  handleModalAsesor: (lead: Lead, users: any[]) => void;
 }
 
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const { getLeadStatus } = useLeadStatus();
-  const { changeState, updateLead } = useLeads();
+  const { changeState, changeEstadoFinal } = useLeads();
   const navigate = useNavigate();
+  const [users, setUsers] = useState<any[]>([]);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -56,7 +58,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
       }))
     );
 
-    updateLead(String(leadId), { estado_final: action }, false).then(() => {
+    changeEstadoFinal(String(leadId), action, false).then(() => {
       // Aquí podrías manejar la respuesta de la API si es necesario
     });
   };
@@ -69,10 +71,15 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     navigate(`/leads/${lead_uuid}`);
   };
 
+  const onEditarAsesor = (lead: Lead) => {
+    props.handleModalAsesor(lead, users);
+  };
+
   useEffect(() => {
     const dataInicial = () => {
       getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
-        props.setEtapas(response.data);
+        props.setEtapas(response.data.lead_etapas);
+        setUsers(response.data.users);
       });
     };
 
@@ -108,7 +115,12 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
               onEnd={handleDragEnd}
             >
               {etapa.leads.map((lead) => (
-                <LeadCardComponent lead={lead} key={lead.id} onClickLead={onClickLead} />
+                <LeadCardComponent
+                  lead={lead}
+                  key={lead.id}
+                  onClickLead={onClickLead}
+                  onEditarAsesor={onEditarAsesor}
+                />
               ))}
             </ReactSortable>
           </div>

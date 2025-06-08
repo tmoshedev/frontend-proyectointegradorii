@@ -7,13 +7,14 @@ import LeadFormComponent from './components/form-lead.component';
 import { LeadStatusResponse } from '../../models/responses';
 import { LeadStatus } from '../../models';
 import DistribuirLeadComponent from './components/distrubir-leads.component';
+import LeadAsesorEditComponent from './components/lead-asesor-edit.component';
 
 interface DataModalState {
   type: string;
   buttonSubmit: string | null;
   row: any | null;
   title: string | null;
-  requirements: any[];
+  requirements: any;
   onCloseModalForm: any;
 }
 
@@ -34,6 +35,17 @@ export const LeadsPage = () => {
     requirements: [],
     onCloseModalForm: () => {},
   });
+  //MODAL EDITAR ASESOR
+  const [isOpenModalAsesor, setIsOpenModalAsesor] = useState(false);
+  const [isStateModalAsesor, setIsStateModalAsesor] = useState(false);
+  const [dataModalAsesorResourceState, setDataModalAsesorResourceState] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    requirements: [],
+    onCloseModalForm: () => {},
+  });
 
   const handleStateView = (view: string) => {
     setStateView(view);
@@ -45,6 +57,14 @@ export const LeadsPage = () => {
 
   const handleCloseModal = () => {
     setIsOpenModal(false);
+  };
+
+  const onCloseModalAsesorForm = () => {
+    setIsStateModalAsesor(false);
+  };
+
+  const handleCloseModalAsesor = () => {
+    setIsOpenModalAsesor(false);
   };
 
   const handleModalLeadForm = (type: string) => {
@@ -62,8 +82,34 @@ export const LeadsPage = () => {
 
   const onRefreshLeads = () => {
     getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
-      setEtapas(response.data);
+      setEtapas(response.data.lead_etapas);
     });
+  };
+
+  const handleModalAsesor = (lead: any, users: any[]) => {
+    setDataModalAsesorResourceState({
+      type: 'EDITAR_ASESOR',
+      buttonSubmit: 'Actualizar',
+      row: {
+        lead_uuid: lead.uuid,
+        assigned_to: lead.user_id ?? '',
+      },
+      title: 'Editar asesor',
+      requirements: {
+        users: users,
+      },
+      onCloseModalForm: onCloseModalAsesorForm,
+    });
+    setIsOpenModalAsesor(true);
+    setIsStateModalAsesor(true);
+  };
+
+  const updateLeadLocal = (lead: any) => {
+    const updatedEtapas = etapas.map((etapa) => {
+      const updatedLeads = etapa.leads.map((l) => (l.uuid === lead.uuid ? lead : l));
+      return { ...etapa, leads: updatedLeads };
+    });
+    setEtapas(updatedEtapas);
   };
 
   return (
@@ -79,6 +125,7 @@ export const LeadsPage = () => {
             onRefreshLeads={onRefreshLeads}
             etapas={etapas}
             setEtapas={setEtapas}
+            handleModalAsesor={handleModalAsesor}
           />
         )}
         {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
@@ -94,6 +141,22 @@ export const LeadsPage = () => {
           size="modal-md"
           content={
             <LeadFormComponent data={dataModalResourceState} onRefreshLeads={onRefreshLeads} />
+          }
+        />
+      )}
+      {/* MODAL - EDITAR ASESOR*/}
+      {isOpenModalAsesor && (
+        <ModalComponent
+          stateModal={isStateModalAsesor}
+          typeModal={'static'}
+          onClose={handleCloseModalAsesor}
+          title={dataModalAsesorResourceState.title || ''}
+          size="modal-md"
+          content={
+            <LeadAsesorEditComponent
+              data={dataModalAsesorResourceState}
+              updateLeadLocal={updateLeadLocal}
+            />
           }
         />
       )}

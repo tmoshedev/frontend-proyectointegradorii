@@ -12,6 +12,8 @@ interface SelectDosDropdownProps {
   setItemSelected: (usuarios: Option[]) => void;
   textNoResult: string;
   multipleSelect: boolean;
+  className?: string;
+  autoFocus?: boolean;
 }
 export const SelectDosDropdown = (props: SelectDosDropdownProps) => {
   const isSelected = (item: Option) => props.itemsSelected.some((s) => s.id === item.id);
@@ -63,8 +65,14 @@ export const SelectDosDropdown = (props: SelectDosDropdownProps) => {
     }
   }, [props.itemsSelected, props.items]);
 
+  useEffect(() => {
+    if (props.autoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [props.autoFocus]);
+
   return (
-    <div className="select-dos-dropdown">
+    <div className={`select-dos-dropdown ${props.className ? ` ${props.className}` : ''}`}>
       <div className="select-dos-dropdown_search">
         <input
           value={query}

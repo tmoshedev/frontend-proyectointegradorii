@@ -20,6 +20,7 @@
   max-height: 250px;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
   .select-dos-dropdown_search {
     flex-shrink: 0;
     padding: 6px 8px;
@@ -41,8 +42,8 @@
         flex-shrink: 0;
         width: 2rem;
         margin-right: 4px; // FOTO
-        img{
-            width: 1.9rem;
+        img {
+          width: 1.9rem;
         }
       }
 
@@ -73,11 +74,10 @@
   color: #fff;
 }
 
-
 .select-dos-dropdown_option:hover .select-dos-dropdown_option_checkbox {
-  color: #fff!important;
+  color: #fff !important;
 }
 
-.select-dos-dropdown_option:hover .select-dos-dropdown_option_avatar  img{
-    filter: brightness(0) invert(1) grayscale(1);
+.select-dos-dropdown_option:hover .select-dos-dropdown_option_avatar img {
+  filter: brightness(0) invert(1) grayscale(1);
 }

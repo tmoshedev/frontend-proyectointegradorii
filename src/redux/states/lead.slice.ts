@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Lead, LeadProject, LeadLabel } from '../../models';
+import { Lead, LeadProject, LeadLabel, User, UserSelect2 } from '../../models';
 import { LeadHistorialResponse } from '../../models/responses';
 
 interface LeadState {
@@ -12,6 +12,7 @@ interface LeadState {
   stateViewHistorial: string;
   projectsAvailable: LeadProject[];
   labelsAvailable: LeadLabel[];
+  users: UserSelect2[];
 }
 
 const initialState: LeadState = {
@@ -21,6 +22,7 @@ const initialState: LeadState = {
   stateViewHistorial: 'alls',
   projectsAvailable: [],
   labelsAvailable: [],
+  users: [],
 };
 
 export const leadSlice = createSlice({
@@ -29,6 +31,18 @@ export const leadSlice = createSlice({
   reducers: {
     setLead(state, action: PayloadAction<Lead>) {
       state.lead = action.payload;
+    },
+    setLeadAndHistorial(
+      state,
+      action: PayloadAction<{
+        lead: Lead;
+        lead_historial: LeadHistorialResponse[];
+        count_historial: { notes: number; state_changes: number };
+      }>
+    ) {
+      state.lead = action.payload.lead;
+      state.historial = action.payload.lead_historial;
+      state.count_historial = action.payload.count_historial;
     },
     setHistorial(state, action: PayloadAction<LeadHistorialResponse[]>) {
       state.historial = action.payload;
@@ -61,6 +75,7 @@ export const leadSlice = createSlice({
         count_historial: { notes: number; state_changes: number };
         projects_available: LeadProject[];
         labels_available: LeadLabel[];
+        users: UserSelect2[];
       }>
     ) {
       state.lead = action.payload.lead;
@@ -68,6 +83,7 @@ export const leadSlice = createSlice({
       state.count_historial = action.payload.count_historial;
       state.projectsAvailable = action.payload.projects_available;
       state.labelsAvailable = action.payload.labels_available;
+      state.users = action.payload.users;
     },
 
     // ✅ Actualiza los datos de historial del lead
@@ -86,6 +102,7 @@ export const leadSlice = createSlice({
 
 export const {
   setLead,
+  setLeadAndHistorial,
   setHistorial,
   updateLeadProjects,
   updateLeadLabels,

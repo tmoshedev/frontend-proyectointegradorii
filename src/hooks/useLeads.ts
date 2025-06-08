@@ -152,6 +152,28 @@ export function useLeads() {
     }
   };
 
+  //PATCH - UPDATE LEAD ASSIGNED TO
+  const updateLeadAsesor = async (lead_uuid: string, assigned_to: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLeadAsesor(lead_uuid, assigned_to);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //PATCH - CHANGE FINAL STATE
+  const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.changeEstadoFinal(id, estado_final);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
@@ -165,5 +187,7 @@ export function useLeads() {
     updateLeadValue,
     getDistribucion,
     postDistribuirLeads,
+    updateLeadAsesor,
+    changeEstadoFinal,
   };
 }

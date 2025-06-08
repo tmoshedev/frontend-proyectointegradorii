@@ -185,7 +185,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                 <div className="multi-select__search-wrapper drop-up-search">
                   <input
                     type="text"
-                    className="form-control multi-select__search"
+                    className="form-control form-control-sm multi-select__search todo-mayuscula"
                     placeholder="Buscar..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}

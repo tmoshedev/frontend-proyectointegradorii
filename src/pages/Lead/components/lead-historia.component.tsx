@@ -10,6 +10,7 @@ import { setOnlyHistorialData, setStateViewHistorial } from '../../../redux/stat
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useLeads } from '../../../hooks';
+import LeadAction from '../historia-components/lead-action.component';
 
 interface LeadHistoriaComponentProps {
   changeHistorialView: (view: string) => void;
@@ -61,6 +62,8 @@ export const LeadHistoriaComponent = (props: LeadHistoriaComponentProps) => {
               return <LeadNoteComponent key={idx} {...item} stateUltimo={stateUltimo} />;
             case 'activity':
               return <LeadItemActividad key={idx} {...item} stateUltimo={stateUltimo} />;
+            case 'action':
+              return <LeadAction key={idx} {...item} stateUltimo={stateUltimo} />;
             default:
               return null;
           }

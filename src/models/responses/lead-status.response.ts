@@ -1,7 +1,10 @@
-import { LeadStatus } from '../lead-status.model';
+import { UserSelect2, LeadStatus } from '..';
 
 export interface LeadStatusResponse {
-  data: LeadStatus[];
-  links: any;
-  meta: any;
+  success: boolean;
+  message: string;
+  data: {
+    lead_etapas: LeadStatus[];
+    users: UserSelect2[];
+  };
 }

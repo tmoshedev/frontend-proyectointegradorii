@@ -1,8 +1,10 @@
 import { Lead, LeadProject } from '../../../models';
+import CanCheck from '../../../resources/can';
 
 interface LeacCardProps {
   lead: Lead;
   onClickLead: (lead_uuid: string) => void;
+  onEditarAsesor: (lead: Lead) => void;
 }
 export const LeadCardComponent = (props: LeacCardProps) => {
   const getInitials = (user_names: string, user_father_names: string) => {
@@ -77,7 +79,10 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           </p>
         </div>
       </div>
-      <div className="kanban-card-footer mt-2">
+      <div
+        className="d-flex kanban-card-footer justify-content-between mt-2"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="d-flex align-items-center kanban-card-footer-user">
           {props.lead.user_id ? (
             <>
@@ -108,6 +113,16 @@ export const LeadCardComponent = (props: LeacCardProps) => {
             </>
           )}
         </div>
+        {CanCheck('update-asesor') && (
+          <div className="d-flex align-items-center">
+            <button
+              className="btn btn-outline-cancel btn-xs"
+              onClick={() => props.onEditarAsesor(props.lead)}
+            >
+              <i className="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
