@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import * as leadsService from '../services/leads.service';
 /**Redux */
 import { setLoading } from '../redux/states/loading.slice';
+import { Lead, UserSelect2 } from '../models';
 
 export function useLeads() {
   const dispatch = useDispatch();
@@ -86,6 +87,93 @@ export function useLeads() {
     }
   };
 
+  //POST - UPDATE PROJECTS
+  const updateProjects = async (lead_uuid: string, projects: any[], loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateProjects(lead_uuid, projects);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - UPDATE LABELS
+  const updateLabels = async (lead_uuid: string, labels: any[], loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLabels(lead_uuid, labels);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //PATCH - UPDATE LEAD VALUE
+  const updateLeadValue = async (
+    lead_id: string,
+    name: string,
+    value: string,
+    loading: boolean
+  ) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLeadValue(lead_id, name, value);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //GET - LEADS DISTRIBUTION
+  const getDistribucion = async (loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.getDistribucion();
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - LEAD DISTRIBUTION
+  const postDistribuirLeads = async (
+    type: string,
+    leads: Lead[],
+    usuarios: UserSelect2[],
+    loading: boolean
+  ) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.postDistribuirLeads(type, leads, usuarios);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //PATCH - UPDATE LEAD ASSIGNED TO
+  const updateLeadAsesor = async (lead_uuid: string, assigned_to: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateLeadAsesor(lead_uuid, assigned_to);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //PATCH - CHANGE FINAL STATE
+  const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.changeEstadoFinal(id, estado_final);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
@@ -94,5 +182,12 @@ export function useLeads() {
     storeLead,
     getLead,
     getLeadHistorial,
+    updateProjects,
+    updateLabels,
+    updateLeadValue,
+    getDistribucion,
+    postDistribuirLeads,
+    updateLeadAsesor,
+    changeEstadoFinal,
   };
 }

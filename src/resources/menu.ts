@@ -14,6 +14,12 @@ const Menu: MenuItem[] = [
     icon: 'ri-home-8-line',
     permission: 'home-index',
   },
+  /* {
+    name: 'Mi equipo',
+    path: '/my-teams',
+    icon: 'ri-user-heart-line',
+    permission: 'leads-index',
+  }, */
   {
     name: 'Leads',
     path: '/leads',
@@ -24,7 +30,7 @@ const Menu: MenuItem[] = [
     name: 'Formularios',
     path: '/forms',
     icon: 'ri-window-line',
-    permission: 'leads-index',
+    permission: 'forms-index',
   },
   {
     name: 'Gestión accesos',

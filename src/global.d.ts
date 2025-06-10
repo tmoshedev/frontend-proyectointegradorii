@@ -6,3 +6,5 @@ declare global {
     bootstrap: any;
   }
 }
+
+declare module 'bootstrap';

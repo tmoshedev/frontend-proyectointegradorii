@@ -1,4 +1,4 @@
-import { Lead } from '..';
+import { Lead, LeadProject, UserSelect2 } from '..';
 import { LeadHistorialResponse } from './lead-historial.response';
 
 export interface LeadResponse {
@@ -9,4 +9,7 @@ export interface LeadResponse {
     notes: number;
     state_changes: number;
   };
+  projects_available: LeadProject[];
+  labels_available: any[];
+  users: UserSelect2[];
 }

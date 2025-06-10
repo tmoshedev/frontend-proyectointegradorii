@@ -69,7 +69,17 @@ $arrow-width: 0.7rem;
           &:first-child {
             margin-top: 0px;
           }
-          .kanban-card-header {
+          &.kanban-card-instagram { background-color: #f4c99b !important; }
+          &.kanban-card-facebook { background-color: #5b6d95 !important; }
+          &.kanban-card-whatsapp { background-color: #89f2b0 !important; }
+          &.kanban-card-landing { background-color: #78b6f7 !important; }
+          &.kanban-card-organico { background-color: #f48383 !important; }
+          &.kanban-card-default { background-color: #f0f0f0 !important; }
+
+
+
+          
+        .kanban-card-header {
             border-bottom: 1px solid #e0e0e0;
             margin-bottom: 0.5rem;
             h4 {

@@ -1,8 +1,10 @@
-import { Lead } from '../../../models';
+import { Lead, LeadProject } from '../../../models';
+import CanCheck from '../../../resources/can';
 
 interface LeacCardProps {
   lead: Lead;
   onClickLead: (lead_uuid: string) => void;
+  onEditarAsesor: (lead: Lead) => void;
 }
 export const LeadCardComponent = (props: LeacCardProps) => {
   const getInitials = (user_names: string, user_father_names: string) => {
@@ -12,9 +14,33 @@ export const LeadCardComponent = (props: LeacCardProps) => {
     return 'U'; // Si no hay datos, usa 'U' por defecto
   };
 
+  const getChannelColorClass = (channel: string) => {
+  const cleanChannel = channel?.trim().toUpperCase();
+
+  switch (cleanChannel) {
+    case 'INSTAGRAM':
+      return 'kanban-card-instagram';
+    case 'FACEBOOK':
+      return 'kanban-card-facebook';
+    case 'WHATSAPP':
+      return 'kanban-card-whatsapp';
+    case 'WEB':
+      return 'kanban-card-web';
+    case 'TIKTOK':
+      return 'kanban-card-tiktok';
+    case 'GOOGLE ADS':
+      return 'kanban-card-google';
+    case 'ORGÁNICO':
+      return 'kanban-card-organico';
+    case 'LANDING PAGE':
+      return 'kanban-card-landing';
+    default:
+      return 'kanban-card-default';
+  }
+};
   return (
     <div
-      className="kanban-card"
+      className={`kanban-card ${getChannelColorClass(props.lead.channel_name)}`}
       data-id={props.lead.id}
       onClick={() => props.onClickLead(props.lead.uuid)}
     >
@@ -29,9 +55,9 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           <b>Proyectos interesados:</b>
         </p>
         <div className="d-flex flex-wrap gap-2 mt-1">
-          {props.lead.lead_projects.map((project) => (
+          {props.lead.lead_projects.map((project: LeadProject) => (
             <span key={project.id} className="badge bg-light text-dark">
-              {project.names}
+              {project.name}
             </span>
           ))}
           {props.lead.lead_projects.length === 0 && (
@@ -77,7 +103,10 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           </p>
         </div>
       </div>
-      <div className="kanban-card-footer mt-2">
+      <div
+        className="d-flex kanban-card-footer justify-content-between mt-2"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="d-flex align-items-center kanban-card-footer-user">
           {props.lead.user_id ? (
             <>
@@ -108,6 +137,16 @@ export const LeadCardComponent = (props: LeacCardProps) => {
             </>
           )}
         </div>
+        {CanCheck('update-asesor') && (
+          <div className="d-flex align-items-center">
+            <button
+              className="btn btn-outline-cancel btn-xs"
+              onClick={() => props.onEditarAsesor(props.lead)}
+            >
+              <i className="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,3 +7,6 @@ export * from './lead-status.model';
 export * from './lead.model';
 export * from './lead-history.model';
 export * from './lead-note.model';
+export * from './lead-project.model';
+export * from './lead-label.model';
+export * from './user-select2.model';

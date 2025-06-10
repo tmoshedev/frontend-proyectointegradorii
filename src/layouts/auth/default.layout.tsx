@@ -6,12 +6,54 @@ import Sidebar from '../../components/sidebar';
 import Header from '../../components/header';
 import { LoadingState } from '../../components/shared';
 import { ToastContainer } from 'react-toastify';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
+import ModalComponent from '../../components/shared/modal.component';
+import CambiarRolComponent from './cambiar-rol.component';
+
+interface DataModalState {
+  type: string;
+  buttonSubmit: string | null;
+  row: any | null;
+  title: string | null;
+  requirements: any[];
+  onCloseModalForm: any;
+}
 
 const DefaultLayout = () => {
   const loadingState = useSelector((store: AppStore) => store.loading);
   const location = useLocation();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isStateModal, setIsStateModal] = useState(false);
+  const [dataModalResourceState, setDataModalResourceState] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    requirements: [],
+    onCloseModalForm: () => {},
+  });
+
+  const onCloseModalForm = () => {
+    setIsStateModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const onCambiarRol = () => {
+    setDataModalResourceState({
+      type: 'CAMBIAR_ROL',
+      buttonSubmit: 'Cambiar',
+      row: null,
+      title: 'Cambiar Rol',
+      requirements: [],
+      onCloseModalForm: onCloseModalForm,
+    });
+    setIsOpenModal(true);
+    setIsStateModal(true);
+  };
 
   const closeSidebar = () => {
     const html = document.documentElement;
@@ -94,11 +136,22 @@ const DefaultLayout = () => {
     <>
       <Tooltip id="tooltip-component" place="bottom" style={{ zIndex: 9999 }} />
       <ToastContainer />
-      <Header openToggled={openToggled} />
+      <Header openToggled={openToggled} onCambiarRol={onCambiarRol} />
       <Sidebar />
       <Outlet />
       <div onClick={closeSidebar} id="responsive-overlay"></div>
       {loadingState.isLoading && <LoadingState />}
+
+      {isOpenModal && (
+        <ModalComponent
+          stateModal={isStateModal}
+          typeModal={'static'}
+          onClose={handleCloseModal}
+          title={dataModalResourceState.title || ''}
+          size="modal-lg"
+          content={<CambiarRolComponent data={dataModalResourceState} />}
+        />
+      )}
     </>
   );
 };

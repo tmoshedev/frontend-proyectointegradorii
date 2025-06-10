@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useLeadNotes } from '../../../hooks/useLeadNotes';
 import { SweetAlert } from '../../../utilities';
 import { LeadNoteRequest } from '../../../models/requests';
-import { Lead } from '../../../models';
+//Redux
+import { AppStore } from '../../../redux/store';
+import { useSelector } from 'react-redux';
 
 interface Props {
-  lead: Lead;
   changeHistorialView: (view: string) => void;
 }
 export const LeadAddNoteComponent = (props: Props) => {
@@ -13,6 +14,7 @@ export const LeadAddNoteComponent = (props: Props) => {
   const [stateNote, setStateNote] = useState(false);
   const [note, setNote] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lead = useSelector((store: AppStore) => store.lead.lead);
 
   const onActivarNota = () => {
     setStateNote(!stateNote);
@@ -27,7 +29,7 @@ export const LeadAddNoteComponent = (props: Props) => {
 
     const formData: LeadNoteRequest = {
       note: note,
-      lead_id: props.lead.id,
+      lead_id: lead.id,
     };
 
     storeLeadNote(formData, true)

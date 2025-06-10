@@ -1,4 +1,13 @@
-import { KanbanSquare, AlignJustify, RefreshCw, ListFilter, CloudDownload } from 'lucide-react';
+import {
+  KanbanSquare,
+  AlignJustify,
+  RefreshCw,
+  ListFilter,
+  CloudDownload,
+  Plus,
+  Share2,
+} from 'lucide-react';
+import CanCheck from '../../../resources/can';
 
 interface LeadHeaderComponentProps {
   onRefreshLeads: () => void;
@@ -41,14 +50,21 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           onClick={() => props.handleModalLeadForm('STORE')}
           className="btn btn-primary btn-sm ms-2"
         >
-          <i className="fa-solid fa-plus me-2"></i>
-          Lead
+          <Plus height={20} /> Lead
         </button>
+        {CanCheck('leads-distrubir') && (
+          <button
+            onClick={() => props.handleStateView('DISTRIBUIR')}
+            className="btn btn-info btn-sm ms-2"
+          >
+            <Share2 height={20} /> Distribuir Leads
+          </button>
+        )}
         <button
           onClick={() => props.handleStateView('IMPORTAR')}
           className="btn btn-success btn-sm ms-2"
         >
-          <CloudDownload height={20} /> Importar
+          <CloudDownload height={20} /> Importar Leads
         </button>
       </div>
 

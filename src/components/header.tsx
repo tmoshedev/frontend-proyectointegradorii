@@ -6,11 +6,13 @@ import { useLogin } from '../hooks';
 
 interface HeaderProps {
   openToggled: () => void;
+  onCambiarRol: () => void;
 }
 
 export const Header = (props: HeaderProps) => {
   const userState = useSelector((state: AppStore) => state.auth.user);
   const { handleLogout } = useLogin();
+  const roleActualName = localStorage.getItem('rolActualName') || '';
   const logout = () => {
     handleLogout();
   };
@@ -29,16 +31,8 @@ export const Header = (props: HeaderProps) => {
           <div className="header-element">
             <div className="horizontal-logo">
               <a href="/" className="header-logo">
-                <img
-                  src="/images/logo-blanco.png"
-                  alt="logo"
-                  className="desktop-logo"
-                />
-                <img
-                  src="/images/icon-blanco.png"
-                  alt="logo"
-                  className="toggle-white"
-                />
+                <img src="/images/logo-blanco.png" alt="logo" className="desktop-logo" />
+                <img src="/images/icon-blanco.png" alt="logo" className="toggle-white" />
               </a>
             </div>
           </div>
@@ -90,7 +84,7 @@ export const Header = (props: HeaderProps) => {
         <div className="header-content-right">
           <div className="header-element d-lg-flex">
             <a
-              role='button'
+              role="button"
               className="header-link dropdown-toggle"
               data-bs-auto-close="outside"
               data-bs-toggle="dropdown"
@@ -101,8 +95,8 @@ export const Header = (props: HeaderProps) => {
               </span>
             </a>
             <div className="main-header-dropdown dropdown-menu dropdown-menu-start">
-              <a className="dropdown-item" role='button'>
-              EMPRESA
+              <a className="dropdown-item" role="button">
+                EMPRESA
               </a>
             </div>
           </div>
@@ -132,9 +126,7 @@ export const Header = (props: HeaderProps) => {
                 )}
                 <div className="d-xl-block d-none align-items-center my-auto text-start">
                   <h6 className="fw-medium mb-0 lh-1 fs-13">{userState.names}</h6>
-                  <span className="op-5 fw-normal d-block fs-11 lh-1">
-                    {userState.roles[0].name}
-                  </span>
+                  <span className="op-5 fw-normal d-block fs-11 lh-1">{roleActualName}</span>
                 </div>
               </div>
             </a>
@@ -146,8 +138,17 @@ export const Header = (props: HeaderProps) => {
                 <li className="drop-heading d-xl-none d-block">
                   <div className="text-center">
                     <h5 className="text-dark mb-0 fs-16 fw-bold">{userState.names}</h5>
-                    <small className="text-muted fs-12">{userState.roles[0].name}</small>
+                    <small className="text-muted fs-12">{roleActualName}</small>
                   </div>
+                </li>
+                <li className="dropdown-item">
+                  <a
+                    onClick={() => props.onCambiarRol()}
+                    className="d-flex align-items-center w-100"
+                    role="button"
+                  >
+                    <i className="ri-loop-left-line me-3"></i> Cambiar Rol
+                  </a>
                 </li>
                 <li className="dropdown-item">
                   <a

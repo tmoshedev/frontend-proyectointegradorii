@@ -30,7 +30,6 @@ export const LeadFormComponent = (props: Props) => {
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    project_id: Yup.string().required('Campo requerido'),
     channel_id: Yup.string().required('Campo requerido'),
     names: Yup.string().required('Campo requerido'),
     cellphone: Yup.string().required('Campo requerido'),
@@ -84,7 +83,7 @@ export const LeadFormComponent = (props: Props) => {
           {/* Proyecto */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="level_id">
-              Proyecto<span className="text-danger">*</span>
+              Proyecto
             </label>
             <select
               onChange={handleInputChangeSelect}

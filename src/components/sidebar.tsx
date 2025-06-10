@@ -24,6 +24,7 @@ export const Sidebar = () => {
   const collapse: { [key: string]: boolean } = {};
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const userState = useSelector((state: AppStore) => state.auth.user);
+  const roleActualName = localStorage.getItem('rolActualName') || '';
 
   // Verificar si la ruta actual pertenece a un submenú
   useEffect(() => {
@@ -100,9 +101,7 @@ export const Sidebar = () => {
             </div>
             <div className="user-info text-center">
               <h5 className=" mb-1 fw-bold">{userState.names}</h5>
-              <span className="text-muted app-sidebar__user-name text-sm">
-                {userState.roles[0].name}
-              </span>
+              <span className="text-muted app-sidebar__user-name text-sm">{roleActualName}</span>
             </div>{' '}
           </div>{' '}
         </div>

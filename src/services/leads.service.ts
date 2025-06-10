@@ -1,5 +1,6 @@
+import { Lead, UserSelect2 } from '../models';
 import { ImportarLeadRequest, LeadFormRequest } from '../models/requests';
-import { LeadResponse, SuccessResponse } from '../models/responses';
+import { LeadDistribucionResponse, LeadResponse, SuccessResponse } from '../models/responses';
 import apiInstance from './api';
 
 export const postChangeState = async (lead_state_id: string, lead_id: string) => {
@@ -39,7 +40,10 @@ export const storeLead = async (data: LeadFormRequest) => {
 };
 
 export const getLead = async (lead_uuid: string) => {
-  const response = await apiInstance.get<LeadResponse>(`/leads/${lead_uuid}`);
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<LeadResponse>(
+    `/leads/${lead_uuid}?rolActual=${rolActual}`
+  );
   return response;
 };
 
@@ -47,5 +51,71 @@ export const getLeadHistorial = async (lead_uuid: string, type: string) => {
   const response = await apiInstance.get<LeadResponse>(
     `/leads/${lead_uuid}/historial?type=${type}`
   );
+  return response;
+};
+
+export const updateProjects = async (lead_uuid: string, projects: any[]) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-projects`, {
+    projects,
+  });
+  return response;
+};
+
+export const updateLabels = async (lead_uuid: string, labels: any[]) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-labels`, {
+    labels,
+  });
+  return response;
+};
+
+export const updateLeadValue = async (lead_uuid: string, label: string, value: string) => {
+  const response = await apiInstance.patch<LeadResponse>(`/leads/${lead_uuid}`, {
+    lead: {
+      [label]: value,
+    },
+  });
+  return response;
+};
+
+export const getDistribucion = async () => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<LeadDistribucionResponse>(
+    `/leads/distribucion?rolActual=${rolActual}`
+  );
+  return response;
+};
+
+export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios: UserSelect2[]) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post<LeadDistribucionResponse>(
+    `/leads/distribuir?rolActual=${rolActual}`,
+    {
+      type,
+      leads,
+      usuarios,
+    }
+  );
+  return response;
+};
+
+export const updateLeadAsesor = async (lead_uuid: string, assigned_to: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.patch<LeadResponse>(
+    `/leads/${lead_uuid}/update-asesor?rolActual=${rolActual}`,
+    {
+      lead: {
+        assigned_to,
+      },
+    }
+  );
+  return response;
+};
+
+export const changeEstadoFinal = async (id: string, estado_final: string) => {
+  const response = await apiInstance.patch<LeadResponse>(`/leads/${id}/change-estado-final`, {
+    lead: {
+      estado_final,
+    },
+  });
   return response;
 };
