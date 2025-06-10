@@ -14,39 +14,45 @@ export const LeadCardComponent = (props: LeacCardProps) => {
     return 'U'; // Si no hay datos, usa 'U' por defecto
   };
 
-  const getChannelColorClass = (channel: string) => {
-  const cleanChannel = channel?.trim().toUpperCase();
+  const getChannelIcon = (channel: string) => {
+  const normalized = channel.trim().toLowerCase();
 
-  switch (cleanChannel) {
-    case 'INSTAGRAM':
-      return 'kanban-card-instagram';
-    case 'FACEBOOK':
-      return 'kanban-card-facebook';
-    case 'WHATSAPP':
-      return 'kanban-card-whatsapp';
-    case 'WEB':
-      return 'kanban-card-web';
-    case 'TIKTOK':
-      return 'kanban-card-tiktok';
-    case 'GOOGLE ADS':
-      return 'kanban-card-google';
-    case 'ORGÁNICO':
-      return 'kanban-card-organico';
-    case 'LANDING PAGE':
-      return 'kanban-card-landing';
+  switch (normalized) {
+    case 'facebook':
+      return <i className="fa-brands fa-facebook ms-2" style={{ color: '#1877F2' }} title="Facebook"></i>;
+    case 'instagram':
+      return <i className="fa-brands fa-instagram ms-2" style={{ color: '#E4405F' }} title="Instagram"></i>;
+    case 'tiktok':
+      return <i className="fa-brands fa-tiktok ms-2" style={{ color: '#000000' }} title="TikTok"></i>;
+    case 'google ads':
+      return <i className="fa-brands fa-google ms-2" style={{ color: '#4285F4' }} title="Google Ads"></i>;
+    case 'orgánico':
+      return <i className="fa-solid fa-leaf ms-2" style={{ color: '#28a745' }} title="Orgánico"></i>;
+    case 'landing page':
+      return <i className="fa-solid fa-globe ms-2" style={{ color: '#17a2b8' }} title="Landing Page"></i>;
     default:
-      return 'kanban-card-default';
+      return <i className="fa-solid fa-question-circle ms-2" style={{ color: '#6c757d' }} title="Canal desconocido"></i>;
   }
 };
+
   return (
     <div
-      className={`kanban-card ${getChannelColorClass(props.lead.channel_name)}`}
+      className="kanban-card"
       data-id={props.lead.id}
       onClick={() => props.onClickLead(props.lead.uuid)}
     >
       <div className="kanban-card-header">
-        <h4>
-          {props.lead.names} {props.lead.last_names}
+        <h4 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis', 
+            whiteSpace: 'nowrap', 
+            flex: 1, 
+            marginRight: '0.5rem' 
+          }}>
+            {props.lead.names} {props.lead.last_names}
+          </span>
+          {getChannelIcon(props.lead.channel_name)}
         </h4>
         <small>Celular: {props.lead.cellphone}</small>
       </div>
