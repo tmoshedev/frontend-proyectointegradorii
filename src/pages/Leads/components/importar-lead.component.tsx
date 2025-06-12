@@ -55,7 +55,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
 
   const onImportar = () => {
     const nuevosErrores = data.map((item) => ({
-      project_id: isEmpty(item.project_id),
+      //project_id: isEmpty(item.project_id),
       channel_id: isEmpty(item.channel_id),
       names: isEmpty(item.names),
       cellphone: isEmpty(item.cellphone),
@@ -95,184 +95,195 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
   }, []);
 
   return (
-    <div className="importar-data">
-      <div className="importa-data-header">
-        <h4 className="text-center mt-3">
-          Importar leads
-          <button
-            onClick={onDescargarPlantilla}
-            type="button"
-            className="btn btn-info-light btn-xs ms-2"
-          >
-            <i className="fa-solid fa-download"></i> Descargar plantilla
-          </button>
-        </h4>
-      </div>
-      <div className="importa-data-body">
-        <div className="tabla-zize-resource">
-          <div className="tabla-zize-header">
-            <div className="tabla-zize-col tabla-zize-col-15 text-center">Proyecto</div>
-            <div className="tabla-zize-col tabla-zize-col-15">Canal captación</div>
-            <div className="tabla-zize-col tabla-zize-col-15 text-center">Nombres</div>
-            <div className="tabla-zize-col tabla-zize-col-20 text-center">Apellidos</div>
-            <div className="tabla-zize-col tabla-zize-col-10 text-center">Celular</div>
-            <div className="tabla-zize-col tabla-zize-col-10 text-center">Ciudad</div>
-            <div className="tabla-zize-col tabla-zize-col-15 text-center">Acción</div>
+    <div
+      className="main-content app-content main-content--page"
+      style={{ paddingLeft: '0rem', paddingRight: '0rem' }}
+    >
+      <div className="container-fluid">
+        <div className="importar-data">
+          <div className="importa-data-header">
+            <h4 className="text-center mt-3">
+              Importar leads
+              <button
+                onClick={onDescargarPlantilla}
+                type="button"
+                className="btn btn-info-light btn-xs ms-2"
+              >
+                <i className="fa-solid fa-download"></i> Descargar plantilla
+              </button>
+            </h4>
           </div>
-          <div className="tabla-zize-body" style={{ height: 'calc(100vh)' }}>
-            {data.map((item, index) => {
-              // Chequeo para esta fila
-              const isEmpty = (value: any) => !value || String(value).trim() === '';
-              const isRowIncomplete =
-                isEmpty(item.project_id) ||
-                isEmpty(item.channel_id) ||
-                isEmpty(item.names) ||
-                isEmpty(item.last_names) ||
-                isEmpty(item.cellphone) ||
-                isEmpty(item.ciudad);
-              return (
-                <div className="tabla-zize-body-item" key={index}>
-                  <div className="tabla-zize-col tabla-zize-col-15">
-                    <select
-                      className={`form-select form-select-sm ${
-                        erroresValidacion[index]?.project_id ? 'is-invalid' : ''
-                      }`}
-                      value={item.project_id}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].project_id = value;
-                          return newData;
-                        });
-                      }}
-                    >
-                      <option value="">Seleccionar</option>
-                      {projects.map((project: any) => (
-                        <option key={project.id} value={project.id}>
-                          {project.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-15">
-                    <select
-                      className={`form-select form-select-sm ${
-                        erroresValidacion[index]?.channel_id ? 'is-invalid' : ''
-                      }`}
-                      value={item.channel_id}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].channel_id = value;
-                          return newData;
-                        });
-                      }}
-                    >
-                      <option value="">Seleccionar</option>
-                      {channels.map((channel: any) => (
-                        <option key={channel.id} value={channel.id}>
-                          {channel.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-15">
-                    <input
-                      type="text"
-                      className={`form-control form-control-sm todo-mayuscula ${
-                        erroresValidacion[index]?.names ? 'is-invalid' : ''
-                      }`}
-                      value={item.names}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].names = value;
-                          return newData;
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-20">
-                    <input
-                      type="text"
-                      className="form-control form-control-sm todo-mayuscula"
-                      value={item.last_names}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].last_names = value;
-                          return newData;
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-15">
-                    <input
-                      type="text"
-                      className={`form-control form-control-sm todo-mayuscula ${
-                        erroresValidacion[index]?.cellphone ? 'is-invalid' : ''
-                      }`}
-                      value={item.cellphone}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].cellphone = value;
-                          return newData;
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-10">
-                    <input
-                      type="text"
-                      className="form-control form-control-sm todo-mayuscula"
-                      value={item.ciudad}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setData((prev) => {
-                          const newData = [...prev];
-                          newData[index].ciudad = value;
-                          return newData;
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="tabla-zize-col tabla-zize-col-10">ACCIÓN</div>
-                </div>
-              );
-            })}
-            {data.length === 0 && (
-              <div className="tabla-zize-body-item">
-                <div className="tabla-zize-col tabla-zize-col-100 text-center">
-                  <b>No hay datos para importar.</b>
-                </div>
+          <div className="importa-data-body">
+            <div className="tabla-zize-resource">
+              <div className="tabla-zize-header">
+                <div className="tabla-zize-col tabla-zize-col-15 text-center">Proyecto</div>
+                <div className="tabla-zize-col tabla-zize-col-15">Canal captación</div>
+                <div className="tabla-zize-col tabla-zize-col-15 text-center">Nombres</div>
+                <div className="tabla-zize-col tabla-zize-col-20 text-center">Apellidos</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Celular</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Ciudad</div>
+                <div className="tabla-zize-col tabla-zize-col-15 text-center">Acción</div>
               </div>
-            )}
+              <div className="tabla-zize-body" style={{ height: 'calc(100vh)' }}>
+                {data.map((item, index) => {
+                  // Chequeo para esta fila
+                  const isEmpty = (value: any) => !value || String(value).trim() === '';
+                  const isRowIncomplete =
+                    //isEmpty(item.project_id) ||
+                    isEmpty(item.channel_id) ||
+                    isEmpty(item.names) ||
+                    isEmpty(item.last_names) ||
+                    isEmpty(item.cellphone) ||
+                    isEmpty(item.ciudad);
+                  return (
+                    <div className="tabla-zize-body-item" key={index}>
+                      <div className="tabla-zize-col tabla-zize-col-15">
+                        <select
+                          className={`form-select form-select-sm ${
+                            erroresValidacion[index]?.project_id ? 'is-invalid' : ''
+                          }`}
+                          value={item.project_id}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].project_id = value;
+                              return newData;
+                            });
+                          }}
+                        >
+                          <option value="">Seleccionar</option>
+                          {projects.map((project: any) => (
+                            <option key={project.id} value={project.id}>
+                              {project.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-15">
+                        <select
+                          className={`form-select form-select-sm ${
+                            erroresValidacion[index]?.channel_id ? 'is-invalid' : ''
+                          }`}
+                          value={item.channel_id}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].channel_id = value;
+                              return newData;
+                            });
+                          }}
+                        >
+                          <option value="">Seleccionar</option>
+                          {channels.map((channel: any) => (
+                            <option key={channel.id} value={channel.id}>
+                              {channel.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-15">
+                        <input
+                          type="text"
+                          className={`form-control form-control-sm todo-mayuscula ${
+                            erroresValidacion[index]?.names ? 'is-invalid' : ''
+                          }`}
+                          value={item.names}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].names = value;
+                              return newData;
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-20">
+                        <input
+                          type="text"
+                          className="form-control form-control-sm todo-mayuscula"
+                          value={item.last_names}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].last_names = value;
+                              return newData;
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-15">
+                        <input
+                          type="text"
+                          className={`form-control form-control-sm todo-mayuscula ${
+                            erroresValidacion[index]?.cellphone ? 'is-invalid' : ''
+                          }`}
+                          value={item.cellphone}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].cellphone = value;
+                              return newData;
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-10">
+                        <input
+                          type="text"
+                          className="form-control form-control-sm todo-mayuscula"
+                          value={item.ciudad}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].ciudad = value;
+                              return newData;
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="tabla-zize-col tabla-zize-col-10"></div>
+                    </div>
+                  );
+                })}
+                {data.length === 0 && (
+                  <div className="tabla-zize-body-item">
+                    <div className="tabla-zize-col tabla-zize-col-100 text-center">
+                      <b>No hay datos para importar.</b>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="importa-data-footer">
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+            <button onClick={() => props.handleStateView('KANBAN')} className="btn btn-light me-2">
+              <i className="fa-solid fa-xmark"></i> Cancelar
+            </button>
+            <button onClick={handleButtonClick} className="btn btn-success">
+              <i className="fa-solid fa-upload"></i> Importar excel
+            </button>
+            <button
+              disabled={data.length == 0}
+              onClick={onImportar}
+              className="btn btn-primary ms-2"
+            >
+              <i className="fa-solid fa-floppy-disk"></i> Guardar
+            </button>
           </div>
         </div>
-      </div>
-      <div className="importa-data-footer">
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-          style={{ display: 'none' }}
-        />
-        <button onClick={() => props.handleStateView('KANBAN')} className="btn btn-light me-2">
-          <i className="fa-solid fa-xmark"></i> Cancelar
-        </button>
-        <button onClick={handleButtonClick} className="btn btn-success">
-          <i className="fa-solid fa-upload"></i> Importar excel
-        </button>
-        <button disabled={data.length == 0} onClick={onImportar} className="btn btn-primary ms-2">
-          <i className="fa-solid fa-floppy-disk"></i> Guardar
-        </button>
       </div>
     </div>
   );

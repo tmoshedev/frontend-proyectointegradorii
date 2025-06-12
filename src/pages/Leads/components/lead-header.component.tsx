@@ -33,6 +33,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             data-tooltip-content={'Vista tabla'}
             type="button"
             className="btn btn-outline-primary btn-xs"
+            onClick={() => props.handleStateView('LEADS_TABLE')}
           >
             <AlignJustify height={20} />
           </button>

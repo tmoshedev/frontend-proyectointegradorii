@@ -8,6 +8,7 @@ import { LeadStatusResponse } from '../../models/responses';
 import { LeadStatus } from '../../models';
 import DistribuirLeadComponent from './components/distrubir-leads.component';
 import LeadAsesorEditComponent from './components/lead-asesor-edit.component';
+import LeadsTableComponent from './components/leads-table.component';
 
 interface DataModalState {
   type: string;
@@ -113,24 +114,21 @@ export const LeadsPage = () => {
   };
 
   return (
-    <div
-      className="main-content app-content main-content--page"
-      style={{ paddingLeft: '0rem', paddingRight: '0rem' }}
-    >
-      <div className="container-fluid">
-        {stateView == 'KANBAN' && (
-          <KanbanBoardComponent
-            handleStateView={handleStateView}
-            handleModalLeadForm={handleModalLeadForm}
-            onRefreshLeads={onRefreshLeads}
-            etapas={etapas}
-            setEtapas={setEtapas}
-            handleModalAsesor={handleModalAsesor}
-          />
-        )}
-        {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
-        {stateView == 'DISTRIBUIR' && <DistribuirLeadComponent handleStateView={handleStateView} />}
-      </div>
+    <>
+      {stateView == 'KANBAN' && (
+        <KanbanBoardComponent
+          handleStateView={handleStateView}
+          handleModalLeadForm={handleModalLeadForm}
+          onRefreshLeads={onRefreshLeads}
+          etapas={etapas}
+          setEtapas={setEtapas}
+          handleModalAsesor={handleModalAsesor}
+        />
+      )}
+      {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
+      {stateView == 'DISTRIBUIR' && <DistribuirLeadComponent handleStateView={handleStateView} />}
+      {stateView == 'LEADS_TABLE' && <LeadsTableComponent />}
+
       {/* MODAL NUEVO LEAD*/}
       {isOpenModal && (
         <ModalComponent
@@ -160,7 +158,7 @@ export const LeadsPage = () => {
           }
         />
       )}
-    </div>
+    </>
   );
 };
 

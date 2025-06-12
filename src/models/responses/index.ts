@@ -6,3 +6,5 @@ export * from './lead.response';
 export * from './lead-note.response';
 export * from './lead-historial.response';
 export * from './lead-distribucion.response';
+export * from './table-header.response';
+export * from './table-crm.response';

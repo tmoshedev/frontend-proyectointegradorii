@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLeads, useSidebarResponsive } from '../../hooks';
-import { LeadHistorialResponse, LeadResponse, SuccessResponse } from '../../models/responses';
-import { Lead, LeadLabel, LeadProject } from '../../models';
+import { LeadResponse } from '../../models/responses';
 import { useParams } from 'react-router-dom';
 
 //Redux
@@ -13,7 +12,6 @@ import LeadDetailsComponent from './components/lead-details.component';
 import LeadEtapasComponent from './components/lead-etapas.component';
 import LeadHeaderComponent from './components/lead-header.component';
 import LeadHistoriaComponent from './components/lead-historia.component';
-import { SweetAlert } from '../../utilities';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setLeadFullData,

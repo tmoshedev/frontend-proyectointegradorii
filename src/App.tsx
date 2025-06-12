@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import ProtectedRoute from './routes/ProtectedRoute';
 
@@ -15,6 +15,7 @@ import {
   FormulariosPage,
   UsuariosPage,
   LeadPage,
+  MiEquipoPage,
 } from './pages';
 
 function App() {
@@ -44,11 +45,16 @@ function App() {
                 <Route element={<ProtectedRoute permission="leads-index" />}>
                   <Route path="leads/:uuid" element={<LeadPage />} />
                 </Route>
+                {/*MiEquipoPage*/}
+                <Route element={<ProtectedRoute permission="teams-index" />}>
+                  <Route path="my-teams" element={<MiEquipoPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>
           {/* Login */}
           <Route path="login" element={<LoginPage />}></Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </Provider>
