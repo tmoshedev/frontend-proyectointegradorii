@@ -87,46 +87,53 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   }, []);
 
   return (
-    <div className="kanban-board">
-      <LeadHeaderComponent
-        onRefreshLeads={props.onRefreshLeads}
-        handleStateView={props.handleStateView}
-        handleModalLeadForm={props.handleModalLeadForm}
-      />
-      <div className="kanban-columns">
-        {props.etapas.map((etapa) => (
-          <div key={etapa.id} className="kanban-column" data-etapa-id={etapa.id}>
-            <div className="kanban-column-header">
-              <div className="kanban-column-header-stage">
-                <h4 className="kanban-column-title p-0 m-0">{etapa.name}</h4>
-                <small className="p-0 m-0">{etapa.leads.length} leads</small>
+    <div
+      className="main-content app-content main-content--page"
+      style={{ paddingLeft: '0rem', paddingRight: '0rem' }}
+    >
+      <div className="container-fluid">
+        <div className="kanban-board">
+          <LeadHeaderComponent
+            onRefreshLeads={props.onRefreshLeads}
+            handleStateView={props.handleStateView}
+            handleModalLeadForm={props.handleModalLeadForm}
+          />
+          <div className="kanban-columns">
+            {props.etapas.map((etapa) => (
+              <div key={etapa.id} className="kanban-column" data-etapa-id={etapa.id}>
+                <div className="kanban-column-header">
+                  <div className="kanban-column-header-stage">
+                    <h4 className="kanban-column-title p-0 m-0">{etapa.name}</h4>
+                    <small className="p-0 m-0">{etapa.leads.length} leads</small>
+                  </div>
+                </div>
+                <ReactSortable
+                  list={etapa.leads}
+                  setList={(newLeads) => handleLeadsChange(etapa.id, newLeads)}
+                  group="etapas"
+                  animation={150}
+                  ghostClass="ghost"
+                  dragClass="drag"
+                  className="kanban-column-content"
+                  forceFallback
+                  onStart={handleDragStart}
+                  onEnd={handleDragEnd}
+                >
+                  {etapa.leads.map((lead) => (
+                    <LeadCardComponent
+                      lead={lead}
+                      key={lead.id}
+                      onClickLead={onClickLead}
+                      onEditarAsesor={onEditarAsesor}
+                    />
+                  ))}
+                </ReactSortable>
               </div>
-            </div>
-            <ReactSortable
-              list={etapa.leads}
-              setList={(newLeads) => handleLeadsChange(etapa.id, newLeads)}
-              group="etapas"
-              animation={150}
-              ghostClass="ghost"
-              dragClass="drag"
-              className="kanban-column-content"
-              forceFallback
-              onStart={handleDragStart}
-              onEnd={handleDragEnd}
-            >
-              {etapa.leads.map((lead) => (
-                <LeadCardComponent
-                  lead={lead}
-                  key={lead.id}
-                  onClickLead={onClickLead}
-                  onEditarAsesor={onEditarAsesor}
-                />
-              ))}
-            </ReactSortable>
+            ))}
           </div>
-        ))}
+          {isDragging && <LeadFooterComponent onDropAction={handleDropAction} />}
+        </div>
       </div>
-      {isDragging && <LeadFooterComponent onDropAction={handleDropAction} />}
     </div>
   );
 };

@@ -25,6 +25,7 @@ export const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const userState = useSelector((state: AppStore) => state.auth.user);
   const roleActualName = localStorage.getItem('rolActualName') || '';
+  const roleActual = localStorage.getItem('rolActual') || '';
 
   // Verificar si la ruta actual pertenece a un submenú
   useEffect(() => {
@@ -107,64 +108,76 @@ export const Sidebar = () => {
         </div>
         <nav className="main-menu-container nav nav-pills flex-column sub-open active">
           <ul className="main-menu">
-            {Menu.map((menuItem, index) => (
-              <li
-                className={`slide ${menuItem.submenu ? 'has-sub' : ''} ${
-                  activeMenu === menuItem.name ? 'open' : ''
-                }`}
-                key={index}
-              >
-                {!menuItem.submenu && CanCheck(menuItem.permission) && (
-                  <NavLink
-                    to={menuItem.path}
-                    className={({ isActive }) => `side-menu__item ${isActive ? 'active' : ''}`}
-                    onClick={() => toggleMenu(menuItem.name)}
-                  >
-                    <i className={`${menuItem.icon} side-menu__icon`}></i>
-                    <span className="side-menu__label">{menuItem.name}</span>
-                  </NavLink>
-                )}
+            {Menu.map((menuItem, index) => {
+              const rolesValidos = menuItem.rolesPermitidos?.map((r) => r.toUpperCase()) ?? [];
 
-                {menuItem.submenu && showSection(menuItem.permissions ?? []) && (
-                  <>
-                    <a
+              if (
+                menuItem.rolesPermitidos &&
+                !rolesValidos.includes('ALLS') &&
+                !rolesValidos.includes(roleActual.toUpperCase())
+              ) {
+                return null;
+              }
+
+              return (
+                <li
+                  className={`slide ${menuItem.submenu ? 'has-sub' : ''} ${
+                    activeMenu === menuItem.name ? 'open' : ''
+                  }`}
+                  key={index}
+                >
+                  {!menuItem.submenu && CanCheck(menuItem.permission) && (
+                    <NavLink
+                      to={menuItem.path}
+                      className={({ isActive }) => `side-menu__item ${isActive ? 'active' : ''}`}
                       onClick={() => toggleMenu(menuItem.name)}
-                      role="button"
-                      className={
-                        validateCollapse(menuItem ?? '')
-                          ? 'side-menu__item active'
-                          : 'side-menu__item'
-                      }
                     >
                       <i className={`${menuItem.icon} side-menu__icon`}></i>
                       <span className="side-menu__label">{menuItem.name}</span>
-                      <i className="ri-arrow-right-s-line side-menu__angle"></i>
-                    </a>
+                    </NavLink>
+                  )}
 
-                    <ul
-                      className="slide-menu child1"
-                      style={{ display: activeMenu === menuItem.name ? 'block' : 'none' }}
-                    >
-                      {menuItem.submenu.map(
-                        (subMenuItem, subIndex) =>
-                          CanCheck(subMenuItem.permission) && (
-                            <li className="slide" key={subIndex}>
-                              <NavLink
-                                className={({ isActive }) =>
-                                  `side-menu__item ${isActive ? 'active' : ''}`
-                                }
-                                to={subMenuItem.path}
-                              >
-                                <span>{subMenuItem.name}</span>
-                              </NavLink>
-                            </li>
-                          )
-                      )}
-                    </ul>
-                  </>
-                )}
-              </li>
-            ))}
+                  {menuItem.submenu && showSection(menuItem.permissions ?? []) && (
+                    <>
+                      <a
+                        onClick={() => toggleMenu(menuItem.name)}
+                        role="button"
+                        className={
+                          validateCollapse(menuItem ?? '')
+                            ? 'side-menu__item active'
+                            : 'side-menu__item'
+                        }
+                      >
+                        <i className={`${menuItem.icon} side-menu__icon`}></i>
+                        <span className="side-menu__label">{menuItem.name}</span>
+                        <i className="ri-arrow-right-s-line side-menu__angle"></i>
+                      </a>
+
+                      <ul
+                        className="slide-menu child1"
+                        style={{ display: activeMenu === menuItem.name ? 'block' : 'none' }}
+                      >
+                        {menuItem.submenu.map(
+                          (subMenuItem, subIndex) =>
+                            CanCheck(subMenuItem.permission) && (
+                              <li className="slide" key={subIndex}>
+                                <NavLink
+                                  className={({ isActive }) =>
+                                    `side-menu__item ${isActive ? 'active' : ''}`
+                                  }
+                                  to={subMenuItem.path}
+                                >
+                                  <span>{subMenuItem.name}</span>
+                                </NavLink>
+                              </li>
+                            )
+                        )}
+                      </ul>
+                    </>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <div className="app-sidebar-help">
             <div className="text-center">

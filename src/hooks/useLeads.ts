@@ -174,6 +174,17 @@ export function useLeads() {
     }
   };
 
+  //GET - LIST LEADS
+  const getLeads = async (text: string, limit: number, page: number, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.getLeads(text, limit, page);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     changeState,
     updateLead,
@@ -189,5 +200,6 @@ export function useLeads() {
     postDistribuirLeads,
     updateLeadAsesor,
     changeEstadoFinal,
+    getLeads,
   };
 }

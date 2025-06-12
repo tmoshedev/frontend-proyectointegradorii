@@ -1,6 +1,11 @@
 import { Lead, UserSelect2 } from '../models';
 import { ImportarLeadRequest, LeadFormRequest } from '../models/requests';
-import { LeadDistribucionResponse, LeadResponse, SuccessResponse } from '../models/responses';
+import {
+  LeadDistribucionResponse,
+  LeadResponse,
+  SuccessResponse,
+  TableCrmResponse,
+} from '../models/responses';
 import apiInstance from './api';
 
 export const postChangeState = async (lead_state_id: string, lead_id: string) => {
@@ -26,14 +31,16 @@ export const requirements = async () => {
 };
 
 export const importLeads = async (data: ImportarLeadRequest) => {
-  const response = await apiInstance.post<SuccessResponse>(`/leads/import`, {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post<SuccessResponse>(`/leads/import?rolActual=${rolActual}`, {
     data,
   });
   return response;
 };
 
 export const storeLead = async (data: LeadFormRequest) => {
-  const response = await apiInstance.post<LeadResponse>(`/leads`, {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post<LeadResponse>(`/leads?rolActual=${rolActual}`, {
     lead: data,
   });
   return response;
@@ -117,5 +124,13 @@ export const changeEstadoFinal = async (id: string, estado_final: string) => {
       estado_final,
     },
   });
+  return response;
+};
+
+export const getLeads = async (text: string, limit: number, page: number) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<TableCrmResponse>(
+    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}`
+  );
   return response;
 };
