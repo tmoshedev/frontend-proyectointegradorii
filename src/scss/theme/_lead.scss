@@ -779,3 +779,25 @@
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 8px 10px 1px rgb(0 0 0/5%),
     0 3px 14px 2px rgb(0 0 0/6%), 0 5px 5px -3px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 670px) {
+  .d-ocultar-menu {
+    display: none !important;
+  }
+}
+
+.columnas-dropdown {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  background-color: #fff;
+  max-height: 250px;
+  width: 350px;
+}
+
+.columnas-dropdown-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}

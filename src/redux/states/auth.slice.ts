@@ -4,6 +4,7 @@ import { User } from '../../models';
 interface AuthState {
   user: User | null;
   token: string | null;
+  title_sidebar: string | null;
 }
 
 const storedUser = localStorage.getItem('user');
@@ -12,6 +13,7 @@ const storedToken = localStorage.getItem('token');
 const initialState: AuthState = {
   user: storedUser ? JSON.parse(storedUser) : null,
   token: storedToken || null,
+  title_sidebar: '',
 };
 
 export const authSlice = createSlice({
@@ -43,11 +45,15 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.title_sidebar = '';
       localStorage.removeItem('user');
       localStorage.clear();
+    },
+    setTitleSidebar: (state, action: PayloadAction<string | null>) => {
+      state.title_sidebar = action.payload;
     },
   },
 });
 
-export const { setUser, setToken, logout } = authSlice.actions;
+export const { setUser, setToken, logout, setTitleSidebar } = authSlice.actions;
 export default authSlice.reducer;

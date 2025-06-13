@@ -4,7 +4,11 @@ import { useLeads, useSidebarResponsive } from '../../../hooks';
 import { TableCrmResponse, TableHeaderResponse } from '../../../models/responses';
 import TableCRMHeaderComponent from '../../../components/page/table-crm-header.component';
 
-export const LeadsTableComponent = () => {
+interface Props {
+  handleStateView: (view: string) => void;
+  handleModalLeadForm: (type: string) => void;
+}
+export const LeadsTableComponent = (props: Props) => {
   useSidebarResponsive(true);
   const { getLeads } = useLeads();
   const [data, setData] = useState<any[]>([]);
@@ -12,7 +16,7 @@ export const LeadsTableComponent = () => {
   const [metaData, setMetaData] = useState({
     current_page: 1,
     last_page: 0,
-    per_page: 10,
+    per_page: 25,
     total: 0,
   });
 
@@ -27,6 +31,37 @@ export const LeadsTableComponent = () => {
       });
     });
   };
+
+  const onKankan = () => {
+    props.handleStateView('KANBAN');
+  };
+
+  const onRefresh = () => {
+    getLeads('', metaData.per_page, metaData.current_page, true).then(
+      (response: TableCrmResponse) => {
+        setData(response.data);
+        setMetaData({
+          current_page: response.meta.current_page,
+          last_page: response.meta.last_page,
+          per_page: response.meta.per_page,
+          total: response.meta.total,
+        });
+      }
+    );
+  };
+
+  const onAddResource = () => {
+    props.handleModalLeadForm('STORE');
+  };
+
+  const onDistributes = () => {
+    props.handleStateView('DISTRIBUIR');
+  };
+
+  const onImports = () => {
+    props.handleStateView('IMPORTAR');
+  };
+
   useEffect(() => {
     const dataInicial = () => {
       getLeads('', metaData.per_page, metaData.current_page, true).then(
@@ -57,7 +92,24 @@ export const LeadsTableComponent = () => {
       >
         <div className="table-crm">
           <div className="table-crm-header">
-            <TableCRMHeaderComponent name_resource="Lead" name_plural_resource="Leads" />
+            <TableCRMHeaderComponent
+              view_kanban={true}
+              view_table={true}
+              view_distributes={true}
+              view_imports={true}
+              view_refresh={true}
+              viewActual="table"
+              name_resource="Lead"
+              name_plural_resource="Leads"
+              onKankan={onKankan}
+              onRefresh={onRefresh}
+              onAddResource={onAddResource}
+              onDistributes={onDistributes}
+              onImports={onImports}
+              metaData={metaData}
+              tableHeader={tableHeader}
+              setTableHeader={setTableHeader}
+            />
           </div>
           <div className="table-crm-body">
             <TableCRM

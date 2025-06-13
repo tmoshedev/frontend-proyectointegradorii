@@ -3,5 +3,6 @@ export interface TableHeaderResponse {
   value: string;
   visible: boolean;
   class: any[];
-  type: 'NORMAL' | 'STATES';
+  type: 'NORMAL' | 'STATES' | 'ARRAYS' | 'HTML';
+  type_value: string;
 }

@@ -1,5 +1,7 @@
 import { Lead, LeadProject } from '../../../models';
 import CanCheck from '../../../resources/can';
+//Proteger contra ataques XSS
+import DOMPurify from 'dompurify';
 
 interface LeacCardProps {
   lead: Lead;
@@ -14,27 +16,6 @@ export const LeadCardComponent = (props: LeacCardProps) => {
     return 'U'; // Si no hay datos, usa 'U' por defecto
   };
 
-  const getChannelIcon = (channel: string) => {
-  const normalized = channel.trim().toLowerCase();
-
-  switch (normalized) {
-    case 'facebook':
-      return <i className="fa-brands fa-facebook ms-2" style={{ color: '#1877F2' }} title="Facebook"></i>;
-    case 'instagram':
-      return <i className="fa-brands fa-instagram ms-2" style={{ color: '#E4405F' }} title="Instagram"></i>;
-    case 'tiktok':
-      return <i className="fa-brands fa-tiktok ms-2" style={{ color: '#000000' }} title="TikTok"></i>;
-    case 'google ads':
-      return <i className="fa-brands fa-google ms-2" style={{ color: '#4285F4' }} title="Google Ads"></i>;
-    case 'orgánico':
-      return <i className="fa-solid fa-leaf ms-2" style={{ color: '#28a745' }} title="Orgánico"></i>;
-    case 'landing page':
-      return <i className="fa-solid fa-globe ms-2" style={{ color: '#17a2b8' }} title="Landing Page"></i>;
-    default:
-      return <i className="fa-solid fa-question-circle ms-2" style={{ color: '#6c757d' }} title="Canal desconocido"></i>;
-  }
-};
-
   return (
     <div
       className="kanban-card"
@@ -43,16 +24,22 @@ export const LeadCardComponent = (props: LeacCardProps) => {
     >
       <div className="kanban-card-header">
         <h4 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ 
-            overflow: 'hidden', 
-            textOverflow: 'ellipsis', 
-            whiteSpace: 'nowrap', 
-            flex: 1, 
-            marginRight: '0.5rem' 
-          }}>
+          <span
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              flex: 1,
+              marginRight: '0.5rem',
+            }}
+          >
             {props.lead.names} {props.lead.last_names}
           </span>
-          {getChannelIcon(props.lead.channel_name)}
+          <span
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(props.lead.channel_icon_html || ''),
+            }}
+          />
         </h4>
         <small>Celular: {props.lead.cellphone}</small>
       </div>

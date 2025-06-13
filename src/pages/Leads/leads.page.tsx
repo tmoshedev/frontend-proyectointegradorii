@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLeadStatus, useSidebarResponsive } from '../../hooks';
 import KanbanBoardComponent from './components/kanban-board.component';
 import ImportarLeadComponent from './components/importar-lead.component';
@@ -9,6 +9,8 @@ import { LeadStatus } from '../../models';
 import DistribuirLeadComponent from './components/distrubir-leads.component';
 import LeadAsesorEditComponent from './components/lead-asesor-edit.component';
 import LeadsTableComponent from './components/leads-table.component';
+import { useDispatch } from 'react-redux';
+import { setTitleSidebar } from '../../redux/states/auth.slice';
 
 interface DataModalState {
   type: string;
@@ -22,6 +24,7 @@ interface DataModalState {
 export const LeadsPage = () => {
   useSidebarResponsive(true);
 
+  const dispatch = useDispatch();
   const { getLeadStatus } = useLeadStatus();
   const [etapas, setEtapas] = useState<LeadStatus[]>([]);
   const [stateView, setStateView] = useState<string>('KANBAN');
@@ -113,6 +116,15 @@ export const LeadsPage = () => {
     setEtapas(updatedEtapas);
   };
 
+  useEffect(() => {
+    dispatch(setTitleSidebar('Leads'));
+
+    // Limpia el estado al desmontar
+    return () => {
+      dispatch(setTitleSidebar(''));
+    };
+  }, []);
+
   return (
     <>
       {stateView == 'KANBAN' && (
@@ -127,7 +139,12 @@ export const LeadsPage = () => {
       )}
       {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
       {stateView == 'DISTRIBUIR' && <DistribuirLeadComponent handleStateView={handleStateView} />}
-      {stateView == 'LEADS_TABLE' && <LeadsTableComponent />}
+      {stateView == 'LEADS_TABLE' && (
+        <LeadsTableComponent
+          handleStateView={handleStateView}
+          handleModalLeadForm={handleModalLeadForm}
+        />
+      )}
 
       {/* MODAL NUEVO LEAD*/}
       {isOpenModal && (

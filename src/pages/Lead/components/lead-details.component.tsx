@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import MultiSelectDropdown from '../../../components/MultiSelectDropdown';
 import { LeadLabel, LeadProject } from '../../../models';
 import FieldLeadComponent from './field-lead.component';
+import DOMPurify from 'dompurify';
 // Redux
 import { AppStore } from '../../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -262,7 +263,15 @@ export const LeadDetailsComponent = () => {
           <div className="fields-list-row">
             <div className="fields-list__label">Canal de origen:</div>
             <div className="fields-list__components">
-              <div className="fields-list__value">{lead.channel_name}</div>
+              <div className="fields-list__value">
+                <span
+                  className="me-1"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(lead.channel_icon_html || ''),
+                  }}
+                />
+                <span>{lead.channel_name}</span>
+              </div>
             </div>
           </div>
         </div>

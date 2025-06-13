@@ -97,6 +97,17 @@ export const leadSlice = createSlice({
       state.historial = action.payload.lead_historial;
       state.count_historial = action.payload.count_historial;
     },
+
+    //Clear the lead state
+    clearLeadState(state) {
+      state.lead = {} as Lead;
+      state.historial = [];
+      state.count_historial = { notes: 0, state_changes: 0 };
+      state.stateViewHistorial = 'alls';
+      state.projectsAvailable = [];
+      state.labelsAvailable = [];
+      state.users = [];
+    },
   },
 });
 
@@ -110,6 +121,7 @@ export const {
   setStateViewHistorial,
   updateLeadField,
   setOnlyHistorialData,
+  clearLeadState,
 } = leadSlice.actions;
 
 export default leadSlice.reducer;

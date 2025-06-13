@@ -442,7 +442,7 @@
 /* End::Responsive header dropdowns */
 .sidemenu-toggle {
   margin: 5px;
-  padding: 5px 18px;
+  padding: 5px 0px;
   text-align: center;
   height: 2.5rem;
   font-size: 1.2rem;
@@ -597,4 +597,15 @@
   height: 2rem !important;
   line-height: 2rem !important;
   font-size: 0.8rem !important;
+}
+
+@media (max-width: 992px) {
+  .sidemenu-toggle {
+    padding: 5px 10px;
+  }
+}
+
+.btn.show {
+  background: $color-primary;
+  border-color: $color-primary;
 }

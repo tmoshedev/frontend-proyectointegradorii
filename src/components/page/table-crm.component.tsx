@@ -1,6 +1,7 @@
 import { Ellipsis } from 'lucide-react';
 import { TableHeaderResponse } from '../../models/responses';
 import React, { useEffect, useRef, useState } from 'react';
+import DOMPurify from 'dompurify';
 
 interface TableCRMProps {
   tableHeader: any[];
@@ -102,19 +103,42 @@ export const TableCRM = (props: TableCRMProps) => {
               header.visible && (
                 <div className="table-cell" key={`${rowIndex}-${index}`}>
                   <div className="header-cell-content">
-                    <span
-                      className={
-                        header.class && header.type === 'STATES' && (header.class as any).classes
-                          ? (header.class as any).classes?.[row[(header.class as any).value]] || ''
-                          : ''
-                      }
-                    >
-                      {row[header.value] !== null &&
-                      row[header.value] !== undefined &&
-                      row[header.value] !== ''
-                        ? row[header.value]
-                        : '-'}
-                    </span>
+                    {header.type === 'HTML' && (
+                      <span
+                        className="me-1"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(row[header.type_value] || ''),
+                        }}
+                      />
+                    )}
+                    {header.type !== 'ARRAYS' && (
+                      <span
+                        className={
+                          header.class && header.type === 'STATES' && (header.class as any).classes
+                            ? (header.class as any).classes?.[row[(header.class as any).value]] ||
+                              ''
+                            : ''
+                        }
+                      >
+                        {row[header.value] !== null &&
+                        row[header.value] !== undefined &&
+                        row[header.value] !== ''
+                          ? row[header.value]
+                          : '-'}
+                      </span>
+                    )}
+                    {header.type === 'ARRAYS' &&
+                      Array.isArray(row[header.type_value]) &&
+                      row[header.type_value].map((item: any, itemIndex: number) => (
+                        <span
+                          key={`${rowIndex}-${index}-${itemIndex}`}
+                          className={`badge bg-light text-dark${
+                            itemIndex !== row[header.type_value].length - 1 ? ' me-1' : ''
+                          }`}
+                        >
+                          {item.name}
+                        </span>
+                      ))}
                   </div>
                 </div>
               )

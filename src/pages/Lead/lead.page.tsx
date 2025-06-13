@@ -14,6 +14,7 @@ import LeadHeaderComponent from './components/lead-header.component';
 import LeadHistoriaComponent from './components/lead-historia.component';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  clearLeadState,
   setLeadFullData,
   setOnlyHistorialData,
   setStateViewHistorial,
@@ -54,6 +55,11 @@ export const LeadPage = () => {
         })
       );
     });
+
+    // Limpia el estado al desmontar
+    return () => {
+      dispatch(clearLeadState());
+    };
   }, []);
 
   return (

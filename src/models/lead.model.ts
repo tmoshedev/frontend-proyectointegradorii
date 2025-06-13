@@ -7,6 +7,7 @@ export interface Lead {
   last_names: string;
   cellphone: string;
   channel_name: string;
+  channel_icon_html: string;
   prediccion_ia: string;
   interes: string;
   estado_final: string;

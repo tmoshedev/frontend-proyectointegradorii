@@ -5,6 +5,8 @@ import { TableCrmResponse, TableHeaderResponse } from '../../models/responses';
 import TableCRMHeaderComponent from '../../components/page/table-crm-header.component';
 import ModalComponent from '../../components/shared/modal.component';
 import AddUserComponent from './components/add-user.component';
+import { setTitleSidebar } from '../../redux/states/auth.slice';
+import { useDispatch } from 'react-redux';
 
 interface DataModalState {
   type: string;
@@ -17,6 +19,8 @@ interface DataModalState {
 
 export const MiEquipoPage = () => {
   useSidebarResponsive(true);
+  const dispatch = useDispatch();
+
   const { findPerson, findUbigeo } = useApis();
   const [data, setData] = useState<any[]>([]);
   const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
@@ -106,6 +110,15 @@ export const MiEquipoPage = () => {
     dataInicial();
   }, []);
 
+  useEffect(() => {
+    dispatch(setTitleSidebar('Mi equipo'));
+
+    // Limpia el estado al desmontar
+    return () => {
+      dispatch(setTitleSidebar(''));
+    };
+  }, []);
+
   return (
     <div
       className="main-content app-content main-content--page"
@@ -119,8 +132,11 @@ export const MiEquipoPage = () => {
           <div className="table-crm-header">
             <TableCRMHeaderComponent
               name_resource="Asesor"
-              name_plural_resource="Leads"
+              name_plural_resource="Asesores"
               onAddResource={onAddResource}
+              metaData={metaData}
+              tableHeader={tableHeader}
+              setTableHeader={setTableHeader}
             />
           </div>
           <div className="table-crm-body">
@@ -143,8 +159,12 @@ export const MiEquipoPage = () => {
           title={dataModalResourceState.title || ''}
           size="modal-lg"
           content={
-            <AddUserComponent data={dataModalResourceState} onRefreshTeams={onRefreshTeams} findPerson={findPerson}
-              findUbigeo={findUbigeo} />
+            <AddUserComponent
+              data={dataModalResourceState}
+              onRefreshTeams={onRefreshTeams}
+              findPerson={findPerson}
+              findUbigeo={findUbigeo}
+            />
           }
         />
       )}
