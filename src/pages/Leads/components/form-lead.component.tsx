@@ -3,7 +3,7 @@
 /**Validations */
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { ErrorBackend, ErrorValidate, SweetAlert } from '../../../utilities';
+import { ErrorValidate, SweetAlert } from '../../../utilities';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { LeadFormRequest } from '../../../models/requests';
 import { useLeads } from '../../../hooks';

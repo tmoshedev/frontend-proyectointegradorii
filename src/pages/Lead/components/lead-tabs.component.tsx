@@ -6,8 +6,8 @@ import { Paperclip } from 'lucide-react';
 
 const menus = [
   { name: 'Notas', icon: <NotebookPen size={18} /> },
-  /* { name: 'Actividad', icon: <CalendarDays size={18} /> },
-  { name: 'Llamada', icon: <PhoneOutgoing size={18} /> },
+  { name: 'Actividad', icon: <CalendarDays size={18} /> },
+  /* { name: 'Llamada', icon: <PhoneOutgoing size={18} /> },
   { name: 'Archivos', icon: <Paperclip size={18} /> }, */
 ];
 

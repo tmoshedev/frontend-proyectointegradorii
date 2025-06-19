@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Lead, LeadProject, LeadLabel, User, UserSelect2 } from '../../models';
+import { Lead, LeadProject, LeadLabel, User, UserSelect2, Activity } from '../../models';
 import { LeadHistorialResponse } from '../../models/responses';
 
 interface LeadState {
@@ -13,6 +13,7 @@ interface LeadState {
   projectsAvailable: LeadProject[];
   labelsAvailable: LeadLabel[];
   users: UserSelect2[];
+  activities: Activity[];
 }
 
 const initialState: LeadState = {
@@ -23,6 +24,7 @@ const initialState: LeadState = {
   projectsAvailable: [],
   labelsAvailable: [],
   users: [],
+  activities: [],
 };
 
 export const leadSlice = createSlice({
@@ -76,6 +78,7 @@ export const leadSlice = createSlice({
         projects_available: LeadProject[];
         labels_available: LeadLabel[];
         users: UserSelect2[];
+        activities: Activity[];
       }>
     ) {
       state.lead = action.payload.lead;
@@ -84,6 +87,7 @@ export const leadSlice = createSlice({
       state.projectsAvailable = action.payload.projects_available;
       state.labelsAvailable = action.payload.labels_available;
       state.users = action.payload.users;
+      state.activities = action.payload.activities;
     },
 
     // ✅ Actualiza los datos de historial del lead
@@ -107,6 +111,7 @@ export const leadSlice = createSlice({
       state.projectsAvailable = [];
       state.labelsAvailable = [];
       state.users = [];
+      state.activities = [];
     },
   },
 });

@@ -1,0 +1,310 @@
+.lead-actividad {
+  display: flex;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+  .lead-actividad__left {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    .lead-actividad__left-container {
+      box-sizing: border-box;
+      min-height: 433px;
+      min-width: 320px;
+      overflow: visible;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-height: 1225px;
+    }
+  }
+  .lead-actividad__right {
+    width: 35%;
+    border-left: 1px solid rgba(33, 35, 44, 0.12);
+  }
+}
+
+.lead-actividad__left-content {
+  padding: 16px;
+  display: block;
+}
+
+.lead-actividad__left-form {
+  display: grid;
+  grid-template-rows: repeat(7, auto);
+  -webkit-box-align: center;
+  align-items: center;
+  row-gap: 16px;
+}
+
+.lead-actividad-form {
+  display: grid;
+  grid-template-columns: 40px auto;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.lead-actividad-form-container {
+  box-sizing: border-box;
+  position: relative;
+  grid-column: 2;
+}
+
+.lead-actividad-form-input {
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+
+.lead-actividad-form-group {
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  grid-column: 2;
+  margin-top: 8px;
+}
+
+.lead-actividad-form-icon {
+  grid-column: 1;
+  align-self: start;
+}
+
+.lead-actividad-form-times {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto 150px 8px 150px auto;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.btn-group-actividades {
+  .btn {
+    border: 1px solid rgba(33, 35, 44, 0.24);
+    color: #21232c;
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: var(--primary02) !important;
+      color: rgb(var(--primary-rgb)) !important;
+      border-color: rgb(var(--primary-rgb)) !important;
+    }
+  }
+  .btn:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+  .btn:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+}
+
+.btn-group-actividades > .btn.active {
+  background-color: var(--primary02) !important;
+  color: rgb(var(--primary-rgb)) !important;
+  border: 1px solid rgb(var(--primary-rgb)) !important;
+}
+
+.input-lead-actividad {
+  border: 1px solid rgba(33, 35, 44, 0.24);
+  color: #21232c;
+  font-weight: 500;
+  &:focus {
+    border-color: var(--primary-color);
+  }
+  &::placeholder {
+    color: #21232c;
+    font-weight: 500;
+    opacity: 1;
+  }
+}
+
+.agregar-ubicacion {
+  font-weight: 500;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.lead-actividad__left-footer {
+  background-color: #f5f5f6;
+  border-radius: 0 0 4px 4px;
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 14px;
+  height: 48px;
+  width: 100%;
+  justify-content: normal;
+  align-items: center;
+  border-top: 1px solid rgba(33, 35, 44, 0.24);
+  box-shadow: none;
+  padding: 0 16px;
+  margin-top: auto;
+  border-bottom-right-radius: 0px;
+  .lead-actividad__left-footer-right {
+    display: flex;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    -webkit-box-align: center;
+    align-items: center;
+    overflow: hidden;
+    margin-left: auto;
+  }
+}
+
+/* Estilos para el layout del formulario de ejemplo (sin cambios) */
+.vista-formulario {
+  display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  height: 80vh;
+}
+.panel-izquierdo {
+  flex: 1;
+}
+.panel-derecho {
+  flex: 1;
+}
+
+/* --- ESTILOS DEL COMPONENTE CalendarioDisponibilidad (ACTUALIZADOS) --- */
+
+.calendario-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  width: 100%;
+  user-select: none;
+  overflow: hidden;
+}
+
+.calendario-header {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: inset 0 -1px 0 0 rgba(33, 35, 44, 0.16);
+  text-transform: capitalize;
+}
+
+.calendario-header__buttons {
+  display: flex;
+  align-items: flex-start;
+  margin-right: 6px;
+}
+
+.calendario-body {
+  height: 380px;
+  display: flex;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.timeline {
+  width: 70px;
+  padding-top: 15px;
+  text-align: right;
+  color: rgba(33, 35, 44, 0.48);
+  font-size: 0.75em;
+  border-right: 1px solid #e9ecef;
+}
+
+.timeline-hora {
+  height: 60px;
+  padding-right: 10px;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+
+.calendario-grid {
+  flex-grow: 1;
+  position: relative;
+}
+
+.grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e9ecef;
+  z-index: 1;
+}
+
+.linea-ahora {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.hora-actual-contenedor {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: -60px;
+}
+
+.hora-texto-izquierda {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: #d90429;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.punto-ahora {
+  width: 8px;
+  height: 8px;
+  background-color: #d90429;
+  border-radius: 50%;
+}
+
+.linea-roja {
+  flex-grow: 1;
+  height: 2px;
+  background-color: #d90429;
+}
+
+.evento {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  border-radius: 4px;
+  padding: 4px 10px;
+  background-color: var(--primary02);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.evento[style*='background-color: rgb(233, 236, 239)'] {
+  color: #212529;
+}
+
+.evento-titulo {
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select-dos-dropdown_option:hover .diff-label {
+  color: #fff !important;
+}
+
+.evento-temporal {
+  background-color: rgba(var(--success-rgb), 0.2);
+  color: var(--success-color);
+}

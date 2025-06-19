@@ -16,7 +16,7 @@ export const LeadsTableComponent = (props: Props) => {
   const [metaData, setMetaData] = useState({
     current_page: 1,
     last_page: 0,
-    per_page: 25,
+    per_page: 50,
     total: 0,
   });
 

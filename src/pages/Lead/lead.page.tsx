@@ -19,6 +19,18 @@ import {
   setOnlyHistorialData,
   setStateViewHistorial,
 } from '../../redux/states/lead.slice';
+import LeadActividadComponent from './components/lead-actividad.component';
+import ModalComponent from '../../components/shared/modal.component';
+import CancelarActividadComponent from './actividades-componentes/cancelar-actividad.component';
+
+interface DataModalState {
+  type: string;
+  buttonSubmit: string | null;
+  row: any | null;
+  title: string | null;
+  requirements: any;
+  onCloseModalForm: any;
+}
 
 export const LeadPage = () => {
   useSidebarResponsive(true);
@@ -27,6 +39,17 @@ export const LeadPage = () => {
   const { getLead, getLeadHistorial } = useLeads();
   const dispatch = useDispatch();
   const { lead, stateViewHistorial } = useSelector((store: AppStore) => store.lead);
+  //CANCELAR ACTIVIDAD
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isStateModal, setIsStateModal] = useState(false);
+  const [dataModalResourceState, setDataModalResourceState] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    requirements: [],
+    onCloseModalForm: () => {},
+  });
 
   const changeHistorialView = (view: string) => {
     const stateView = view === '' ? stateViewHistorial : view;
@@ -42,6 +65,29 @@ export const LeadPage = () => {
     });
   };
 
+  const onCloseModalForm = () => {
+    setIsStateModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const handleModalCancelarActividadForm = (uuid: string) => {
+    setDataModalResourceState({
+      type: 'cancelar-actividad',
+      buttonSubmit: 'Guardar',
+      row: {
+        lead_activity_uuid: uuid,
+      },
+      title: 'Cancelar Actividad',
+      requirements: [],
+      onCloseModalForm: onCloseModalForm,
+    });
+    setIsOpenModal(true);
+    setIsStateModal(true);
+  };
+
   useEffect(() => {
     getLead(uuid ?? '', true).then((response: LeadResponse) => {
       dispatch(
@@ -52,6 +98,7 @@ export const LeadPage = () => {
           projects_available: response.projects_available,
           labels_available: response.labels_available,
           users: response.users,
+          activities: response.activities,
         })
       );
     });
@@ -92,18 +139,43 @@ export const LeadPage = () => {
                           {stateMenu == 'Notas' && (
                             <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
                           )}
+                          {stateMenu == 'Actividad' && (
+                            <LeadActividadComponent
+                              changeHistorialView={changeHistorialView}
+                              setStateMenu={setStateMenu}
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
                 {/*Historial*/}
-                <LeadHistoriaComponent changeHistorialView={changeHistorialView} />
+                <LeadHistoriaComponent
+                  changeHistorialView={changeHistorialView}
+                  handleModalCancelarActividad={handleModalCancelarActividadForm}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+      {/* MODAL CANCELAR ACTIVIDAD*/}
+      {isOpenModal && (
+        <ModalComponent
+          stateModal={isStateModal}
+          typeModal={'static'}
+          onClose={handleCloseModal}
+          title={dataModalResourceState.title || ''}
+          size="modal-md"
+          content={
+            <CancelarActividadComponent
+              data={dataModalResourceState}
+              changeHistorialView={changeHistorialView}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

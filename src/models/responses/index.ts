@@ -8,3 +8,4 @@ export * from './lead-historial.response';
 export * from './lead-distribucion.response';
 export * from './table-header.response';
 export * from './table-crm.response';
+export * from './agenda-diaria.response';

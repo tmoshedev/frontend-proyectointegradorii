@@ -10,5 +10,9 @@ export interface LeadHistorialResponse {
     state_moved: string;
     note: string;
     text: string;
+    title: string;
+    activity_name: string;
+    state: string;
+    uuid: string;
   };
 }

@@ -5,3 +5,5 @@ export * from './useLeadStatus';
 export * from './useLeads';
 export * from './useApis';
 export * from './useUserHierarchy';
+export * from './useLeadNotes';
+export * from './useCalendarioActividades';

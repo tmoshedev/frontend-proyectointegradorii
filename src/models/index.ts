@@ -10,3 +10,5 @@ export * from './lead-note.model';
 export * from './lead-project.model';
 export * from './lead-label.model';
 export * from './user-select2.model';
+export * from './activity.model';
+export * from './agenda-diaria.model';

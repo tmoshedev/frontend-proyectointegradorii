@@ -4,6 +4,7 @@ interface ListHistorialLeadComponentProps {
   count_historial: {
     notes: number;
     state_changes: number;
+    activities: number;
   };
 }
 export const ListHistorialLeadComponent = (props: ListHistorialLeadComponentProps) => {
@@ -30,10 +31,16 @@ export const ListHistorialLeadComponent = (props: ListHistorialLeadComponentProp
           Notas({props.count_historial.notes})
         </a>
       </div>
-      {/* <div className="list-historial__item">
-        <a role="button">Actividades (2)</a>
-      </div>
       <div className="list-historial__item">
+        <a
+          onClick={() => onChangeViewHistorial('activities')}
+          className={`${props.stateViewHistorial == 'activities' ? 'active' : ''}`}
+          role="button"
+        >
+          Actividades({props.count_historial.activities})
+        </a>
+      </div>
+      {/* <div className="list-historial__item">
         <a role="button">Archivos (2)</a>
       </div> */}
       <div className="list-historial__item">
