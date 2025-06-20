@@ -31,6 +31,8 @@ export const MiEquipoPage = () => {
     total: 0,
   });
   const { getUserHierarchy } = useUserHierarchy();
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const nameModel = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisor' : 'Asesor';
   //MODAL NUEVO LEAD
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -70,7 +72,7 @@ export const MiEquipoPage = () => {
       type: 'ADD',
       buttonSubmit: 'Crear',
       row: null,
-      title: 'Agregar Asesor',
+      title: 'Agregar ' + nameModel,
       requirements: [],
       onCloseModalForm: onCloseModalForm,
     });
@@ -131,7 +133,7 @@ export const MiEquipoPage = () => {
         <div className="table-crm">
           <div className="table-crm-header">
             <TableCRMHeaderComponent
-              name_resource="Asesor"
+              name_resource={nameModel}
               name_plural_resource="Asesores"
               onAddResource={onAddResource}
               metaData={metaData}

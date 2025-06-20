@@ -21,7 +21,7 @@ const Menu: MenuItem[] = [
     path: '/my-teams',
     icon: 'ri-user-heart-line',
     permission: 'teams-index',
-    rolesPermitidos: ['SALES_SUPERVISOR'],
+    rolesPermitidos: ['SALES_SUPERVISOR', 'COMMERCIAL_LEADER'],
   },
   {
     name: 'Leads',

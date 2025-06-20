@@ -270,7 +270,7 @@ export const LeadDetailsComponent = () => {
                     __html: DOMPurify.sanitize(lead.channel_icon_html || ''),
                   }}
                 />
-                <span>{lead.channel_name}</span>
+                <span>{lead.channel_name != '' ? lead.channel_name : 'SIN ASIGNAR'}</span>
               </div>
             </div>
           </div>

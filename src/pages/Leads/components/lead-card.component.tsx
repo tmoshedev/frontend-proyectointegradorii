@@ -15,6 +15,7 @@ export const LeadCardComponent = (props: LeacCardProps) => {
     }
     return 'U'; // Si no hay datos, usa 'U' por defecto
   };
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   return (
     <div
@@ -59,8 +60,16 @@ export const LeadCardComponent = (props: LeacCardProps) => {
         </div>
         <p className="mt-2">
           <b>Origen/Canal: </b>
-          <span>{props.lead.channel_name}</span>
+          <span>{props.lead.channel_name != '' ? props.lead.channel_name : '-'}</span>
         </p>
+        {(rolActual == 'COMMERCIAL_LEADER' ||
+          rolActual == 'DEVELOPER' ||
+          rolActual == 'ADMINISTRATOR') && (
+          <p className="mt-1">
+            <b>Supervisor: </b>
+            <span>{props.lead.supervisor_names ?? '-'}</span>
+          </p>
+        )}
         <div className="d-flex justify-content-center">
           <p className="mt-2 tex-center">
             <span className={`lead-icon ${props.lead.interes}`}>
