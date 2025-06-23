@@ -127,10 +127,18 @@ export const changeEstadoFinal = async (id: string, estado_final: string) => {
   return response;
 };
 
-export const getLeads = async (text: string, limit: number, page: number) => {
+export const getLeads = async (
+  user_ids: string,
+  channel_ids: string,
+  lead_label_ids: string,
+  stage_ids: string,
+  text: string,
+  limit: number,
+  page: number
+) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<TableCrmResponse>(
-    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}`
+    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}`
   );
   return response;
 };

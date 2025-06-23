@@ -14,11 +14,24 @@ export function useLeadStatus() {
     business_id: string,
     lead_activos: string,
     type: string,
+    user_ids: string,
+    channel_ids: string,
+    lead_label_ids: string,
+    stage_ids: string,
+    /**Loading */
     loading: boolean
   ) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadStatusService.getLeadStatus(business_id, lead_activos, type);
+      const response = await leadStatusService.getLeadStatus(
+        business_id,
+        lead_activos,
+        type,
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids
+      );
       return response;
     } finally {
       dispatch(setLoading(false));

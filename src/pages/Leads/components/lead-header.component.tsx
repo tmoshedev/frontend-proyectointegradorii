@@ -1,18 +1,12 @@
-import {
-  KanbanSquare,
-  AlignJustify,
-  RefreshCw,
-  ListFilter,
-  CloudDownload,
-  Plus,
-  Share2,
-} from 'lucide-react';
+import { KanbanSquare, AlignJustify, RefreshCw, CloudDownload, Plus, Share2 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 
 interface LeadHeaderComponentProps {
   onRefreshLeads: () => void;
   handleStateView: (view: string) => void;
   handleModalLeadForm: (type: string) => void;
+  onFiltrosLeads: () => void;
+  filtros: any[];
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
@@ -70,7 +64,14 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
       </div>
 
       <div className="d-flex justify-content-center align-items-center">
-        <button className="btn btn-outline-primary btn-xs">Filtro</button>
+        <button
+          onClick={props.onFiltrosLeads}
+          className={`btn btn-xs ${
+            props.filtros.length > 0 ? 'btn-primary' : 'btn-outline-primary'
+          }`}
+        >
+          Filtros{props.filtros.length > 0 && ` (${props.filtros.length})`}
+        </button>
       </div>
     </div>
   );

@@ -36,6 +36,8 @@ interface Props {
   onImports?: () => void;
   onKankan?: () => void;
   setTableHeader: (updatedHeader: any[]) => void;
+  onFiltros?: () => void;
+  filtros: any[];
 }
 export const TableCRMHeaderComponent = (props: Props) => {
   const atLeastOneView = props.view_kanban || props.view_table || props.view_refresh;
@@ -128,11 +130,15 @@ export const TableCRMHeaderComponent = (props: Props) => {
           </button>
         )}
         <button
-          className="btn btn-outline-primary btn-xs"
+          onClick={props.onFiltros}
+          className={`btn btn-xs ${
+            props.filtros.length > 0 ? 'btn-primary' : 'btn-outline-primary'
+          }`}
           data-tooltip-id="tooltip-component"
           data-tooltip-content={'Filtros'}
         >
           <Funnel height={20} />
+          {props.filtros.length > 0 && ` (${props.filtros.length})`}
         </button>
         <button
           data-bs-auto-close="outside"

@@ -139,6 +139,7 @@ export const MiEquipoPage = () => {
               metaData={metaData}
               tableHeader={tableHeader}
               setTableHeader={setTableHeader}
+              filtros={[]}
             />
           </div>
           <div className="table-crm-body">
