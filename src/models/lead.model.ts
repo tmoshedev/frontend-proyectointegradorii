@@ -22,4 +22,5 @@ export interface Lead {
   state_histories: LeadHistory[];
   ciudad: string;
   email: string;
+  supervisor_names: string;
 }

@@ -17,13 +17,19 @@ interface KanbanBoardComponentProps {
   etapas: LeadStatus[];
   setEtapas: React.Dispatch<React.SetStateAction<LeadStatus[]>>;
   handleModalAsesor: (lead: Lead, users: any[]) => void;
+  onFiltrosLeads: (type: string) => void;
+  users: any[];
+  setUsers: any;
+  setLabels: any;
+  setChannels: any;
+  setStages: any;
+  filtros: any[];
 }
 
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   const { getLeadStatus } = useLeadStatus();
   const { changeState, changeEstadoFinal } = useLeads();
   const navigate = useNavigate();
-  const [users, setUsers] = useState<any[]>([]);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -72,14 +78,21 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
   };
 
   const onEditarAsesor = (lead: Lead) => {
-    props.handleModalAsesor(lead, users);
+    props.handleModalAsesor(lead, props.users);
+  };
+
+  const onFiltrosLeads = () => {
+    props.onFiltrosLeads('LEADS_KANBAN');
   };
 
   useEffect(() => {
     const dataInicial = () => {
-      getLeadStatus('1', '1', 'get', true).then((response: LeadStatusResponse) => {
+      getLeadStatus('1', '1', 'get', '', '', '', '', true).then((response: LeadStatusResponse) => {
         props.setEtapas(response.data.lead_etapas);
-        setUsers(response.data.users);
+        props.setUsers(response.data.users);
+        props.setLabels(response.data.labels);
+        props.setChannels(response.data.channels);
+        props.setStages(response.data.stages);
       });
     };
 
@@ -97,6 +110,8 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             onRefreshLeads={props.onRefreshLeads}
             handleStateView={props.handleStateView}
             handleModalLeadForm={props.handleModalLeadForm}
+            onFiltrosLeads={onFiltrosLeads}
+            filtros={props.filtros}
           />
           <div className="kanban-columns">
             {props.etapas.map((etapa) => (

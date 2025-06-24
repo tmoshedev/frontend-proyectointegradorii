@@ -6,5 +6,8 @@ export interface LeadStatusResponse {
   data: {
     lead_etapas: LeadStatus[];
     users: UserSelect2[];
+    channels: any[];
+    labels: any[];
+    stages: any[];
   };
 }

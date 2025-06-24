@@ -7,29 +7,21 @@ import TableCRMHeaderComponent from '../../../components/page/table-crm-header.c
 interface Props {
   handleStateView: (view: string) => void;
   handleModalLeadForm: (type: string) => void;
+  onFiltrosLeads: (type: string) => void;
+  leads: any[];
+  setLeads: any;
+  metaData: any;
+  setMetaData: any;
+  cargarDataLeads: (page: number) => void;
+  filtros: any[];
 }
 export const LeadsTableComponent = (props: Props) => {
   useSidebarResponsive(true);
   const { getLeads } = useLeads();
-  const [data, setData] = useState<any[]>([]);
   const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
-  const [metaData, setMetaData] = useState({
-    current_page: 1,
-    last_page: 0,
-    per_page: 50,
-    total: 0,
-  });
 
   const cargarData = (page: number) => {
-    getLeads('', metaData.per_page, page, true).then((response: TableCrmResponse) => {
-      setData((prevData) => [...prevData, ...response.data]); // Concatenar arrays
-      setMetaData({
-        current_page: response.meta.current_page,
-        last_page: response.meta.last_page,
-        per_page: response.meta.per_page,
-        total: response.meta.total,
-      });
-    });
+    props.cargarDataLeads(page);
   };
 
   const onKankan = () => {
@@ -37,17 +29,7 @@ export const LeadsTableComponent = (props: Props) => {
   };
 
   const onRefresh = () => {
-    getLeads('', metaData.per_page, metaData.current_page, true).then(
-      (response: TableCrmResponse) => {
-        setData(response.data);
-        setMetaData({
-          current_page: response.meta.current_page,
-          last_page: response.meta.last_page,
-          per_page: response.meta.per_page,
-          total: response.meta.total,
-        });
-      }
-    );
+    props.cargarDataLeads(props.metaData.current_page);
   };
 
   const onAddResource = () => {
@@ -64,11 +46,11 @@ export const LeadsTableComponent = (props: Props) => {
 
   useEffect(() => {
     const dataInicial = () => {
-      getLeads('', metaData.per_page, metaData.current_page, true).then(
+      getLeads('', '', '', '', '', props.metaData.per_page, props.metaData.current_page, true).then(
         (response: TableCrmResponse) => {
-          setData(response.data);
+          props.setLeads(response.data);
           setTableHeader(response.table_header);
-          setMetaData({
+          props.setMetaData({
             current_page: response.meta.current_page,
             last_page: response.meta.last_page,
             per_page: response.meta.per_page,
@@ -106,18 +88,22 @@ export const LeadsTableComponent = (props: Props) => {
               onAddResource={onAddResource}
               onDistributes={onDistributes}
               onImports={onImports}
-              metaData={metaData}
+              metaData={props.metaData}
               tableHeader={tableHeader}
               setTableHeader={setTableHeader}
+              onFiltros={() => props.onFiltrosLeads('LEADS_TABLE')}
+              filtros={props.filtros}
             />
           </div>
           <div className="table-crm-body">
             <TableCRM
               tableHeader={tableHeader}
-              tableData={data}
+              tableData={props.leads}
               activateCheckBoot={false}
-              metaData={metaData}
+              metaData={props.metaData}
               cargarData={cargarData}
+              buttonsAcctions={[]}
+              onClickButtonPersonalizado={() => {}}
             />
           </div>
         </div>

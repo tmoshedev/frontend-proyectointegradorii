@@ -175,10 +175,27 @@ export function useLeads() {
   };
 
   //GET - LIST LEADS
-  const getLeads = async (text: string, limit: number, page: number, loading: boolean) => {
+  const getLeads = async (
+    user_ids: string,
+    channel_ids: string,
+    lead_label_ids: string,
+    stage_ids: string,
+    text: string,
+    limit: number,
+    page: number,
+    loading: boolean
+  ) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.getLeads(text, limit, page);
+      const response = await leadsService.getLeads(
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids,
+        text,
+        limit,
+        page
+      );
       return response;
     } finally {
       dispatch(setLoading(false));
