@@ -31,3 +31,11 @@ export const deleteUserHierarchy = async (user_hierarchy_id: string) => {
   );
   return response;
 };
+
+export const postHabilitarUserHierarchy = async (user_hierarchy_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post(`/user-hierarchy/habilitar?rolActual=${rolActual}`, {
+    user_hierarchy_id: user_hierarchy_id,
+  });
+  return response;
+};

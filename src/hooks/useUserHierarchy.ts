@@ -54,10 +54,22 @@ export function useUserHierarchy() {
     }
   };
 
+  //POST - postHabilitarUserHierarchy
+  const postHabilitarUserHierarchy = async (user_hierarchy_id: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await useHierarchyService.postHabilitarUserHierarchy(user_hierarchy_id);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     getUserHierarchy,
     requirements,
     storeUserHierarchy,
     deleteUserHierarchy,
+    postHabilitarUserHierarchy,
   };
 }

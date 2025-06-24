@@ -31,7 +31,7 @@ export const MiEquipoPage = () => {
     per_page: 10,
     total: 0,
   });
-  const { getUserHierarchy, deleteUserHierarchy } = useUserHierarchy();
+  const { getUserHierarchy, deleteUserHierarchy, postHabilitarUserHierarchy } = useUserHierarchy();
   const rolActual = localStorage.getItem('rolActual') || '';
   const nameModel = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisor' : 'Asesor';
   //BOTONES DE ACCIONES
@@ -41,6 +41,18 @@ export const MiEquipoPage = () => {
       name: 'Desactivar',
       name_class: 'text-danger',
       icon: '<i class="fa-solid fa-power-off"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': true }, { '0': false }],
+    },
+    {
+      id: 'habilitar',
+      name: 'Habilitar',
+      name_class: 'text-success',
+      icon: '<i class="fa-solid fa-power-off"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': false }, { '0': true }],
     },
   ];
   //MODAL NUEVO LEAD
@@ -110,6 +122,19 @@ export const MiEquipoPage = () => {
           () => handleDesactivarSupervisor(row),
           handleCancelDelete,
           '¿Está seguro que deseas desactivar al ' + nameModel + '?',
+          row.names_alls
+        );
+        break;
+      case 'habilitar':
+        SweetAlert.onConfirmation(
+          () => {
+            postHabilitarUserHierarchy(row.id, true).then((response: any) => {
+              SweetAlert.success('Mensaje', response.message);
+              onRefreshTeams();
+            });
+          },
+          handleCancelDelete,
+          '¿Está seguro que deseas habilitar al ' + nameModel + '?',
           row.names_alls
         );
         break;
