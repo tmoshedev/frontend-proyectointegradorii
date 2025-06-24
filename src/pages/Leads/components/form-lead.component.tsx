@@ -24,10 +24,12 @@ export const LeadFormComponent = (props: Props) => {
     last_names: '',
     cellphone: '',
     ciudad: '',
+    asignarme_lead: false,
   };
   const [projects, setProjects] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [errors, setErrors] = useState<any>({});
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   const validationSchema = Yup.object({
     channel_id: Yup.string().required('Campo requerido'),
@@ -196,6 +198,25 @@ export const LeadFormComponent = (props: Props) => {
               className={'todo-mayuscula form-control form-control-sm'}
             />
           </div>
+
+          {/*Asignarme lead a mi usuario*/}
+          {(rolActual == 'COMMERCIAL_LEADER' || rolActual == 'SALES_SUPERVISOR') && (
+            <div className="col-md-12 mb-3">
+              <div className="form-check mt-1">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="asignarme_lead"
+                  name="asignarme_lead"
+                  checked={formik.values.asignarme_lead}
+                  onChange={formik.handleChange}
+                />
+                <label className="form-check-label" htmlFor="asignarme_lead">
+                  Asignarme lead a mi usuario
+                </label>
+              </div>
+            </div>
+          )}
 
           <div className="col-md-12 mt-2" style={{ fontSize: '10px' }}>
             <span className="text-danger">*</span>

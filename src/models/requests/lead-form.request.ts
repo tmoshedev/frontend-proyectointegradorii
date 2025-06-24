@@ -7,4 +7,5 @@ export interface LeadFormRequest {
   last_names: string;
   cellphone: string;
   ciudad: string;
+  asignarme_lead: boolean;
 }
