@@ -1,7 +1,8 @@
 import { Ellipsis } from 'lucide-react';
 import { TableHeaderResponse } from '../../models/responses';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, use, useEffect, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
+import DropdownActionsMenu from '../shared/DropdownActionsMenu';
 
 interface TableCRMProps {
   tableHeader: any[];
@@ -14,11 +15,16 @@ interface TableCRMProps {
     total: number;
   };
   cargarData: (page: number) => void;
+  buttonsAcctions: any[];
+  onClickButtonPersonalizado: (row: any, id: string) => void;
 }
 export const TableCRM = (props: TableCRMProps) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const metaDataRef = useRef(props.metaData);
   const [isLoading, setIsLoading] = useState(false);
+  const typeToggleRef = useRef<HTMLButtonElement>(null);
+  const [openActionRow, setOpenActionRow] = useState<number | null>(null);
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
 
   //
   const visibleHeadersCount = props.tableHeader.filter(
@@ -28,6 +34,16 @@ export const TableCRM = (props: TableCRMProps) => {
   const gridTemplateColumns = props.activateCheckBoot
     ? `50px repeat(${visibleHeadersCount}, 200px) 60px`
     : `repeat(${visibleHeadersCount}, 200px) 60px`;
+
+  const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
+    if (openActionRow === rowIndex) {
+      setOpenActionRow(null);
+      setAnchorRect(null);
+      return;
+    }
+    setOpenActionRow(rowIndex);
+    setAnchorRect(event.currentTarget.getBoundingClientRect());
+  };
 
   useEffect(() => {
     metaDataRef.current = props.metaData;
@@ -145,9 +161,21 @@ export const TableCRM = (props: TableCRMProps) => {
           )}
           {/* Action cell */}
           <div key={`action-${rowIndex}`} className="table-cell sticky-col-last action-cell">
-            <button className="action-button text-primary">
+            <button
+              ref={typeToggleRef}
+              className="action-button text-primary"
+              onClick={(e) => handleActionClick(e, rowIndex)}
+            >
               <Ellipsis height={15} />
             </button>
+            <DropdownActionsMenu
+              isOpen={openActionRow === rowIndex}
+              anchorRect={anchorRect}
+              onClose={() => setOpenActionRow(null)}
+              buttonsAcctions={props.buttonsAcctions}
+              row={row}
+              onClickButtonPersonalizado={props.onClickButtonPersonalizado}
+            />
           </div>
         </React.Fragment>
       ))}

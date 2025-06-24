@@ -23,3 +23,11 @@ export const storeUserHierarchy = async (data: AccessUser) => {
   });
   return response;
 };
+
+export const deleteUserHierarchy = async (user_hierarchy_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.delete(
+    `/user-hierarchy/${user_hierarchy_id}?rolActual=${rolActual}`
+  );
+  return response;
+};

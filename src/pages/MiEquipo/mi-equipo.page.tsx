@@ -7,6 +7,7 @@ import ModalComponent from '../../components/shared/modal.component';
 import AddUserComponent from './components/add-user.component';
 import { setTitleSidebar } from '../../redux/states/auth.slice';
 import { useDispatch } from 'react-redux';
+import { SweetAlert } from '../../utilities';
 
 interface DataModalState {
   type: string;
@@ -30,9 +31,18 @@ export const MiEquipoPage = () => {
     per_page: 10,
     total: 0,
   });
-  const { getUserHierarchy } = useUserHierarchy();
+  const { getUserHierarchy, deleteUserHierarchy } = useUserHierarchy();
   const rolActual = localStorage.getItem('rolActual') || '';
   const nameModel = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisor' : 'Asesor';
+  //BOTONES DE ACCIONES
+  const buttonsAcctions = [
+    {
+      id: 'desactivar',
+      name: 'Desactivar',
+      name_class: 'text-danger',
+      icon: '<i class="fa-solid fa-power-off"></i>',
+    },
+  ];
   //MODAL NUEVO LEAD
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -93,6 +103,31 @@ export const MiEquipoPage = () => {
     );
   };
 
+  const onClickButtonPersonalizado = (row: any, id: string) => {
+    switch (id) {
+      case 'desactivar':
+        SweetAlert.onConfirmation(
+          () => handleDesactivarSupervisor(row),
+          handleCancelDelete,
+          '¿Está seguro que deseas desactivar al ' + nameModel + '?',
+          row.names_alls
+        );
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleCancelDelete = () => {};
+
+  const handleDesactivarSupervisor = (row: any) => {
+    deleteUserHierarchy(row.id, true).then((response: any) => {
+      SweetAlert.success('Mensaje', response.message);
+      onRefreshTeams();
+    });
+  };
+
   useEffect(() => {
     const dataInicial = () => {
       getUserHierarchy('', metaData.per_page, metaData.current_page, true).then(
@@ -149,6 +184,8 @@ export const MiEquipoPage = () => {
               activateCheckBoot={false}
               metaData={metaData}
               cargarData={cargarData}
+              buttonsAcctions={buttonsAcctions}
+              onClickButtonPersonalizado={onClickButtonPersonalizado}
             />
           </div>
         </div>

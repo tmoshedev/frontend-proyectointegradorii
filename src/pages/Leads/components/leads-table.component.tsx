@@ -102,6 +102,8 @@ export const LeadsTableComponent = (props: Props) => {
               activateCheckBoot={false}
               metaData={props.metaData}
               cargarData={cargarData}
+              buttonsAcctions={[]}
+              onClickButtonPersonalizado={() => {}}
             />
           </div>
         </div>
