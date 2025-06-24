@@ -62,19 +62,44 @@ const DropdownActionsMenu: React.FC<DropdownActionsMenuProps> = ({
     return null;
   }
 
+  const viewBotton = (
+    row: any,
+    type: string,
+    type_value: string,
+    values: { [key: string]: boolean }[]
+  ) => {
+    switch (type) {
+      case 'states':
+        if (row[type_value] !== undefined && row[type_value] !== null) {
+          // Busca el objeto en values cuyo key coincida con el valor de row[type_value]
+          const valueObj = values.find((obj) => obj.hasOwnProperty(row[type_value]));
+          if (valueObj) {
+            return valueObj[row[type_value]];
+          }
+          return false; // Si no encuentra el valor, retorna false
+        }
+        return false;
+      default:
+        return true;
+    }
+  };
+
   return createPortal(
     <div ref={menuRef} className="dropdown-actions-table" style={menuStyles}>
-      {buttonsAcctions.map((action, index) => (
-        <button onClick={() => onclick(row, action.id)} key={index} className="dropdown-item">
-          {action.icon != '' && (
-            <span
-              className={`${action.name_class} me-1`}
-              dangerouslySetInnerHTML={{ __html: action.icon }}
-            />
-          )}
-          <span className={`${action.name_class}`}>{action.name}</span>
-        </button>
-      ))}
+      {buttonsAcctions.map(
+        (action, index) =>
+          viewBotton(row, action.type, action.type_value, action.values) && (
+            <button onClick={() => onclick(row, action.id)} key={index} className="dropdown-item">
+              {action.icon != '' && (
+                <span
+                  className={`${action.name_class} me-1`}
+                  dangerouslySetInnerHTML={{ __html: action.icon }}
+                />
+              )}
+              <span className={`${action.name_class}`}>{action.name}</span>
+            </button>
+          )
+      )}
     </div>,
     document.body
   );

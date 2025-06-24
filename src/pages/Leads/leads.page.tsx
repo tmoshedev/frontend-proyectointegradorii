@@ -56,6 +56,11 @@ export const LeadsPage = () => {
           value: authState.user.id,
           avatar: true,
         },
+        {
+          label: `Sin asignar`,
+          value: '0',
+          avatar: true,
+        },
         ...users
           .filter((u) => u.id !== authState.user.id)
           .map((u) => ({ label: u.name, value: u.id, avatar: true })),
