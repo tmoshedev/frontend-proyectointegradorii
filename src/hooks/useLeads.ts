@@ -44,10 +44,10 @@ export function useLeads() {
   };
 
   //POST - IMPORT LEADS
-  const importLeads = async (data: any, loading: boolean) => {
+  const importLeads = async (data: any, asignarmeLead: boolean, loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.importLeads(data);
+      const response = await leadsService.importLeads(data, asignarmeLead);
       return response;
     } finally {
       dispatch(setLoading(false));

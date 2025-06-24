@@ -30,10 +30,11 @@ export const requirements = async () => {
   return response;
 };
 
-export const importLeads = async (data: ImportarLeadRequest) => {
+export const importLeads = async (data: ImportarLeadRequest, asignarmeLead: boolean) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.post<SuccessResponse>(`/leads/import?rolActual=${rolActual}`, {
     data,
+    asignarme_lead: asignarmeLead,
   });
   return response;
 };
