@@ -65,11 +65,47 @@ export function useUserHierarchy() {
     }
   };
 
+  //GET - getUsersBySuperior
+  const getUsersBySuperior = async (superior_id: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await useHierarchyService.getUsersBySuperior(superior_id);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - postHabilitarComercial
+  const postHabilitarComercial = async (user_hierarchy_id: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await useHierarchyService.postHabilitarComercial(user_hierarchy_id);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  //POST - deshabilitarComercial
+  const deshabilitarComercial = async (user_hierarchy_id: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await useHierarchyService.deshabilitarComercial(user_hierarchy_id);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     getUserHierarchy,
     requirements,
     storeUserHierarchy,
     deleteUserHierarchy,
     postHabilitarUserHierarchy,
+    getUsersBySuperior,
+    postHabilitarComercial,
+    deshabilitarComercial,
   };
 }

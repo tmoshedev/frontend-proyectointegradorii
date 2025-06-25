@@ -44,6 +44,7 @@ export const AddUserComponent = (props: Props) => {
     genero: '',
     selectedUbigeoDomilicio: { label: 'Buscar ciudad...', value: '' },
     roles: [],
+    superior_id: props.data.row?.user_id || '',
   };
 
   const validationSchema = Yup.object({
