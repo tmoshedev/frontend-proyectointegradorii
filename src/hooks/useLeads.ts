@@ -141,11 +141,12 @@ export function useLeads() {
     type: string,
     leads: Lead[],
     usuarios: UserSelect2[],
+    typeUsuario: string,
     loading: boolean
   ) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.postDistribuirLeads(type, leads, usuarios);
+      const response = await leadsService.postDistribuirLeads(type, leads, usuarios, typeUsuario);
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -180,6 +181,8 @@ export function useLeads() {
     channel_ids: string,
     lead_label_ids: string,
     stage_ids: string,
+    project_ids: string,
+    activity_expiration_ids: string,
     text: string,
     limit: number,
     page: number,
@@ -192,6 +195,8 @@ export function useLeads() {
         channel_ids,
         lead_label_ids,
         stage_ids,
+        project_ids,
+        activity_expiration_ids,
         text,
         limit,
         page

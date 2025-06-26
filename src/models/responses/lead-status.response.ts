@@ -9,5 +9,6 @@ export interface LeadStatusResponse {
     channels: any[];
     labels: any[];
     stages: any[];
+    projects: any[];
   };
 }

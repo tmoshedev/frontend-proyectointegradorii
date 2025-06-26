@@ -13,3 +13,4 @@ export * from './user-select2.model';
 export * from './activity.model';
 export * from './agenda-diaria.model';
 export * from './filtros-crm.model';
+export * from './lead-actividad-estado.model';

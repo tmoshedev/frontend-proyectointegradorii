@@ -5,4 +5,6 @@ export interface TableHeaderResponse {
   class: any[];
   type: 'NORMAL' | 'STATES' | 'ARRAYS' | 'HTML';
   type_value: string;
+  tooltip: boolean;
+  value_tooltip: string;
 }

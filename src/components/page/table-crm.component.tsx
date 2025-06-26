@@ -135,6 +135,15 @@ export const TableCRM = (props: TableCRMProps) => {
                               ''
                             : ''
                         }
+                        {...(header.tooltip
+                          ? {
+                              'data-tooltip-id': 'tooltip-component',
+                              'data-tooltip-content':
+                                header.tooltip === true
+                                  ? row[header.value_tooltip]
+                                  : header.tooltip,
+                            }
+                          : {})}
                       >
                         {row[header.value] !== null &&
                         row[header.value] !== undefined &&

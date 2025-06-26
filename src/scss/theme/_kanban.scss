@@ -59,6 +59,7 @@ $arrow-width: 0.7rem;
         overflow-y: auto;
         padding: 0rem 0.5rem;
         .kanban-card {
+          position: relative;
           cursor: pointer;
           padding: 8px 10px;
           background: #fff;
@@ -69,17 +70,26 @@ $arrow-width: 0.7rem;
           &:first-child {
             margin-top: 0px;
           }
-          &.kanban-card-instagram { background-color: #f4c99b !important; }
-          &.kanban-card-facebook { background-color: #5b6d95 !important; }
-          &.kanban-card-whatsapp { background-color: #89f2b0 !important; }
-          &.kanban-card-landing { background-color: #78b6f7 !important; }
-          &.kanban-card-organico { background-color: #f48383 !important; }
-          &.kanban-card-default { background-color: #f0f0f0 !important; }
+          &.kanban-card-instagram {
+            background-color: #f4c99b !important;
+          }
+          &.kanban-card-facebook {
+            background-color: #5b6d95 !important;
+          }
+          &.kanban-card-whatsapp {
+            background-color: #89f2b0 !important;
+          }
+          &.kanban-card-landing {
+            background-color: #78b6f7 !important;
+          }
+          &.kanban-card-organico {
+            background-color: #f48383 !important;
+          }
+          &.kanban-card-default {
+            background-color: #f0f0f0 !important;
+          }
 
-
-
-          
-        .kanban-card-header {
+          .kanban-card-header {
             border-bottom: 1px solid #e0e0e0;
             margin-bottom: 0.5rem;
             h4 {
@@ -307,5 +317,49 @@ $arrow-width: 0.7rem;
   }
   50% {
     opacity: 0.3;
+  }
+}
+
+.kanban-card-alert {
+  margin-top: 1.2rem !important;
+  &:first-child {
+    margin-top: 0.52rem !important;
+  }
+}
+
+.alert-lead {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  color: white;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  animation: parpadeo-alerta 1s infinite ease-in-out;
+}
+
+.alert-lead-vencido {
+  background-color: $color-lead-perdido;
+}
+
+.alert-lead-porvencer {
+  background-color: $color-actividad-por-vencer;
+}
+
+@keyframes parpadeo-alerta {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }

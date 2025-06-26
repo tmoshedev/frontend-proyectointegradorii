@@ -23,7 +23,7 @@
 .tabla-row-distribuir {
   /* Cada fila será un grid con X columnas */
   display: grid;
-  grid-template-columns: 70px repeat(7, 1fr);
+  grid-template-columns: 70px repeat(8, 1fr);
   border-bottom: 1px solid #ddd;
   &:last-child {
     border-bottom: none;

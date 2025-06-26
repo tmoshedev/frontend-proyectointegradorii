@@ -1,4 +1,4 @@
-import { LeadHistory, LeadLabel, LeadProject } from '.';
+import { LeadActividadEstado, LeadHistory, LeadLabel, LeadProject } from '.';
 
 export interface Lead {
   id: number;
@@ -23,4 +23,6 @@ export interface Lead {
   ciudad: string;
   email: string;
   supervisor_names: string;
+  fecha_creacion?: string;
+  actividad_estado: LeadActividadEstado;
 }
