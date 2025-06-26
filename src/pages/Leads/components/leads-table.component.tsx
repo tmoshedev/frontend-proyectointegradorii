@@ -46,18 +46,26 @@ export const LeadsTableComponent = (props: Props) => {
 
   useEffect(() => {
     const dataInicial = () => {
-      getLeads('', '', '', '', '', props.metaData.per_page, props.metaData.current_page, true).then(
-        (response: TableCrmResponse) => {
-          props.setLeads(response.data);
-          setTableHeader(response.table_header);
-          props.setMetaData({
-            current_page: response.meta.current_page,
-            last_page: response.meta.last_page,
-            per_page: response.meta.per_page,
-            total: response.meta.total,
-          });
-        }
-      );
+      getLeads(
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        props.metaData.per_page,
+        props.metaData.current_page,
+        true
+      ).then((response: TableCrmResponse) => {
+        props.setLeads(response.data);
+        setTableHeader(response.table_header);
+        props.setMetaData({
+          current_page: response.meta.current_page,
+          last_page: response.meta.last_page,
+          per_page: response.meta.per_page,
+          total: response.meta.total,
+        });
+      });
     };
 
     dataInicial();

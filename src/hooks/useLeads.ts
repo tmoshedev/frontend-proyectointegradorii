@@ -181,6 +181,7 @@ export function useLeads() {
     channel_ids: string,
     lead_label_ids: string,
     stage_ids: string,
+    project_ids: string,
     text: string,
     limit: number,
     page: number,
@@ -193,6 +194,7 @@ export function useLeads() {
         channel_ids,
         lead_label_ids,
         stage_ids,
+        project_ids,
         text,
         limit,
         page

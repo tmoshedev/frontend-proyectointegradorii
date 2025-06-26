@@ -269,6 +269,7 @@ export const LeadsPage = () => {
     channel_ids: string,
     lead_label_ids: string,
     stage_ids: string,
+    project_ids: string,
     per_page: number,
     current_page: number,
     add_data: boolean = false,
@@ -279,6 +280,7 @@ export const LeadsPage = () => {
       channel_ids,
       lead_label_ids,
       stage_ids,
+      project_ids,
       '',
       per_page,
       current_page,
@@ -311,6 +313,7 @@ export const LeadsPage = () => {
     const channel_ids = getValorFiltro('channel_ids');
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
+    const project_ids = getValorFiltro('project_ids');
 
     const addData = page == 1 ? false : true;
 
@@ -319,6 +322,7 @@ export const LeadsPage = () => {
       channel_ids,
       lead_label_ids,
       stage_ids,
+      project_ids,
       metaData.per_page,
       page,
       addData,
@@ -375,7 +379,17 @@ export const LeadsPage = () => {
         setEtapas(response.data.lead_etapas);
       });
     } else if (dataModalFiltrosResourceState.type == 'LEADS_TABLE') {
-      refreshDataLeads(user_ids, channel_ids, lead_label_ids, stage_ids, 50, 1, false, false);
+      refreshDataLeads(
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids,
+        project_ids,
+        50,
+        1,
+        false,
+        false
+      );
     }
   };
 
