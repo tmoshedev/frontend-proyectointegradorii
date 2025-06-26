@@ -19,6 +19,7 @@ export function useLeadStatus() {
     lead_label_ids: string,
     stage_ids: string,
     project_ids: string,
+    activity_expiration_ids: string,
     /**Loading */
     loading: boolean
   ) => {
@@ -32,7 +33,8 @@ export function useLeadStatus() {
         channel_ids,
         lead_label_ids,
         stage_ids,
-        project_ids
+        project_ids,
+        activity_expiration_ids
       );
       return response;
     } finally {

@@ -86,6 +86,19 @@ export const LeadsPage = () => {
         ...projects.map((p) => ({ label: p.name, value: p.id })),
       ],
     },
+    'Vencimiento de actividad': {
+      value: 'activity_expiration_ids',
+      opciones: [
+        { label: 'Vencida', value: 'vencida' },
+        { label: 'Por vencer', value: 'por_vencer' },
+        { label: 'Hoy', value: 'hoy' },
+        { label: 'Mañana', value: 'manana' },
+        { label: 'Esta semana', value: 'esta_semana' },
+        { label: 'Próxima semana', value: 'proxima_semana' },
+        { label: 'Este mes', value: 'este_mes' },
+        { label: 'Próximo mes', value: 'proximo_mes' },
+      ],
+    },
   };
   const [filtros, setFiltros] = useState<any[]>([]);
   //MODAL NUEVO LEAD
@@ -127,6 +140,12 @@ export const LeadsPage = () => {
   const handleStateView = (view: string) => {
     setStateView(view);
     setFiltros([]);
+    setMetaData({
+      current_page: 1,
+      last_page: 0,
+      per_page: 50,
+      total: 0,
+    });
   };
 
   const onCloseModalForm = () => {
@@ -180,6 +199,7 @@ export const LeadsPage = () => {
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
     const project_ids = getValorFiltro('project_ids');
+    const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
 
     getLeadStatus(
       '1',
@@ -190,6 +210,7 @@ export const LeadsPage = () => {
       lead_label_ids,
       stage_ids,
       project_ids,
+      activity_expiration_ids,
       true
     ).then((response: LeadStatusResponse) => {
       setEtapas(response.data.lead_etapas);
@@ -270,6 +291,7 @@ export const LeadsPage = () => {
     lead_label_ids: string,
     stage_ids: string,
     project_ids: string,
+    activity_expiration_ids: string,
     per_page: number,
     current_page: number,
     add_data: boolean = false,
@@ -281,6 +303,7 @@ export const LeadsPage = () => {
       lead_label_ids,
       stage_ids,
       project_ids,
+      activity_expiration_ids,
       '',
       per_page,
       current_page,
@@ -314,6 +337,7 @@ export const LeadsPage = () => {
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
     const project_ids = getValorFiltro('project_ids');
+    const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
 
     const addData = page == 1 ? false : true;
 
@@ -323,6 +347,7 @@ export const LeadsPage = () => {
       lead_label_ids,
       stage_ids,
       project_ids,
+      activity_expiration_ids,
       metaData.per_page,
       page,
       addData,
@@ -336,6 +361,7 @@ export const LeadsPage = () => {
     let lead_label_ids = '';
     let stage_ids = '';
     let project_ids = '';
+    let activity_expiration_ids = '';
 
     filtrosAplicados.forEach((filtro) => {
       if (filtro.tipo && filtro.valoresSeleccionados && filtro.valoresSeleccionados.length > 0) {
@@ -358,6 +384,8 @@ export const LeadsPage = () => {
           case 'project_ids':
             project_ids = valores;
             break;
+          case 'activity_expiration_ids':
+            activity_expiration_ids = valores;
           default:
             break;
         }
@@ -374,6 +402,7 @@ export const LeadsPage = () => {
         lead_label_ids,
         stage_ids,
         project_ids,
+        activity_expiration_ids,
         false
       ).then((response: LeadStatusResponse) => {
         setEtapas(response.data.lead_etapas);
@@ -385,6 +414,7 @@ export const LeadsPage = () => {
         lead_label_ids,
         stage_ids,
         project_ids,
+        activity_expiration_ids,
         50,
         1,
         false,

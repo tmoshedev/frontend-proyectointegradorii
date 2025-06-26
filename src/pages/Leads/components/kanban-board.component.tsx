@@ -88,7 +88,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
 
   useEffect(() => {
     const dataInicial = () => {
-      getLeadStatus('1', '1', 'get', '', '', '', '', '', true).then(
+      getLeadStatus('1', '1', 'get', '', '', '', '', '', '', true).then(
         (response: LeadStatusResponse) => {
           props.setEtapas(response.data.lead_etapas);
           props.setUsers(response.data.users);

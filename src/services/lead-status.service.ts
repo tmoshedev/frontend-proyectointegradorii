@@ -9,11 +9,12 @@ export const getLeadStatus = async (
   channel_ids: string,
   lead_label_ids: string,
   stage_ids: string,
-  project_ids: string
+  project_ids: string,
+  activity_expiration_ids: string
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<LeadStatusResponse>(
-    `/lead-status?business_id=${business_id}&type=${type}&lead_activos=${lead_activos}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}`
+    `/lead-status?business_id=${business_id}&type=${type}&lead_activos=${lead_activos}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}`
   );
   return response;
 };

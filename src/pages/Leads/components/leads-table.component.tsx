@@ -53,6 +53,7 @@ export const LeadsTableComponent = (props: Props) => {
         '',
         '',
         '',
+        '',
         props.metaData.per_page,
         props.metaData.current_page,
         true

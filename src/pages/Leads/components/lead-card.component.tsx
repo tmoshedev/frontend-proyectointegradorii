@@ -19,11 +19,24 @@ export const LeadCardComponent = (props: LeacCardProps) => {
 
   return (
     <div
-      className="kanban-card"
+      className={`kanban-card ${props.lead.actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
       data-id={props.lead.id}
       onClick={() => props.onClickLead(props.lead.uuid)}
     >
       <div className="kanban-card-header">
+        {props.lead.actividad_estado.state_view && (
+          <div
+            data-tooltip-id="tooltip-component"
+            data-tooltip-content={`${props.lead.actividad_estado.state} - ${props.lead.actividad_estado.fecha_actividad}`}
+            className={`alert-lead ${
+              props.lead.actividad_estado.type == 'VENCIDA'
+                ? 'alert-lead-vencido'
+                : 'alert-lead-porvencer'
+            }`}
+          >
+            !
+          </div>
+        )}
         <h4 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span
             style={{
@@ -36,11 +49,6 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           >
             {props.lead.names} {props.lead.last_names}
           </span>
-          <span
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(props.lead.channel_icon_html || ''),
-            }}
-          />
         </h4>
         <small>Celular: {props.lead.cellphone}</small>
       </div>
@@ -60,6 +68,12 @@ export const LeadCardComponent = (props: LeacCardProps) => {
         </div>
         <p className="mt-2">
           <b>Origen/Canal: </b>
+          <span
+            className="me-1"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(props.lead.channel_icon_html || ''),
+            }}
+          />
           <span>{props.lead.channel_name != '' ? props.lead.channel_name : '-'}</span>
         </p>
         {(rolActual == 'COMMERCIAL_LEADER' ||

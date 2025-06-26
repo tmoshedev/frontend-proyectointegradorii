@@ -117,7 +117,13 @@ export const LeadActividadComponent = (props: Props) => {
           </div>
           <div className="lead-actividad__left-footer">
             <div className="lead-actividad__left-footer-right">
-              <button className="btn btn-xs btn-outline-cancel me-2">Cancelar</button>
+              <button
+                type="button"
+                onClick={() => props.setStateMenu('Notas')}
+                className="btn btn-xs btn-outline-cancel me-2"
+              >
+                Cancelar
+              </button>
               <button type="submit" className="btn btn-xs btn-primary">
                 Guardar
               </button>
