@@ -8,6 +8,7 @@ import AddUserComponent from './components/add-user.component';
 import { setTitleSidebar } from '../../redux/states/auth.slice';
 import { useDispatch } from 'react-redux';
 import { SweetAlert } from '../../utilities';
+import ListUsersComponent from './components/list-users.component';
 
 interface DataModalState {
   type: string;
@@ -34,8 +35,27 @@ export const MiEquipoPage = () => {
   const { getUserHierarchy, deleteUserHierarchy, postHabilitarUserHierarchy } = useUserHierarchy();
   const rolActual = localStorage.getItem('rolActual') || '';
   const nameModel = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisor' : 'Asesor';
+  const nameModelPlural = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisores' : 'Asesores';
   //BOTONES DE ACCIONES
   const buttonsAcctions = [
+    {
+      id: 'add_agente',
+      name: 'Agregar agente',
+      name_class: '',
+      icon: '<i class="fa-solid fa-user-plus"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': true }, { '0': false }],
+    },
+    {
+      id: 'agentes_ventas',
+      name: 'Agente de ventas',
+      name_class: '',
+      icon: '<i class="fa-solid fa-users"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': true }, { '0': false }],
+    },
     {
       id: 'desactivar',
       name: 'Desactivar',
@@ -66,6 +86,17 @@ export const MiEquipoPage = () => {
     requirements: [],
     onCloseModalForm: () => {},
   });
+  //MODAL EQUIPO DE USERS
+  const [isOpenModalUsers, setIsOpenModalUsers] = useState(false);
+  const [isStateModalUsers, setIsStateModalUsers] = useState(false);
+  const [dataModalUsersResourceState, setDataModalUsersResourceState] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    requirements: [],
+    onCloseModalForm: () => {},
+  });
 
   const cargarData = (page: number) => {
     getUserHierarchy('', metaData.per_page, page, true).then((response: TableCrmResponse) => {
@@ -85,6 +116,14 @@ export const MiEquipoPage = () => {
 
   const onCloseModalForm = () => {
     setIsStateModal(false);
+  };
+
+  const handleCloseModalUsers = () => {
+    setIsOpenModalUsers(false);
+  };
+
+  const onCloseModalUsersForm = () => {
+    setIsStateModalUsers(false);
   };
 
   const onAddResource = () => {
@@ -138,10 +177,28 @@ export const MiEquipoPage = () => {
           row.names_alls
         );
         break;
-
+      case 'agentes_ventas':
+        onHandleAsesores(row);
+        break;
+      case 'add_agente':
+        onHandleAddAgente('STORE_AGENTE', row);
+        break;
       default:
         break;
     }
+  };
+
+  const onHandleAddAgente = (type: string, row: any) => {
+    setIsOpenModal(true);
+    setIsStateModal(true);
+    setDataModalResourceState({
+      type: type,
+      buttonSubmit: 'Crear',
+      row: row,
+      title: 'Agregar Agente de ventas a ' + nameModel + ': ' + row.names_alls,
+      requirements: [],
+      onCloseModalForm: onCloseModalForm,
+    });
   };
 
   const handleCancelDelete = () => {};
@@ -150,6 +207,19 @@ export const MiEquipoPage = () => {
     deleteUserHierarchy(row.id, true).then((response: any) => {
       SweetAlert.success('Mensaje', response.message);
       onRefreshTeams();
+    });
+  };
+
+  const onHandleAsesores = (row: any) => {
+    setIsOpenModalUsers(true);
+    setIsStateModalUsers(true);
+    setDataModalUsersResourceState({
+      type: 'LISTA_USERS',
+      buttonSubmit: 'Crear',
+      row: row,
+      title: 'Equipo de ' + nameModel + ': ' + row.names_alls,
+      requirements: [],
+      onCloseModalForm: onCloseModalUsersForm,
     });
   };
 
@@ -194,7 +264,7 @@ export const MiEquipoPage = () => {
           <div className="table-crm-header">
             <TableCRMHeaderComponent
               name_resource={nameModel}
-              name_plural_resource="Asesores"
+              name_plural_resource={nameModelPlural}
               onAddResource={onAddResource}
               metaData={metaData}
               tableHeader={tableHeader}
@@ -231,6 +301,17 @@ export const MiEquipoPage = () => {
               findUbigeo={findUbigeo}
             />
           }
+        />
+      )}
+      {/* MODAL EQUIPO DE AGENTE DE VENTAS*/}
+      {isOpenModalUsers && (
+        <ModalComponent
+          stateModal={isStateModalUsers}
+          typeModal={'static'}
+          onClose={handleCloseModalUsers}
+          title={dataModalUsersResourceState.title || ''}
+          size="modal-xl"
+          content={<ListUsersComponent data={dataModalUsersResourceState} />}
         />
       )}
     </div>

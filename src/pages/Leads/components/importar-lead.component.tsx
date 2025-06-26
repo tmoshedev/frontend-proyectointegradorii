@@ -15,6 +15,8 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
   const [projects, setProjects] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [erroresValidacion, setErroresValidacion] = useState<any[]>([]);
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const [asignarmeLead, setAsignarmeLead] = useState<boolean>(false);
 
   const onDescargarPlantilla = () => {
     window.open(`${import.meta.env.VITE_URL_WEB}/exports/leads-template`, '_blank');
@@ -69,7 +71,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
     }
 
     // Aquí puedes realizar la lógica de importación con los datos validados
-    importLeads(data, true)
+    importLeads(data, asignarmeLead, true)
       .then((response: any) => {
         SweetAlert.success('Mensaje', response.message);
         setData([]);
@@ -77,10 +79,15 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
         if (fileInputRef.current) {
           fileInputRef.current.value = ''; // Limpiar el input de archivo
         }
+        setAsignarmeLead(false);
       })
       .catch((error: any) => {
         SweetAlert.error('Mensaje', 'Error al importar los datos');
       });
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setAsignarmeLead(event.target.checked);
   };
 
   useEffect(() => {
@@ -282,6 +289,21 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
             >
               <i className="fa-solid fa-floppy-disk"></i> Guardar
             </button>
+            {(rolActual == 'COMMERCIAL_LEADER' || rolActual == 'SALES_SUPERVISOR') && (
+              <div className="form-check ms-3">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="asignarme_lead"
+                  name="asignarme_lead"
+                  checked={asignarmeLead}
+                  onChange={handleInputChange}
+                />
+                <label className="form-check-label" htmlFor="asignarme_lead">
+                  Asignarme lead a mi usuario
+                </label>
+              </div>
+            )}
           </div>
         </div>
       </div>

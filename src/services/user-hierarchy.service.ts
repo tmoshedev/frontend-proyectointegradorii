@@ -39,3 +39,30 @@ export const postHabilitarUserHierarchy = async (user_hierarchy_id: string) => {
   });
   return response;
 };
+
+export const getUsersBySuperior = async (superior_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.get<TableCrmResponse>(
+    `/user-hierarchy/users?rolActual=${rolActual}&superior_id=${superior_id}`
+  );
+  return response;
+};
+
+export const postHabilitarComercial = async (user_hierarchy_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post(
+    `/user-hierarchy/habilitar-comercial?rolActual=${rolActual}`,
+    {
+      user_hierarchy_id: user_hierarchy_id,
+    }
+  );
+  return response;
+};
+
+export const deshabilitarComercial = async (user_hierarchy_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.delete(
+    `/user-hierarchy/${user_hierarchy_id}/comercial?rolActual=${rolActual}`
+  );
+  return response;
+};

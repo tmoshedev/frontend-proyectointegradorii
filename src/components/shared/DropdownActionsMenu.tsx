@@ -28,7 +28,7 @@ const DropdownActionsMenu: React.FC<DropdownActionsMenuProps> = ({
 
   useEffect(() => {
     if (anchorRect) {
-      const menuWidth = 150; // Ancho aproximado del menú
+      const menuWidth = 180; // Ancho aproximado del menú
       // Alinea el menú a la derecha del botón de acción
       const left = anchorRect.right + window.scrollX - menuWidth;
 

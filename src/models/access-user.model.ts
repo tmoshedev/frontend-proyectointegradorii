@@ -15,4 +15,5 @@ export interface AccessUser {
   fecha_nacimiento?: string;
   genero?: string;
   selectedUbigeoDomilicio?: any;
+  superior_id?: string;
 }

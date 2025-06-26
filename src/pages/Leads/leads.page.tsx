@@ -159,9 +159,24 @@ export const LeadsPage = () => {
   };
 
   const onRefreshLeads = () => {
-    getLeadStatus('1', '1', 'get', '', '', '', '', true).then((response: LeadStatusResponse) => {
-      setEtapas(response.data.lead_etapas);
-    });
+    const getValorFiltro = (tipoApi: string) => {
+      const filtro = filtros.find(
+        (f) =>
+          f.tipo && TODOS_LOS_FILTROS[f.tipo as keyof typeof TODOS_LOS_FILTROS]?.value === tipoApi
+      );
+      return filtro?.valoresSeleccionados.map((v: any) => v.value).join(',') || '';
+    };
+
+    const user_ids = getValorFiltro('user_ids');
+    const channel_ids = getValorFiltro('channel_ids');
+    const lead_label_ids = getValorFiltro('lead_labels_ids');
+    const stage_ids = getValorFiltro('stage_ids');
+
+    getLeadStatus('1', '1', 'get', user_ids, channel_ids, lead_label_ids, stage_ids, true).then(
+      (response: LeadStatusResponse) => {
+        setEtapas(response.data.lead_etapas);
+      }
+    );
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
