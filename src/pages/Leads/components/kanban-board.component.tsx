@@ -23,6 +23,7 @@ interface KanbanBoardComponentProps {
   setLabels: any;
   setChannels: any;
   setStages: any;
+  setProjects: any;
   filtros: any[];
 }
 
@@ -87,13 +88,16 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
 
   useEffect(() => {
     const dataInicial = () => {
-      getLeadStatus('1', '1', 'get', '', '', '', '', true).then((response: LeadStatusResponse) => {
-        props.setEtapas(response.data.lead_etapas);
-        props.setUsers(response.data.users);
-        props.setLabels(response.data.labels);
-        props.setChannels(response.data.channels);
-        props.setStages(response.data.stages);
-      });
+      getLeadStatus('1', '1', 'get', '', '', '', '', '', true).then(
+        (response: LeadStatusResponse) => {
+          props.setEtapas(response.data.lead_etapas);
+          props.setUsers(response.data.users);
+          props.setLabels(response.data.labels);
+          props.setChannels(response.data.channels);
+          props.setStages(response.data.stages);
+          props.setProjects(response.data.projects);
+        }
+      );
     };
 
     dataInicial();

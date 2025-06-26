@@ -98,6 +98,21 @@ export function useUserHierarchy() {
     }
   };
 
+  //POST - cambiarSupervisor
+  const cambiarSupervisor = async (
+    users: string[],
+    nuevo_superior_id: string,
+    loading: boolean
+  ) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await useHierarchyService.cambiarSupervisor(users, nuevo_superior_id);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     getUserHierarchy,
     requirements,
@@ -107,5 +122,6 @@ export function useUserHierarchy() {
     getUsersBySuperior,
     postHabilitarComercial,
     deshabilitarComercial,
+    cambiarSupervisor,
   };
 }

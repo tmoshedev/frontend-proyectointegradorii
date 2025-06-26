@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import SelectDosDropdown from '../../../components/shared/SelectDosDropdown';
 import { CircleUser, Share2 } from 'lucide-react';
 import { Lead, LeadProject } from '../../../models';
@@ -16,11 +16,17 @@ export const DistribuirLeadComponent = (props: Props) => {
   const { getDistribucion, postDistribuirLeads } = useLeads();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [comercialAsesores, setComercialAsesores] = useState<any[]>([]);
   const [leadsSeleccionados, setLeadsSeleccionados] = useState<Lead[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [type, setType] = useState<string>('equitable');
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState<any[]>([]);
   const userState = useSelector((state: AppStore) => state.auth.user);
+  const [typeUsuario, setTypeUsuario] = useState<string>('USERS');
+  //AGENTES
+  const dropdownRefAgentes = useRef<HTMLDivElement>(null);
+  const [agentesSeleccionados, setAgentesSeleccionados] = useState<any[]>([]);
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   let textTypeUser = 'Usuarios';
   switch (userState.roles[0].name) {
@@ -74,18 +80,32 @@ export const DistribuirLeadComponent = (props: Props) => {
       SweetAlert.warning('Mensaje', 'Debe seleccionar al menos un lead para distribuir.');
       return;
     }
-    if (usuariosSeleccionados.length === 0) {
+    if (usuariosSeleccionados.length === 0 && typeUsuario === 'USERS') {
       SweetAlert.warning(
         'Mensaje',
         `Debe seleccionar al menos un ${textTypeUserSingular} para distribuir los leads.`
       );
       return;
     }
-    postDistribuirLeads(type, leadsSeleccionados, usuariosSeleccionados, true)
+    if (agentesSeleccionados.length === 0 && typeUsuario === 'AGENTES_COMERCIAL') {
+      SweetAlert.warning(
+        'Mensaje',
+        `Debe seleccionar al menos un Agente de ventas para distribuir los leads.`
+      );
+      return;
+    }
+    let usersLocal = [];
+    if (typeUsuario === 'USERS') {
+      usersLocal = usuariosSeleccionados;
+    } else if (typeUsuario === 'AGENTES_COMERCIAL') {
+      usersLocal = agentesSeleccionados;
+    }
+    postDistribuirLeads(type, leadsSeleccionados, usersLocal, typeUsuario, true)
       .then((response: LeadDistribucionResponse) => {
         SweetAlert.success('Mensaje', 'Leads distribuidos correctamente.');
         setLeadsSeleccionados([]);
         setUsuariosSeleccionados([]);
+        setAgentesSeleccionados([]);
         setType('equitable');
         setLeads(response.leads);
         setUsuarios(response.users);
@@ -93,6 +113,13 @@ export const DistribuirLeadComponent = (props: Props) => {
       .catch((error) => {
         SweetAlert.error('Error', error.message || 'Ocurrió un error al distribuir los leads.');
       });
+  };
+
+  const onChangeValue = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setTypeUsuario(value);
+    setUsuariosSeleccionados([]);
+    setAgentesSeleccionados([]);
   };
 
   useEffect(() => {
@@ -112,10 +139,27 @@ export const DistribuirLeadComponent = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    const el = dropdownRefAgentes.current;
+    if (!el) return;
+
+    const handler = () => {
+      const input: HTMLInputElement | null = el.querySelector('input');
+      input?.focus();
+    };
+
+    el.addEventListener('shown.bs.dropdown', handler);
+
+    return () => {
+      el.removeEventListener('shown.bs.dropdown', handler);
+    };
+  }, []);
+
+  useEffect(() => {
     const dataInicial = () => {
       getDistribucion(true).then((response: LeadDistribucionResponse) => {
         setLeads(response.leads);
         setUsuarios(response.users);
+        setComercialAsesores(response.comercial_asesores);
       });
     };
 
@@ -134,7 +178,7 @@ export const DistribuirLeadComponent = (props: Props) => {
               <h4 className="mt-3">Distribuir leads</h4>
             </div>
             <div className="dl__actions-header">
-              <div className="btn-group" role="group" aria-label="Basic radio toggle button group">
+              <div className="btn-group" role="group" aria-label="Distribución de leads">
                 <input
                   type="radio"
                   className="btn-check"
@@ -158,24 +202,64 @@ export const DistribuirLeadComponent = (props: Props) => {
                   Distribución manual
                 </label>
               </div>
-              <div className="btn-asesores" ref={dropdownRef}>
-                <button
-                  data-bs-auto-close="outside"
-                  data-bs-toggle="dropdown"
-                  className="btn btn-success"
-                >
-                  <CircleUser /> {textTypeUser} ({usuariosSeleccionados.length})
-                </button>
-                <div className="main-header-dropdown dropdown-menu">
-                  <SelectDosDropdown
-                    items={usuarios}
-                    itemsSelected={usuariosSeleccionados}
-                    setItemSelected={setUsuariosSeleccionados}
-                    textNoResult={`No se encontraron ${textTypeUser} disponibles.`}
-                    multipleSelect={type === 'manual' ? false : true}
-                  />
+              {rolActual == 'COMMERCIAL_LEADER' && (
+                <div>
+                  <select
+                    value={typeUsuario}
+                    onChange={onChangeValue}
+                    style={{ height: '100%', width: '200px' }}
+                    name="type_usuario"
+                    id="type_usuario"
+                    className="form-select"
+                  >
+                    <option value="" disabled>
+                      Tipo de usuario
+                    </option>
+                    <option value="USERS">Supervisores</option>
+                    <option value="AGENTES_COMERCIAL">Agente de ventas</option>
+                  </select>
                 </div>
-              </div>
+              )}
+              {typeUsuario == 'USERS' && (
+                <div className="btn-asesores" ref={dropdownRef}>
+                  <button
+                    data-bs-auto-close="outside"
+                    data-bs-toggle="dropdown"
+                    className="btn btn-success"
+                  >
+                    <CircleUser /> {textTypeUser} ({usuariosSeleccionados.length})
+                  </button>
+                  <div className="main-header-dropdown dropdown-menu">
+                    <SelectDosDropdown
+                      items={usuarios}
+                      itemsSelected={usuariosSeleccionados}
+                      setItemSelected={setUsuariosSeleccionados}
+                      textNoResult={`No se encontraron ${textTypeUser} disponibles.`}
+                      multipleSelect={type === 'manual' ? false : true}
+                    />
+                  </div>
+                </div>
+              )}
+              {typeUsuario == 'AGENTES_COMERCIAL' && (
+                <div className="btn-asesores" ref={dropdownRefAgentes}>
+                  <button
+                    data-bs-auto-close="outside"
+                    data-bs-toggle="dropdown"
+                    className="btn btn-info"
+                  >
+                    <CircleUser /> Agente de ventas ({agentesSeleccionados.length})
+                  </button>
+                  <div className="main-header-dropdown dropdown-menu">
+                    <SelectDosDropdown
+                      items={comercialAsesores}
+                      itemsSelected={agentesSeleccionados}
+                      setItemSelected={setAgentesSeleccionados}
+                      textNoResult={`No se encontraron Agente de Ventas disponibles.`}
+                      multipleSelect={type === 'manual' ? false : true}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="importa-data-body">
@@ -190,6 +274,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                     onChange={(e) => handleSelectAllLeads(e.target.checked)}
                   />
                 </div>
+                <div className="tabla-cell text-center">Fecha creación</div>
                 <div className="tabla-cell text-center">Proyecto</div>
                 <div className="tabla-cell text-center">Origen</div>
                 <div className="tabla-cell text-center">Nombres</div>
@@ -219,6 +304,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                         onChange={(e) => handleLeadSelection(e.target.checked, leads[index])}
                       />
                     </div>
+                    <div className="tabla-cell">{lead.fecha_creacion ?? '-'}</div>
                     <div className="tabla-cell">
                       <div className="d-flex gap-1">
                         {lead.lead_projects.map((project: LeadProject) => (

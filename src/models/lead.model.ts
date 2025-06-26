@@ -23,4 +23,5 @@ export interface Lead {
   ciudad: string;
   email: string;
   supervisor_names: string;
+  fecha_creacion?: string;
 }

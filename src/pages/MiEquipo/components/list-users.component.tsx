@@ -8,13 +8,16 @@ import { SweetAlert } from '../../../utilities';
 
 interface Props {
   data: any;
+  onRefreshTeams: (state: boolean) => void;
 }
 
 export const ListUsersComponent = (props: Props) => {
   const [users, setUsers] = useState<any[]>([]);
-  const { getUsersBySuperior, postHabilitarComercial, deshabilitarComercial } = useUserHierarchy();
+  const { getUsersBySuperior, postHabilitarComercial, deshabilitarComercial, cambiarSupervisor } =
+    useUserHierarchy();
   const [usuariosCargo, setUsuariosCargo] = useState<any[]>([]);
   const [usersSeleccionados, setUsuariosSeleccionados] = useState<any[]>([]);
+  const [nuevoSuperiorId, setNuevoSuperiorId] = useState<string>('');
 
   const onHabilitar = (userId: string) => {
     postHabilitarComercial(userId, true).then((response: any) => {
@@ -59,7 +62,11 @@ export const ListUsersComponent = (props: Props) => {
   };
 
   const onCambiarSupervisor = () => {
-    console.log('Cambiar supervisor', usersSeleccionados);
+    cambiarSupervisor(usersSeleccionados, nuevoSuperiorId, true).then((response: any) => {
+      SweetAlert.success('Mensaje', response.message);
+      props.onRefreshTeams(false);
+      props.data.onCloseModalForm();
+    });
   };
 
   useEffect(() => {
@@ -102,6 +109,7 @@ export const ListUsersComponent = (props: Props) => {
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Celular</th>
+                    <th>Leads asignados</th>
                     <th className="text-center">Estado</th>
                     <th className="text-center">Acción</th>
                   </tr>
@@ -126,6 +134,7 @@ export const ListUsersComponent = (props: Props) => {
                         {user.father_last_name} {user.mother_last_name}
                       </td>
                       <td className="text-center">{user.cellphone ?? '-'}</td>
+                      <td className="text-center">{user.lead_asignados_counts}</td>
                       <td className="text-center">
                         <span className={`${user.state == 1 ? 'text-success' : 'text-danger'}`}>
                           {user.state_name}
@@ -158,21 +167,27 @@ export const ListUsersComponent = (props: Props) => {
           </div>
           <div className="col-12 mt-3 d-flex justify-content-center align-items-center">
             <select
-              name=""
-              id=""
+              name="nuevo_superior_id"
+              id="nuevo_superior_id"
               className="form-select form-select-sm me-2"
               style={{ width: '300px' }}
+              value={nuevoSuperiorId}
+              onChange={(e) => setNuevoSuperiorId(e.target.value)}
             >
               <option value="">Seleccionar</option>
               {usuariosCargo.map((cargo: any, index: number) =>
                 props.data.row.user_id != cargo.user_id ? (
-                  <option key={index} value={cargo.id}>
+                  <option key={index} value={cargo.user_id}>
                     {cargo.names_alls}
                   </option>
                 ) : null
               )}
             </select>
-            <button onClick={onCambiarSupervisor} className="btn-primary btn btn-sm">
+            <button
+              disabled={!nuevoSuperiorId || usersSeleccionados.length == 0}
+              onClick={onCambiarSupervisor}
+              className="btn-primary btn btn-sm"
+            >
               Cambiar de supervisor
             </button>
           </div>

@@ -93,7 +93,12 @@ export const getDistribucion = async () => {
   return response;
 };
 
-export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios: UserSelect2[]) => {
+export const postDistribuirLeads = async (
+  type: string,
+  leads: Lead[],
+  usuarios: UserSelect2[],
+  typeUsuario: string
+) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.post<LeadDistribucionResponse>(
     `/leads/distribuir?rolActual=${rolActual}`,
@@ -101,6 +106,7 @@ export const postDistribuirLeads = async (type: string, leads: Lead[], usuarios:
       type,
       leads,
       usuarios,
+      typeUsuario,
     }
   );
   return response;

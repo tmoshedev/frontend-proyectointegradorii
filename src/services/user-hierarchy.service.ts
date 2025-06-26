@@ -66,3 +66,15 @@ export const deshabilitarComercial = async (user_hierarchy_id: string) => {
   );
   return response;
 };
+
+export const cambiarSupervisor = async (users: string[], nuevo_superior_id: string) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
+  const response = await apiInstance.post(
+    `/user-hierarchy/cambiar-supervisor?rolActual=${rolActual}`,
+    {
+      users: users,
+      nuevo_superior_id: nuevo_superior_id,
+    }
+  );
+  return response;
+};

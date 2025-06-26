@@ -45,6 +45,7 @@ export const LeadsPage = () => {
   const [labels, setLabels] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [stages, setStages] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
@@ -77,6 +78,13 @@ export const LeadsPage = () => {
     Etiquetas: {
       value: 'lead_labels_ids',
       opciones: labels.map((c) => ({ label: c.name, value: c.id })),
+    },
+    Proyectos: {
+      value: 'project_ids',
+      opciones: [
+        { label: 'Sin proyecto', value: '0' },
+        ...projects.map((p) => ({ label: p.name, value: p.id })),
+      ],
     },
   };
   const [filtros, setFiltros] = useState<any[]>([]);
@@ -171,12 +179,21 @@ export const LeadsPage = () => {
     const channel_ids = getValorFiltro('channel_ids');
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
+    const project_ids = getValorFiltro('project_ids');
 
-    getLeadStatus('1', '1', 'get', user_ids, channel_ids, lead_label_ids, stage_ids, true).then(
-      (response: LeadStatusResponse) => {
-        setEtapas(response.data.lead_etapas);
-      }
-    );
+    getLeadStatus(
+      '1',
+      '1',
+      'get',
+      user_ids,
+      channel_ids,
+      lead_label_ids,
+      stage_ids,
+      project_ids,
+      true
+    ).then((response: LeadStatusResponse) => {
+      setEtapas(response.data.lead_etapas);
+    });
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -254,6 +271,7 @@ export const LeadsPage = () => {
     stage_ids: string,
     per_page: number,
     current_page: number,
+    add_data: boolean = false,
     loanding: boolean
   ) => {
     getLeads(
@@ -266,7 +284,11 @@ export const LeadsPage = () => {
       current_page,
       loanding
     ).then((response: TableCrmResponse) => {
-      setLeads(response.data);
+      if (add_data) {
+        setLeads((prevLeads) => [...prevLeads, ...response.data]);
+      } else {
+        setLeads(response.data);
+      }
       setMetaData({
         current_page: response.meta.current_page,
         last_page: response.meta.last_page,
@@ -290,6 +312,8 @@ export const LeadsPage = () => {
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
 
+    const addData = page == 1 ? false : true;
+
     refreshDataLeads(
       user_ids,
       channel_ids,
@@ -297,6 +321,7 @@ export const LeadsPage = () => {
       stage_ids,
       metaData.per_page,
       page,
+      addData,
       true
     );
   };
@@ -306,6 +331,7 @@ export const LeadsPage = () => {
     let channel_ids = '';
     let lead_label_ids = '';
     let stage_ids = '';
+    let project_ids = '';
 
     filtrosAplicados.forEach((filtro) => {
       if (filtro.tipo && filtro.valoresSeleccionados && filtro.valoresSeleccionados.length > 0) {
@@ -325,6 +351,9 @@ export const LeadsPage = () => {
           case 'stage_ids':
             stage_ids = valores;
             break;
+          case 'project_ids':
+            project_ids = valores;
+            break;
           default:
             break;
         }
@@ -332,13 +361,21 @@ export const LeadsPage = () => {
     });
 
     if (dataModalFiltrosResourceState.type == 'LEADS_KANBAN') {
-      getLeadStatus('1', '1', 'get', user_ids, channel_ids, lead_label_ids, stage_ids, false).then(
-        (response: LeadStatusResponse) => {
-          setEtapas(response.data.lead_etapas);
-        }
-      );
+      getLeadStatus(
+        '1',
+        '1',
+        'get',
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids,
+        project_ids,
+        false
+      ).then((response: LeadStatusResponse) => {
+        setEtapas(response.data.lead_etapas);
+      });
     } else if (dataModalFiltrosResourceState.type == 'LEADS_TABLE') {
-      refreshDataLeads(user_ids, channel_ids, lead_label_ids, stage_ids, 50, 1, false);
+      refreshDataLeads(user_ids, channel_ids, lead_label_ids, stage_ids, 50, 1, false, false);
     }
   };
 
@@ -367,6 +404,7 @@ export const LeadsPage = () => {
           setLabels={setLabels}
           setChannels={setChannels}
           setStages={setStages}
+          setProjects={setProjects}
           filtros={filtros}
         />
       )}

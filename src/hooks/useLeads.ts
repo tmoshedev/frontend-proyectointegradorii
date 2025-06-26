@@ -141,11 +141,12 @@ export function useLeads() {
     type: string,
     leads: Lead[],
     usuarios: UserSelect2[],
+    typeUsuario: string,
     loading: boolean
   ) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.postDistribuirLeads(type, leads, usuarios);
+      const response = await leadsService.postDistribuirLeads(type, leads, usuarios, typeUsuario);
       return response;
     } finally {
       dispatch(setLoading(false));
