@@ -9,3 +9,4 @@ export * from './lead-distribucion.response';
 export * from './table-header.response';
 export * from './table-crm.response';
 export * from './agenda-diaria.response';
+export * from './mi-calendario.response';

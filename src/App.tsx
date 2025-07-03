@@ -16,6 +16,7 @@ import {
   UsuariosPage,
   LeadPage,
   MiEquipoPage,
+  CalendarioPage,
 } from './pages';
 
 function App() {
@@ -48,6 +49,10 @@ function App() {
                 {/*MiEquipoPage*/}
                 <Route element={<ProtectedRoute permission="teams-index" />}>
                   <Route path="my-teams" element={<MiEquipoPage />} />
+                </Route>
+                {/*CalendarioPage*/}
+                <Route element={<ProtectedRoute permission="home-index" />}>
+                  <Route path="calendar" element={<CalendarioPage />} />
                 </Route>
               </Route>
             </Route>

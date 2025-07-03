@@ -17,6 +17,13 @@ const Menu: MenuItem[] = [
     rolesPermitidos: ['ALLS'],
   },
   {
+    name: 'Calendario',
+    path: '/calendar',
+    icon: 'ri-calendar-2-line',
+    permission: 'home-index',
+    rolesPermitidos: ['ALLS'],
+  },
+  {
     name: 'Mi equipo',
     path: '/my-teams',
     icon: 'ri-user-heart-line',
