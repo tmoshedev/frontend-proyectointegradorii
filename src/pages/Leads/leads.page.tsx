@@ -26,6 +26,7 @@ interface DataModalState {
 export const LeadsPage = () => {
   useSidebarResponsive(true);
   const authState = useSelector((state: AppStore) => state.auth);
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   const dispatch = useDispatch();
   //LEADS TABLE
@@ -225,7 +226,7 @@ export const LeadsPage = () => {
         lead_uuid: lead.uuid,
         assigned_to: lead.user_id ?? '',
       },
-      title: 'Editar asesor',
+      title: rolActual === 'COMMERCIAL_LEADER' ? 'Editar Supervisor' : 'Editar asesor',
       requirements: {
         users: users,
       },
