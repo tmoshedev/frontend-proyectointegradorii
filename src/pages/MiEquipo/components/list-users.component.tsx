@@ -102,7 +102,7 @@ export const ListUsersComponent = (props: Props) => {
                         name="users"
                         type="checkbox"
                         onChange={(e) => handleSelectAllUsers(e.target.checked)}
-                        checked={users.length > 0 && usersSeleccionados.length === users.length}
+                        checked={users.length > 0 && usersSeleccionados.length == users.length}
                       />
                     </th>
                     <th className="text-center">Nº</th>

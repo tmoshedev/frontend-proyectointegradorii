@@ -1,0 +1,681 @@
+.calendar-crm {
+  position: relative;
+}
+
+.calendar-crm-inner-wrap {
+  margin-right: 0;
+  margin-left: 0;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 0.375rem;
+}
+
+.scrollable-crm-calendar {
+  overflow: auto;
+  margin-left: 4.2rem;
+  min-height: 13px;
+  scrollbar-color: #44b7c3 #f4f4f4;
+  scrollbar-width: thin;
+  display: none;
+}
+
+.calendar-crm-scrollable {
+  margin-left: 4.2rem;
+  min-height: 13px;
+  scrollbar-color: #44b7c3 #f4f4f4;
+  scrollbar-width: thin;
+  padding-left: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  overflow: hidden;
+  //overflow-x: hidden; /* ocultamos el horizontal aquí */
+  //overflow-y: auto; /* sólo scroll vertical */
+}
+
+.calendar-crm-flex {
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-crm-header {
+  position: relative;
+  z-index: 2;
+  flex-grow: 1 !important;
+  display: flex !important;
+  overflow: scroll;
+  overflow-x: hidden; /* Habilitar scroll horizontal */
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  //overflow-x: hidden;
+  //overflow-y: hidden;
+}
+.calendar-crm-header::-webkit-scrollbar {
+  display: none; /* Ocultar scrollbar en Chrome/Safari */
+}
+
+.calendar-crm-day-col {
+  //min-width: 15.625rem;
+  min-width: calc(4.002rem * var(--users-count, 1));
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.activity-days-list {
+  display: flex;
+  border-bottom: 1px solid #e3e3e3;
+  border-left: 1px solid #e3e3e3;
+  margin: 0 0 0 2.5rem;
+  padding: 0;
+  cursor: grab;
+  user-select: none;
+  margin-left: 0;
+  li {
+    justify-content: center;
+    flex-basis: 0;
+    flex-grow: 1;
+    padding: 0;
+    display: flex;
+    height: 2rem;
+    padding-left: 0;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 1.125rem;
+    color: #404040;
+    font-weight: 400;
+    text-transform: capitalize;
+    span {
+      color: #8c8c8c;
+      margin-left: 0.375rem;
+      font-size: 0.875rem;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.calendar-crm-day-col:first-child .daily-activity-crm .staff-list {
+  border-left: 0 !important;
+}
+.calendar-crm-day-col:first-child .activity-days-list {
+  border-left: 0 !important;
+}
+
+.calendar-crm-body {
+  z-index: 1;
+  scrollbar-color: rgb(var(--primary-rgb)) var(--gray-1);
+  scrollbar-width: thin;
+  min-width: 15.625rem;
+  display: flex;
+  flex-grow: 1;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.day-col-body {
+  //min-width: 15.625rem;
+  min-width: calc(4.002rem * var(--users-count, 1));
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.calendar-grid-outer-wrap {
+  overflow: visible;
+  max-height: calc(100vh - 15rem);
+  position: relative;
+  touch-action: pan-x pan-y;
+}
+
+.calendar-grid {
+  height: 90rem;
+  overflow: visible;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  position: relative;
+  transition: all 0.25s ease-out;
+}
+
+.calendar-content {
+  padding-left: 0;
+  border-left: 1px solid #e3e3e3;
+  z-index: unset !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.calendar-column {
+  flex-basis: 0;
+  flex-grow: 1;
+  position: relative;
+  border-left: 1px solid #e3e3e3;
+}
+
+.calendar-content > .calendar-column:first-child {
+  border-left: none;
+}
+
+.calendar-crm-timeline {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh - 14.125rem);
+  top: 3.5rem;
+  left: 0;
+  max-height: 100%;
+  margin-top: -0.625rem;
+  scrollbar-color: #44b7c3 #f4f4f4;
+  scrollbar-width: thin;
+  overflow: auto;
+  //overflow: hidden !important;
+}
+
+.time-data-inner-wrap {
+  top: 0.75rem;
+  position: relative;
+}
+
+.current-time-wrap {
+  max-height: 90rem;
+  top: 0;
+  padding-left: 2.9rem;
+  position: absolute;
+  left: 2.4rem;
+  width: calc(100% - 2.4rem);
+  transition: all 0.25s ease-out;
+}
+
+.blue-line {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  //background: url('https://www.docfav.com/calendar-pattern.44d3142f4ff936788dca.png') repeat 0 0;
+}
+
+.current-time {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-left: 2.5rem;
+  z-index: 6;
+  span {
+    position: absolute;
+    width: 2.75rem;
+    height: 1.125rem;
+    left: -0.3125rem;
+    top: -0.5625rem;
+    font-size: 0.875rem;
+    color: #fff;
+    background: rgb(var(--primary-rgb));
+    text-align: center;
+    line-height: 1.125rem;
+    border-radius: 6px;
+  }
+  .current-time-line {
+    width: 100%;
+    height: 1px;
+    background: rgb(var(--primary-rgb));
+    position: relative;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: -0.5rem;
+      left: -0.1875rem;
+      width: 0;
+      height: 0;
+      border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(var(--primary-rgb));
+      border-style: solid;
+      border-width: 0.5rem 0 0.5rem 0.5rem;
+    }
+  }
+}
+
+.calendar-crm-sessions {
+  top: 0 !important;
+  position: absolute;
+  //left: 2.25rem;
+  left: 0.6rem;
+  background: #fff;
+  z-index: 2;
+}
+
+.session-item {
+  height: 3.75rem;
+  width: 100%;
+  position: relative;
+  text-align: right;
+  font-size: 0.875rem;
+  color: #626262;
+  background: #fff;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  padding-right: 0;
+  span {
+    position: relative;
+    flex-grow: 1;
+    background: #fff;
+    padding-right: 0.3125rem;
+    top: -0.75rem !important;
+  }
+}
+
+.daily-activity-crm {
+  padding-left: 0;
+  min-width: 100%;
+}
+
+.staff-list-wrap {
+  background: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.staff-list {
+  margin: 0;
+  padding: 0;
+  padding-left: 0 !important;
+  display: flex;
+  align-items: center;
+  //padding: 0 0 0 2.5rem;
+  cursor: grab;
+  user-select: none;
+  border-bottom: 1px solid #e3e3e3;
+  border-left: 1px solid #e3e3e3;
+  li {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+    flex-grow: 1;
+    flex-basis: 0;
+    position: relative;
+    list-style: none;
+  }
+}
+
+.media-staff {
+  height: 1.4375rem;
+  padding: 0 0.75rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: #626262;
+  border-radius: 0;
+  box-shadow: none;
+}
+.media-staff::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+.media-staff-body {
+  flex: 1;
+}
+.short-name-staff {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: 1.125rem;
+  color: color-mix(in srgb, rgb(var(--primary-rgb)), black 35%);
+  word-break: break-word;
+  display: block;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.staff-list,
+.calendar-content {
+  box-sizing: border-box;
+}
+
+.bookings-list {
+  position: relative;
+  margin: 0 0 0 0.625rem;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.drag-container {
+  position: relative;
+  width: 100%;
+}
+
+.crm-card-event {
+  cursor: pointer;
+  height: 15.5rem;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  right: -1px;
+  z-index: 1;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  background: #fff;
+  border-radius: 0.625rem 0 0 0.625rem;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease-in-out;
+  border: 0;
+  border-left: 3px solid rgb(var(--info-rgb));
+}
+
+.crm-card-event-bg {
+  background-color: rgb(var(--info-rgb));
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 0.625rem 0 0 0.625rem;
+  z-index: 0;
+  width: 100%;
+  opacity: 0.25;
+}
+
+.crm-card-event-body {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  color: #6c757d;
+}
+
+.crm-card-event-description {
+  display: flex;
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  font-size: 85%;
+}
+
+.crm-card-event .crm-card-event-body .crm-card-event-description > * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-time {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  line-height: 0.9;
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.title_state_time {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.crm-booking-name {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.75);
+  margin-bottom: 0.15rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.crm-card-event:hover {
+  z-index: 1001; /* Aumentar z-index al hacer hover */
+}
+
+.event-tooltip {
+  position: fixed;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1002;
+  min-width: 200px;
+  font-size: 12px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  //overflow: hidden; // Para que el borde se ajuste al border-radius
+}
+
+.event-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; /* Posiciona la flecha en la parte inferior del tooltip */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  /* Esto crea un triángulo que apunta hacia abajo */
+  border-color: white transparent transparent transparent;
+}
+
+.tooltip-color-border {
+  background-color: rgb(var(--info-rgb));
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.tooltip-time-column {
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  font-weight: 500;
+  padding-left: 10px; // Espacio para el borde de color
+}
+
+.tooltip-info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+}
+
+.tooltip-date {
+  padding: 0;
+  margin: 0;
+  color: #888;
+  font-size: 12px;
+}
+
+.calendar-grid-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.hour-line-crm {
+  box-shadow: 0 -1px 0 #e3e3e3;
+  position: relative;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e3e3e3;
+  height: 3.75rem;
+  &:first-child,
+  &:last-child {
+    border-top: none;
+  }
+}
+
+.calendar-crm-scrollable,
+.calendar-crm-timeline,
+.calendar-crm-body {
+  scrollbar-color: rgb(var(--primary-rgb)) var(--gray-1);
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: var(--gray-1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--primary-rgb));
+    border-radius: 4px;
+  }
+}
+
+.crm-calendar-topbar {
+  padding: 15px 0px 15px;
+  margin: 0;
+  flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.button-filtro {
+  font-size: 14px !important;
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  gap: 10px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  color: color-mix(in srgb, rgb(var(--primary-rgb)), black 35%);
+  border: 1px solid #f7faff;
+  &:hover {
+    background-color: rgb(var(--primary-rgb));
+    color: #fff;
+    border-color: rgb(var(--primary-rgb));
+  }
+}
+
+.crm-calendar-month-containmer {
+  width: 100%;
+  margin: auto;
+  overflow: auto;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.crm-calendar-month {
+  position: relative;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(7, minmax(3.125rem, 1fr));
+  grid-template-rows: 3.125rem;
+  grid-auto-rows: 7rem;
+  max-height: 80vh;
+  height: 100%;
+  overflow: auto;
+}
+
+.crm-calendar-month-day-name {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: #404040;
+  padding: 0.9375rem 0.3125rem;
+}
+
+.crm-calendar-month-days {
+  border-bottom: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+  font-size: 1.25rem;
+  font-style: normal;
+  color: #000;
+  opacity: 0.8;
+  position: relative;
+}
+
+.crm-calendar-month-day-wrap {
+  cursor: pointer;
+  height: 100%;
+  padding: 0.9375rem 1.25rem;
+  z-index: 2;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.crm-calendar-day-name {
+  position: absolute;
+  left: 1.25rem;
+  top: 0.9375rem;
+  text-align: left;
+  font-size: 1.25rem;
+  color: #000;
+  text-transform: capitalize;
+}
+
+.crm-calendar-month-day-events {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.3125rem;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #8b8b8b;
+}
+
+.day--disabled {
+  background-image: url('/images/svg/date-disabled.svg');
+  color: rgba(71, 83, 92, 0.29);
+  background-color: #eff1f5;
+}
+
+.day-font-bold {
+  font-weight: 700;
+}

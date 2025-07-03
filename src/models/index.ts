@@ -14,3 +14,5 @@ export * from './activity.model';
 export * from './agenda-diaria.model';
 export * from './filtros-crm.model';
 export * from './lead-actividad-estado.model';
+export * from './calendar-event.model';
+export * from './user-calendario.model';

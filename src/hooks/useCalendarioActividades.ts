@@ -60,10 +60,22 @@ export function useCalendarioActividades() {
     }
   };
 
+  //GET - Mi Calendario
+  const getMiCalendario = async (date_start: string, date_end: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await calendarioActividadesService.getMiCalendario(date_start, date_end);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
     getAgendaDiaria,
     postLeadActividad,
     postActividadCompletada,
     postCancelarActividad,
+    getMiCalendario,
   };
 }

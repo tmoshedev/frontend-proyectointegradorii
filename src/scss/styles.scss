@@ -8,6 +8,7 @@
 
 //DatePicker
 @import 'plugins/datepicker';
+@import 'flatpickr/dist/plugins/monthSelect/style.css';
 
 //Tooltip
 @import 'react-tooltip/dist/react-tooltip.css';
@@ -75,6 +76,9 @@
 @import 'theme/_table_crm';
 @import 'theme/lead_actividad';
 @import 'theme/filtros';
+
+/* CALENDARIO CRM */
+@import 'theme/WeeklyCalendar';
 
 .user-avatar {
   display: flex;

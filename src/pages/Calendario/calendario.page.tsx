@@ -1,0 +1,113 @@
+import WeeklyCalendar from '../../components/shared/Calendario/WeeklyCalendar';
+import { useEffect, useState } from 'react';
+import { setTitleSidebar } from '../../redux/states/auth.slice';
+import { useDispatch } from 'react-redux';
+import { useCalendarioActividades, useSidebarResponsive } from '../../hooks';
+/**Components */
+import CrmCalendarTopbarComponent, { ViewType } from './components/crm-calendar-topbar.component';
+/**Moment */
+import moment from 'moment';
+import { MiCalendarioResponse } from '../../models/responses';
+import { CalendarEvent, UserCalendario } from '../../models';
+import MonthCalendarComponent from '../../components/shared/Calendario/MonthCalendar';
+import { useNavigate } from 'react-router-dom';
+
+export const CalendarioPage = () => {
+  useSidebarResponsive(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [users, setUsers] = useState<UserCalendario[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const { getMiCalendario } = useCalendarioActividades();
+
+  const [formData, setFormData] = useState<{
+    type: ViewType;
+    fecha_inicial: string;
+    fecha_final: string;
+  }>({
+    type: 'SEMANA',
+    fecha_inicial: moment().startOf('isoWeek').format('YYYY-MM-DD'), // lunes
+    fecha_final: moment().endOf('isoWeek').format('YYYY-MM-DD'), // domingo
+  });
+
+  const onEvent = (event: CalendarEvent) => {
+    switch (event.model_type) {
+      case 'LEAD_ACTIVITY':
+        navigate(`/leads/${event.model_uuid}`);
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    dispatch(setTitleSidebar('Calendario'));
+
+    // Limpia el estado al desmontar
+    return () => {
+      dispatch(setTitleSidebar(''));
+    };
+  }, []);
+
+  useEffect(() => {
+    const dataInicial = () => {
+      getMiCalendario(formData.fecha_inicial, formData.fecha_final, true).then(
+        (response: MiCalendarioResponse) => {
+          setUsers(response.users);
+          setEvents(response.actividades);
+        }
+      );
+    };
+
+    dataInicial();
+  }, [formData.fecha_inicial, formData.fecha_final]);
+
+  return (
+    <div
+      className="main-content app-content main-content--page"
+      style={{ backgroundColor: 'rgba(var(--primary-rgb), 0.08)' }}
+    >
+      <div
+        className="container-fluid p-0"
+        style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.4rem)' }}
+      >
+        <div className="row">
+          <div className="col-12">
+            <CrmCalendarTopbarComponent setFormData={setFormData} formData={formData} />
+          </div>
+          <div className="col-12">
+            {/* <MyCalendarComponent /> */}
+            {formData.type == 'SEMANA' && (
+              <WeeklyCalendar
+                weekStart={moment(formData.fecha_inicial).toDate()}
+                events={events}
+                startHour={6}
+                users={users}
+                onEvent={onEvent}
+              />
+            )}
+            {formData.type == 'DIA' && (
+              <WeeklyCalendar
+                weekStart={moment(formData.fecha_inicial).toDate()}
+                events={events}
+                startHour={6}
+                users={users}
+                numberOfDays={1}
+                onEvent={onEvent}
+              />
+            )}
+            {formData.type == 'MES' && (
+              <MonthCalendarComponent
+                date_start={formData.fecha_inicial}
+                date_end={formData.fecha_final}
+                events={events}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CalendarioPage;

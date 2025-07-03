@@ -6,3 +6,4 @@ export { default as FormulariosPage } from './Campanas/Formularios/formularios.p
 export { default as UsuariosPage } from './GestionAccesos/Usuarios/usuarios.page';
 export { default as LeadPage } from './Lead/lead.page';
 export { default as MiEquipoPage } from './MiEquipo/mi-equipo.page';
+export { default as CalendarioPage } from './Calendario/calendario.page';
