@@ -20,8 +20,10 @@ export const LeadsTableComponent = (props: Props) => {
   const { getLeads } = useLeads();
   const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
 
-  const cargarData = (page: number) => {
+  const cargarData = (page: number, onFinish?: () => void) => {
+    console.log('Cargando datos de la página:', page);
     props.cargarDataLeads(page);
+    if (onFinish) onFinish();
   };
 
   const onKankan = () => {

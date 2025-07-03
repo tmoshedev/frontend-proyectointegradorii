@@ -210,7 +210,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
           {/* HEADER: sincronizado horizontalmente */}
           <div className="calendar-crm-header" ref={headerRef}>
             {days.map((day, i) => (
-              <div className="calendar-crm-day-col" key={i}>
+              <div className="calendar-crm-day-col" key={i} style={{ ['--users-count' as any]: users.length }}>
                 <ul className="activity-days-list">
                   <li>
                     {day.format('dddd')}
@@ -244,7 +244,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
           {/* BODY: scroll vertical y horizontal */}
           <div className="calendar-crm-body" ref={bodyRef}>
             {days.map((day, i) => (
-              <div className="day-col-body" key={i}>
+              <div className="day-col-body" key={i} style={{ ['--users-count' as any]: users.length }}>
                 <div className="calendar-grid-outer-wrap">
                   <div className="calendar-grid">
                     <div className="calendar-content">

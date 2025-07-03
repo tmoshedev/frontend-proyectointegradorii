@@ -14,7 +14,7 @@ interface TableCRMProps {
     per_page: number;
     total: number;
   };
-  cargarData: (page: number) => void;
+  cargarData: (page: number, callback?: () => void) => void;
   buttonsAcctions: any[];
   onClickButtonPersonalizado: (row: any, id: string) => void;
 }
@@ -60,7 +60,7 @@ export const TableCRM = (props: TableCRMProps) => {
         !isLoading
       ) {
         setIsLoading(true);
-        props.cargarData(metaDataRef.current.current_page + 1);
+        props.cargarData(metaDataRef.current.current_page + 1, () => setIsLoading(false));
       }
     };
 

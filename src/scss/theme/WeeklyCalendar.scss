@@ -59,7 +59,8 @@
 }
 
 .calendar-crm-day-col {
-  min-width: 15.625rem;
+  //min-width: 15.625rem;
+  min-width: calc(4.002rem * var(--users-count, 1));
   flex-grow: 1;
   flex-basis: 0;
 }
@@ -119,7 +120,8 @@
 }
 
 .day-col-body {
-  min-width: 15.625rem;
+  //min-width: 15.625rem;
+  min-width: calc(4.002rem * var(--users-count, 1));
   flex-grow: 1;
   flex-basis: 0;
 }

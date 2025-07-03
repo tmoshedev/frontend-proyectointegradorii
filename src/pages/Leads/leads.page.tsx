@@ -143,7 +143,7 @@ export const LeadsPage = () => {
     setMetaData({
       current_page: 1,
       last_page: 0,
-      per_page: 50,
+      per_page: 200,
       total: 0,
     });
   };
