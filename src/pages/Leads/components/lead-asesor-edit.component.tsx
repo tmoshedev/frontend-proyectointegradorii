@@ -14,6 +14,7 @@ interface Props {
 export const LeadAsesorEditComponent = (props: Props) => {
   const { updateLeadAsesor } = useLeads();
   const formData = props.data.row;
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   const validationSchema = Yup.object({
     assigned_to: Yup.string().required('Campo requerido'),
@@ -42,10 +43,10 @@ export const LeadAsesorEditComponent = (props: Props) => {
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
       <div className="modal-body">
         <div className="row">
-          {/* Asesor */}
+          {/* Asesor/Supervisor */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="level_id">
-              Asesor<span className="text-danger">*</span>
+               {rolActual === 'COMMERCIAL_LEADER' ? 'Supervisor' : 'Asesor'}<span className="text-danger">*</span>
             </label>
             <select
               onChange={handleSelectChange}
