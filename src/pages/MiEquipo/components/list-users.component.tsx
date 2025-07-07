@@ -23,7 +23,7 @@ export const ListUsersComponent = (props: Props) => {
     postHabilitarComercial(userId, true).then((response: any) => {
       SweetAlert.success('Mensaje', response.message);
       const updatedUsers = users.map((user) => {
-        if (user.id === userId) {
+        if (user.id == userId) {
           return { ...user, state: 1, state_name: 'Activo' };
         }
         return user;
@@ -36,7 +36,7 @@ export const ListUsersComponent = (props: Props) => {
     deshabilitarComercial(userId, true).then((response: any) => {
       SweetAlert.success('Mensaje', response.message);
       const updatedUsers = users.map((user) => {
-        if (user.id === userId) {
+        if (user.id == userId) {
           return { ...user, state: 0, state_name: 'Desactivado' };
         }
         return user;
@@ -47,7 +47,7 @@ export const ListUsersComponent = (props: Props) => {
 
   const handleSelectAllUsers = (isChecked: boolean) => {
     if (isChecked) {
-      setUsuariosSeleccionados(users.filter((user) => user.state === 1).map((user) => user.id));
+      setUsuariosSeleccionados(users.filter((user) => user.state == 1).map((user) => user.id));
     } else {
       setUsuariosSeleccionados([]);
     }
@@ -57,7 +57,7 @@ export const ListUsersComponent = (props: Props) => {
     if (isChecked) {
       setUsuariosSeleccionados((prev) => [...prev, user.id]);
     } else {
-      setUsuariosSeleccionados((prev) => prev.filter((id) => id !== user.id));
+      setUsuariosSeleccionados((prev) => prev.filter((id) => id != user.id));
     }
   };
 
@@ -122,7 +122,7 @@ export const ListUsersComponent = (props: Props) => {
                           id={`user_${index}`}
                           name={`user_${index}`}
                           type="checkbox"
-                          disabled={user.state !== 1}
+                          disabled={user.state != 1}
                           className="form-check-input"
                           checked={usersSeleccionados.includes(user.id)}
                           onChange={(e) => handleLeadSelection(e.target.checked, user)}

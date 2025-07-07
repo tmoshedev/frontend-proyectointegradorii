@@ -679,3 +679,10 @@
 .day-font-bold {
   font-weight: 700;
 }
+
+.day-active {
+  background: rgb(var(--primary-rgb));
+  border-radius: 0.625rem;
+  color: #fff !important;
+  padding: 2px 6px;
+}
