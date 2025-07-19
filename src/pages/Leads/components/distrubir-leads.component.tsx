@@ -277,6 +277,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                 <div className="tabla-cell text-center">Fecha creación</div>
                 <div className="tabla-cell text-center">Proyecto</div>
                 <div className="tabla-cell text-center">Origen</div>
+                <div className="tabla-cell text-center">Dni</div>
                 <div className="tabla-cell text-center">Nombres</div>
                 <div className="tabla-cell text-center">Apellidos</div>
                 <div className="tabla-cell text-center">Celular</div>
@@ -315,6 +316,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                       </div>
                     </div>
                     <div className="tabla-cell">{lead.channel_name ?? '-'}</div>
+                    <div className="tabla-cell">{lead.document_number ?? '-'}</div>
                     <div className="tabla-cell">{lead.names ?? '-'}</div>
                     <div className="tabla-cell">{lead.last_names ?? '-'}</div>
                     <div className="tabla-cell">{lead.cellphone ?? '-'}</div>

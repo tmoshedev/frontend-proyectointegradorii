@@ -13,6 +13,7 @@ interface Props {
   data: any;
   onRefreshLeads: () => void;
 }
+
 export const LeadFormComponent = (props: Props) => {
   const { requirements, storeLead } = useLeads();
   const formData: LeadFormRequest = props.data.row || {
@@ -20,6 +21,7 @@ export const LeadFormComponent = (props: Props) => {
     lead_state_id: '1',
     project_id: '',
     channel_id: '',
+    document_number: '',
     names: '',
     last_names: '',
     cellphone: '',
@@ -130,6 +132,25 @@ export const LeadFormComponent = (props: Props) => {
             </select>
             <ErrorValidate state={formik.errors.channel_id} />
           </div>
+         {/* Dni */}
+          <div className="col-md-12 mb-3">
+            <label className="form-label" htmlFor="document_number">
+              Dni
+            </label>
+            <input
+              autoComplete="off"
+              onChange={handleInputChange}
+              value={formik.values.document_number ?? ''}
+              name="document_number"
+              id="document_number"
+              type="text"
+              className={
+                'todo-mayuscula form-control form-control-sm' +
+                (formik.errors.document_number && formik.touched.document_number ? ' is-invalid' : '')
+              }
+            />
+            <ErrorValidate state={formik.errors.cellphone} />
+          </div>    
           {/* Nombres */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="names">

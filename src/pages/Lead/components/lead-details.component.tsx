@@ -19,12 +19,14 @@ import { useLeads } from '../../../hooks';
 export const LeadDetailsComponent = () => {
   const dispatch = useDispatch();
   const { updateProjects, updateLabels } = useLeads();
-  const { lead, projectsAvailable, labelsAvailable } = useSelector((store: AppStore) => store.lead);
+  const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector((store: AppStore) => store.lead);
 
   const [editProjects, setEditProjects] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<any[]>(lead.lead_projects || []);
   const [selectedLabels, setSelectedLabels] = useState<any[]>(lead.lead_labels || []);
+    const [selectedChannels, setSelectedChannels] = useState<any[]>(lead.channel || []);
+
 
   const onCancelProyectos = () => {
     setSelectedProjects(lead.lead_projects || []);
@@ -124,6 +126,13 @@ export const LeadDetailsComponent = () => {
           <h4>Datos del cliente</h4>
         </div>
         <div className="bock-item__datos">
+           <FieldLeadComponent
+            onUpdateRest={onUpdateLead}
+            label={'Dni'}
+            value={lead.document_number}
+            name="document_number"
+            uuid={lead.uuid}
+          />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
             label={'Nombres'}
