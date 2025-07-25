@@ -156,6 +156,10 @@ export const LeadCardComponent = (props: LeacCardProps) => {
         {CanCheck('update-asesor') && (
           <div className="d-flex align-items-center">
             <button
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content={`${
+                rolActual === 'COMMERCIAL_LEADER' ? 'Editar Supervisor' : 'Editar asesor'
+              }`}
               className="btn btn-outline-cancel btn-xs"
               onClick={() => props.onEditarAsesor(props.lead)}
             >
