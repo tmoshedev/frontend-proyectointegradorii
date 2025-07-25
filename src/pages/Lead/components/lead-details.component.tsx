@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import MultiSelectDropdown from '../../../components/MultiSelectDropdown';
-import { LeadLabel, LeadProject } from '../../../models';
+import { LeadLabel, LeadProject, UserLabel } from '../../../models';
 import FieldLeadComponent from './field-lead.component';
 import DOMPurify from 'dompurify';
 // Redux
@@ -10,23 +10,34 @@ import {
   updateLeadField,
   updateLeadLabels,
   updateLeadProjects,
+
 } from '../../../redux/states/lead.slice';
+
+import { updateUserLabels } from '../../../redux/states/user.slice';
 
 //Utilities
 import { Bounce, toast } from 'react-toastify';
-import { useLeads } from '../../../hooks';
+import { useLeads, useUsers } from '../../../hooks';
 
 export const LeadDetailsComponent = () => {
   const dispatch = useDispatch();
   const { updateProjects, updateLabels } = useLeads();
+  const { updateUserLabels } = useUsers();
+
   const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector((store: AppStore) => store.lead);
+  const { user, userlabelsAvailable } = useSelector((store: AppStore) => store.user);
 
   const [editProjects, setEditProjects] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
+  const [editChannels, setEditChannels] = useState(false);
+  const [editUserLabels, setEditUserLabels] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<any[]>(lead.lead_projects || []);
   const [selectedLabels, setSelectedLabels] = useState<any[]>(lead.lead_labels || []);
-    const [selectedChannels, setSelectedChannels] = useState<any[]>(lead.channel || []);
-
+  const [selectedUserLabels, setSelectedUserLabels] = useState<any[]>(user?.user_labels || []);
+  const [selectedChannels, setSelectedChannels] = useState<any[]>(lead.channel || []);
+  const [channels, setChannels] = useState<any[]>([]);
+const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.channel_id ?? '');
+  const { requirements, updateChannels } = useLeads();
 
   const onCancelProyectos = () => {
     setSelectedProjects(lead.lead_projects || []);
@@ -74,6 +85,16 @@ export const LeadDetailsComponent = () => {
     setEditLabels(false);
   };
 
+  const onCancelChannels = () => {
+    setSelectedChannels(lead.channels || []);
+    setEditChannels(false);
+  };
+
+  const onCancelUserLabels = () => {
+    setSelectedUserLabels(user.user_labels || []);
+    setEditUserLabels(false);
+  };
+
   const onGuardarLabels = () => {
     updateLabels(lead.uuid, selectedLabels, false)
       .then((response) => {
@@ -106,8 +127,69 @@ export const LeadDetailsComponent = () => {
       });
   };
 
+  const onGuardarCanal = () => {
+    updateChannels(lead.uuid, String(selectedChannelId), false)
+      .then((response) => {
+        dispatch(updateLeadField({ name: 'channel_id', value: String(selectedChannelId) }));
+        setEditChannels(false);
+        toast.success(response.message, {
+          position: 'top-center',
+          autoClose: 4000,
+          theme: 'light',
+          transition: Bounce,
+        });
+      })
+      .catch(() => {
+        toast.error('Error al actualizar el canal de origen.', {
+          position: 'top-center',
+          autoClose: 4000,
+          theme: 'light',
+          transition: Bounce,
+        });
+      });
+  };
+
+  const onGuardarUserLabels = () => {
+    updateUserLabels(user.username, selectedUserLabels, false)
+      .then((response) => {
+        toast.success(response.message, {
+          position: 'top-center',
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
+        });
+        setEditUserLabels(false);
+      })
+      .catch((error) => {
+        toast.error('Error al actualizar las etiquetas.', {
+          position: 'top-center',
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
+        });
+      });
+  };
+
   const onActivarEditLabel = () => {
     setEditLabels(true);
+  };
+
+  const onActivarEditChannel = () => {
+    setEditChannels(true);
+  };
+
+  const onActivarEditUserLabel = () => {
+    setEditUserLabels(true);
   };
 
   const onUpdateLead = (name: string, value: string) => {
@@ -119,6 +201,16 @@ export const LeadDetailsComponent = () => {
     setSelectedLabels(lead.lead_labels || []);
   }, [lead]);
 
+  useEffect(() => {
+    setSelectedUserLabels(user?.user_labels || []);
+  }, [user]);
+
+  useEffect(() => {
+    requirements(true).then((response: any) => {
+      setChannels(response.channels);
+    });
+  }, []);
+
   return (
     <div className="lead-content__sidebar scroll-personalizado">
       <div className="block-item">
@@ -126,7 +218,7 @@ export const LeadDetailsComponent = () => {
           <h4>Datos del cliente</h4>
         </div>
         <div className="bock-item__datos">
-           <FieldLeadComponent
+          <FieldLeadComponent
             onUpdateRest={onUpdateLead}
             label={'Dni'}
             value={lead.document_number}
@@ -220,7 +312,7 @@ export const LeadDetailsComponent = () => {
       </div>
       <div className="block-item">
         <div className="bock-item__title">
-          <h4>Etiquetas</h4>
+          <h4>Etiquetas de salida</h4>
         </div>
 
         <div className="bock-item__datos">
@@ -266,6 +358,53 @@ export const LeadDetailsComponent = () => {
       </div>
       <div className="block-item">
         <div className="bock-item__title">
+          <h4>Etiquetas propias</h4>
+        </div>
+
+        <div className="bock-item__datos">
+          <div className="fields-list-row">
+            {editUserLabels ? (
+              <MultiSelectDropdown
+                options={userlabelsAvailable}
+                selected={selectedUserLabels}
+                onChange={setSelectedUserLabels}
+                placeholder="Selecciona tus etiquetas"
+                onCancel={onCancelUserLabels}
+                onGuardar={onGuardarUserLabels}
+              />
+            ) : (
+              <div className="fields-list__components">
+                <div className="list-fields-items">
+                  <ul className="fields-list__items">
+                    {user?.user_labels?.map((userlabel: UserLabel, index: number) => (
+                      <li key={index} className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">{userlabel.name}</span>
+                        </div>
+                      </li>
+                    ))}
+
+                    {user?.user_labels?.length === 0 && (
+                      <li className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">Sin etiquetas</span>
+                        </div>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div className="list-fields-edit">
+                  <button onClick={onActivarEditUserLabel} className="btn btn-outline-cancel btn-xs">
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="block-item">
+        <div className="bock-item__title">
           <h4>Origen</h4>
         </div>
         <div className="bock-item__datos">
@@ -273,14 +412,47 @@ export const LeadDetailsComponent = () => {
             <div className="fields-list__label">Canal de origen:</div>
             <div className="fields-list__components">
               <div className="fields-list__value">
-                <span
-                  className="me-1"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(lead.channel_icon_html || ''),
-                  }}
-                />
-                <span>{lead.channel_name != '' ? lead.channel_name : 'SIN ASIGNAR'}</span>
+                {editChannels ? (
+                  <div className="fields-list__components">
+                    <select
+                    name="channel_id"
+              id="channel_id"
+                      className="form-select form-select-sm"
+                      value={selectedChannelId}
+onChange={(e) => setSelectedChannelId(Number(e.target.value))}
+                    >
+                      <option value="">Seleccionar canal</option>
+                      {channels.map((channel: any) => (
+                        <option key={channel.id} value={channel.id}>
+                          {channel.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="mt-2 d-flex justify-content-end gap-2">
+                      <button onClick={() => setEditChannels(false)} className="btn btn-light btn-sm">Cancelar</button>
+                      <button onClick={onGuardarCanal} className="btn btn-primary btn-sm">Guardar</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="fields-list__components">
+                    <div className="fields-list__value">
+                      <span
+                        className="me-1"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(lead.channel_icon_html || ''),
+                        }}
+                      />
+                      <span>{lead.channel_name !== '' ? lead.channel_name : 'SIN ASIGNAR'}</span>
+                    </div>
+                    <div className="list-fields-edit">
+                      <button onClick={onActivarEditChannel} className="btn btn-outline-cancel btn-xs">
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+
             </div>
           </div>
         </div>
