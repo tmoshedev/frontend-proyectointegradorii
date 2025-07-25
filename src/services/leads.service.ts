@@ -25,7 +25,7 @@ export const patchUpdateLead = async (lead_id: string, data: any) => {
   return response;
 };
 
-export const requirements = async () => {
+export const requirements = async (p0: boolean) => {
   const response = await apiInstance.get(`/leads/requirements`);
   return response;
 };
@@ -68,6 +68,14 @@ export const updateProjects = async (lead_uuid: string, projects: any[]) => {
   });
   return response;
 };
+
+export const updateChannels = async (lead_uuid: string, channels: string) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-channel`, {
+    channels,
+  });
+  return response;
+};
+
 
 export const updateLabels = async (lead_uuid: string, labels: any[]) => {
   const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-labels`, {

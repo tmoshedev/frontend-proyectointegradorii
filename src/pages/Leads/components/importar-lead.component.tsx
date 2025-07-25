@@ -47,7 +47,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         defval: '',
         range: 1, // Saltar las dos primeras filas
-        header: ['project_id', 'channel_id', 'names', 'last_names', 'cellphone', 'ciudad'],
+        header: ['project_id', 'channel_id', 'document_number','names', 'last_names', 'cellphone', 'ciudad'],
       });
       setData(jsonData as ImportarLeadRequest[]);
     };
@@ -58,7 +58,6 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
   const onImportar = () => {
     const nuevosErrores = data.map((item) => ({
       //project_id: isEmpty(item.project_id),
-      channel_id: isEmpty(item.channel_id),
       names: isEmpty(item.names),
       cellphone: isEmpty(item.cellphone),
     }));
@@ -125,6 +124,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
               <div className="tabla-zize-header">
                 <div className="tabla-zize-col tabla-zize-col-15 text-center">Proyecto</div>
                 <div className="tabla-zize-col tabla-zize-col-15">Canal captación</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Dni</div>
                 <div className="tabla-zize-col tabla-zize-col-15 text-center">Nombres</div>
                 <div className="tabla-zize-col tabla-zize-col-20 text-center">Apellidos</div>
                 <div className="tabla-zize-col tabla-zize-col-10 text-center">Celular</div>
@@ -137,7 +137,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                   const isEmpty = (value: any) => !value || String(value).trim() === '';
                   const isRowIncomplete =
                     //isEmpty(item.project_id) ||
-                    isEmpty(item.channel_id) ||
+                    isEmpty(item.document_number) ||
                     isEmpty(item.names) ||
                     isEmpty(item.last_names) ||
                     isEmpty(item.cellphone) ||
@@ -167,28 +167,23 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                           ))}
                         </select>
                       </div>
+                      
                       <div className="tabla-zize-col tabla-zize-col-15">
-                        <select
-                          className={`form-select form-select-sm ${
-                            erroresValidacion[index]?.channel_id ? 'is-invalid' : ''
+                        <input
+                          type="text"
+                          className={`form-control form-control-sm todo-mayuscula ${
+                            erroresValidacion[index]?.document_number ? 'is-invalid' : ''
                           }`}
-                          value={item.channel_id}
+                          value={item.document_number}
                           onChange={(e) => {
                             const value = e.target.value;
                             setData((prev) => {
                               const newData = [...prev];
-                              newData[index].channel_id = value;
+                              newData[index].document_number = value;
                               return newData;
                             });
                           }}
-                        >
-                          <option value="">Seleccionar</option>
-                          {channels.map((channel: any) => (
-                            <option key={channel.id} value={channel.id}>
-                              {channel.name}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
                       <div className="tabla-zize-col tabla-zize-col-15">
                         <input

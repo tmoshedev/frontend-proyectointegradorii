@@ -3,6 +3,7 @@ export interface LeadFormRequest {
   lead_state_id: string;
   project_id: string;
   channel_id: string;
+  document_number: string;
   names: string;
   last_names: string;
   cellphone: string;

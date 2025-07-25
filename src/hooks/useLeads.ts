@@ -36,7 +36,7 @@ export function useLeads() {
   const requirements = async (loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.requirements();
+      const response = await leadsService.requirements(loading);
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -98,11 +98,22 @@ export function useLeads() {
     }
   };
 
+
   //POST - UPDATE LABELS
   const updateLabels = async (lead_uuid: string, labels: any[], loading: boolean) => {
     dispatch(setLoading(loading));
     try {
       const response = await leadsService.updateLabels(lead_uuid, labels);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const updateChannels = async (lead_uuid: string, channel_ids: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.updateChannels(lead_uuid, channel_ids);
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -223,5 +234,6 @@ export function useLeads() {
     updateLeadAsesor,
     changeEstadoFinal,
     getLeads,
+    updateChannels,
   };
 }
