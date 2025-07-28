@@ -7,6 +7,7 @@ interface LeacCardProps {
   lead: Lead;
   onClickLead: (lead_uuid: string) => void;
   onEditarAsesor: (lead: Lead) => void;
+  onChangeStateLead: (lead_uuid: string, state: string) => void;
 }
 export const LeadCardComponent = (props: LeacCardProps) => {
   const getInitials = (user_names: string, user_father_names: string) => {
@@ -85,8 +86,13 @@ export const LeadCardComponent = (props: LeacCardProps) => {
           </p>
         )}
         <div className="d-flex justify-content-center">
-          <p className="mt-2 tex-center">
-            <span className={`lead-icon ${props.lead.interes}`}>
+          <div className="dropdown">
+            <span
+              onClick={(e) => e.stopPropagation()}
+              className={`lead-icon ${props.lead.interes}`}
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
               {(() => {
                 switch (props.lead.interes) {
                   case 'caliente':
@@ -116,7 +122,43 @@ export const LeadCardComponent = (props: LeacCardProps) => {
                 }
               })()}
             </span>
-          </p>
+
+            <ul className="dropdown-menu">
+              <li>
+                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'caliente'); }}>
+                  <span
+                    className={`lead-icon ${
+                      props.lead.interes === 'caliente' ? props.lead.interes : 'menu-estado'
+                    }`}
+                  >
+                    <i className="fa-solid fa-fire"></i> Lead Caliente
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'tibio'); }}>
+                  <span
+                    className={`lead-icon ${
+                      props.lead.interes === 'tibio' ? props.lead.interes : 'menu-estado'
+                    }`}
+                  >
+                    <i className="fa-solid fa-temperature-half"></i> Lead Tibio
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'frio'); }}>
+                  <span
+                    className={`lead-icon ${
+                      props.lead.interes === 'frio' ? props.lead.interes : 'menu-estado'
+                    }`}
+                  >
+                    <i className="fa-solid fa-snowflake"></i> Lead Frío
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <div

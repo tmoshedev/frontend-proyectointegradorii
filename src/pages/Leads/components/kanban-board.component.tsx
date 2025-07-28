@@ -86,6 +86,11 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     props.onFiltrosLeads('LEADS_KANBAN');
   };
 
+  const onChangeStateLead = (lead_uuid: string, state: string) => {
+    console.log('Cambiar estado del lead:', lead_uuid, 'a', state);
+    //props.onChangeStateLead(lead_uuid, state);
+  };
+
   useEffect(() => {
     const dataInicial = () => {
       getLeadStatus('1', '1', 'get', '', '', '', '', '', '', true).then(
@@ -144,6 +149,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                       key={lead.id}
                       onClickLead={onClickLead}
                       onEditarAsesor={onEditarAsesor}
+                      onChangeStateLead={onChangeStateLead}
                     />
                   ))}
                 </ReactSortable>

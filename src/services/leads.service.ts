@@ -8,8 +8,8 @@ import {
 } from '../models/responses';
 import apiInstance from './api';
 
-export const postChangeState = async (lead_state_id: string, lead_id: string) => {
-  const response = await apiInstance.post<SuccessResponse>(`/leads/change-state`, {
+export const postChangeEtapa = async (lead_state_id: string, lead_id: string) => {
+  const response = await apiInstance.post<SuccessResponse>(`/leads/change-etapa`, {
     lead: {
       lead_state_id,
       lead_id,
