@@ -10,6 +10,7 @@ export interface AppStore {
   auth: any;
   dataTable: any;
   lead: any;
+  user: any;
 }
 
 export default configureStore<AppStore>({
@@ -18,5 +19,6 @@ export default configureStore<AppStore>({
     auth: authSlice.reducer,
     dataTable: dataTableSlice.reducer,
     lead: leadSlice.reducer,
+    user: leadSlice.reducer, 
   },
 });
