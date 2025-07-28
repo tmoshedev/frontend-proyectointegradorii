@@ -76,7 +76,6 @@ export const updateChannels = async (lead_uuid: string, channels: string) => {
   return response;
 };
 
-
 export const updateLabels = async (lead_uuid: string, labels: any[]) => {
   const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-labels`, {
     labels,
@@ -157,5 +156,14 @@ export const getLeads = async (
   const response = await apiInstance.get<TableCrmResponse>(
     `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}`
   );
+  return response;
+};
+
+export const changeNivelInteres = async (uuid: string, nivel_interes: string) => {
+  const response = await apiInstance.patch<LeadResponse>(`/leads/${uuid}/change-nivel-interes`, {
+    lead: {
+      nivel_interes,
+    },
+  });
   return response;
 };

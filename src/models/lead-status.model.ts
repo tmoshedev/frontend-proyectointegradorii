@@ -5,4 +5,5 @@ export interface LeadStatus {
   name: string;
   order: number;
   leads: Lead[];
+  leads_count: number;
 }

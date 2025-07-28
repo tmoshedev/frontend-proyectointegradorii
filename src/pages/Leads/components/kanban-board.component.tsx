@@ -4,32 +4,32 @@ import LeadCardComponent from './lead-card.component';
 import LeadFooterComponent, {
   DropAction as DropActionFooter,
 } from '../components/lead-footer.component';
-import { useLeads, useLeadStatus } from '../../../hooks';
-import { useCallback, useEffect, useState } from 'react';
-import { Lead, LeadStatus } from '../../../models';
-import { LeadStatusResponse } from '../../../models/responses';
+import { useLeads } from '../../../hooks';
+import { useCallback, useState } from 'react';
+import { Lead } from '../../../models';
+import { EtapaConPaginacion } from '../../../models/responses';
 import { useNavigate } from 'react-router-dom';
+import SkeletonCardComponent from './SkeletonCardComponent';
 
 interface KanbanBoardComponentProps {
   handleStateView: (view: string) => void;
   handleModalLeadForm: (type: string) => void;
   onRefreshLeads: () => void;
-  etapas: LeadStatus[];
-  setEtapas: React.Dispatch<React.SetStateAction<LeadStatus[]>>;
+  etapas: EtapaConPaginacion[];
+  setEtapas: React.Dispatch<React.SetStateAction<EtapaConPaginacion[]>>;
   handleModalAsesor: (lead: Lead, users: any[]) => void;
   onFiltrosLeads: (type: string) => void;
   users: any[];
-  setUsers: any;
-  setLabels: any;
-  setChannels: any;
-  setStages: any;
-  setProjects: any;
   filtros: any[];
+  nivelesInteres: string[];
+  handleNivelInteresChange: (nivel: string) => void;
+  cargarMasLeads: (etapaId: string) => void;
+  setIsLoadingKanban: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
-  const { getLeadStatus } = useLeadStatus();
-  const { changeState, changeEstadoFinal } = useLeads();
+  const { postChangeEtapa, changeEstadoFinal, changeNivelInteres } = useLeads();
+
   const navigate = useNavigate();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -48,7 +48,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     const leadId = Number(item.getAttribute('data-id'));
 
     if (destColumn) {
-      changeState(String(destColumn), String(leadId), false).then(() => {
+      postChangeEtapa(String(destColumn), String(leadId), false).then(() => {
         // Aquí podrías manejar la respuesta de la API si es necesario
       });
     }
@@ -86,27 +86,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     props.onFiltrosLeads('LEADS_KANBAN');
   };
 
-  const onChangeStateLead = (lead_uuid: string, state: string) => {
-    console.log('Cambiar estado del lead:', lead_uuid, 'a', state);
-    //props.onChangeStateLead(lead_uuid, state);
+  const onChangeStateLead = (lead_uuid: string, nivel_interes: string) => {
+    changeNivelInteres(lead_uuid, nivel_interes, false).then(() => {});
   };
-
-  useEffect(() => {
-    const dataInicial = () => {
-      getLeadStatus('1', '1', 'get', '', '', '', '', '', '', true).then(
-        (response: LeadStatusResponse) => {
-          props.setEtapas(response.data.lead_etapas);
-          props.setUsers(response.data.users);
-          props.setLabels(response.data.labels);
-          props.setChannels(response.data.channels);
-          props.setStages(response.data.stages);
-          props.setProjects(response.data.projects);
-        }
-      );
-    };
-
-    dataInicial();
-  }, []);
 
   return (
     <div
@@ -121,6 +103,8 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             handleModalLeadForm={props.handleModalLeadForm}
             onFiltrosLeads={onFiltrosLeads}
             filtros={props.filtros}
+            nivelesInteres={props.nivelesInteres}
+            handleNivelInteresChange={props.handleNivelInteresChange}
           />
           <div className="kanban-columns">
             {props.etapas.map((etapa) => (
@@ -128,31 +112,59 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                 <div className="kanban-column-header">
                   <div className="kanban-column-header-stage">
                     <h4 className="kanban-column-title p-0 m-0">{etapa.name}</h4>
-                    <small className="p-0 m-0">{etapa.leads.length} leads</small>
+                    <small className="p-0 m-0">
+                      {!etapa.meta.is_loading
+                        ? `Mostrando ${etapa.leads.length} de ${etapa.meta.total}`
+                        : 'Cargando...'}
+                    </small>
                   </div>
                 </div>
-                <ReactSortable
-                  list={etapa.leads}
-                  setList={(newLeads) => handleLeadsChange(etapa.id, newLeads)}
-                  group="etapas"
-                  animation={150}
-                  ghostClass="ghost"
-                  dragClass="drag"
-                  className="kanban-column-content"
-                  forceFallback
-                  onStart={handleDragStart}
-                  onEnd={handleDragEnd}
-                >
-                  {etapa.leads.map((lead) => (
-                    <LeadCardComponent
-                      lead={lead}
-                      key={lead.id}
-                      onClickLead={onClickLead}
-                      onEditarAsesor={onEditarAsesor}
-                      onChangeStateLead={onChangeStateLead}
-                    />
-                  ))}
-                </ReactSortable>
+
+                <div className="kanban-column-content">
+                  {etapa.meta.is_loading && (
+                    <>
+                      <SkeletonCardComponent />
+                      <SkeletonCardComponent />
+                      <SkeletonCardComponent />
+                    </>
+                  )}
+                  <ReactSortable
+                    list={etapa.leads}
+                    setList={(newLeads) => handleLeadsChange(etapa.id, newLeads)}
+                    group="etapas"
+                    animation={150}
+                    ghostClass="ghost"
+                    dragClass="drag"
+                    className="sortable-container"
+                    forceFallback
+                    onStart={handleDragStart}
+                    onEnd={handleDragEnd}
+                  >
+                    {etapa.leads.map((lead) => (
+                      <LeadCardComponent
+                        lead={lead}
+                        key={lead.id}
+                        onClickLead={onClickLead}
+                        onEditarAsesor={onEditarAsesor}
+                        onChangeStateLead={onChangeStateLead}
+                      />
+                    ))}
+                  </ReactSortable>
+                  <div className="kanban-column-footer text-center">
+                    {etapa.meta.is_loading && (
+                      <div className="spinner-border spinner-border-sm" role="status"></div>
+                    )}
+                    {!etapa.meta.is_loading && etapa.meta.current_page < etapa.meta.last_page && (
+                      <button
+                        className="btn btn-link btn-sm"
+                        onClick={() => props.cargarMasLeads(String(etapa.id))}
+                      >
+                        <i className="fa-solid fa-chevron-down me-2"></i>
+                        Cargar más
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

@@ -10,7 +10,6 @@ import {
   updateLeadField,
   updateLeadLabels,
   updateLeadProjects,
-
 } from '../../../redux/states/lead.slice';
 
 import { updateUserLabels } from '../../../redux/states/user.slice';
@@ -24,7 +23,9 @@ export const LeadDetailsComponent = () => {
   const { updateProjects, updateLabels } = useLeads();
   const { updateUserLabels } = useUsers();
 
-  const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector((store: AppStore) => store.lead);
+  const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector(
+    (store: AppStore) => store.lead
+  );
   const { user, userlabelsAvailable } = useSelector((store: AppStore) => store.user);
 
   const [editProjects, setEditProjects] = useState(false);
@@ -36,7 +37,7 @@ export const LeadDetailsComponent = () => {
   const [selectedUserLabels, setSelectedUserLabels] = useState<any[]>(user?.user_labels || []);
   const [selectedChannels, setSelectedChannels] = useState<any[]>(lead.channel || []);
   const [channels, setChannels] = useState<any[]>([]);
-const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.channel_id ?? '');
+  const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.channel_id ?? '');
   const { requirements, updateChannels } = useLeads();
 
   const onCancelProyectos = () => {
@@ -394,7 +395,10 @@ const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.cha
                   </ul>
                 </div>
                 <div className="list-fields-edit">
-                  <button onClick={onActivarEditUserLabel} className="btn btn-outline-cancel btn-xs">
+                  <button
+                    onClick={onActivarEditUserLabel}
+                    className="btn btn-outline-cancel btn-xs"
+                  >
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
                 </div>
@@ -415,11 +419,11 @@ const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.cha
                 {editChannels ? (
                   <div className="fields-list__components">
                     <select
-                    name="channel_id"
-              id="channel_id"
+                      name="channel_id"
+                      id="channel_id"
                       className="form-select form-select-sm"
                       value={selectedChannelId}
-onChange={(e) => setSelectedChannelId(Number(e.target.value))}
+                      onChange={(e) => setSelectedChannelId(Number(e.target.value))}
                     >
                       <option value="">Seleccionar canal</option>
                       {channels.map((channel: any) => (
@@ -429,8 +433,15 @@ onChange={(e) => setSelectedChannelId(Number(e.target.value))}
                       ))}
                     </select>
                     <div className="mt-2 d-flex justify-content-end gap-2">
-                      <button onClick={() => setEditChannels(false)} className="btn btn-light btn-sm">Cancelar</button>
-                      <button onClick={onGuardarCanal} className="btn btn-primary btn-sm">Guardar</button>
+                      <button
+                        onClick={() => setEditChannels(false)}
+                        className="btn btn-light btn-sm"
+                      >
+                        Cancelar
+                      </button>
+                      <button onClick={onGuardarCanal} className="btn btn-primary btn-sm">
+                        Guardar
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -445,14 +456,16 @@ onChange={(e) => setSelectedChannelId(Number(e.target.value))}
                       <span>{lead.channel_name !== '' ? lead.channel_name : 'SIN ASIGNAR'}</span>
                     </div>
                     <div className="list-fields-edit">
-                      <button onClick={onActivarEditChannel} className="btn btn-outline-cancel btn-xs">
+                      <button
+                        onClick={onActivarEditChannel}
+                        className="btn btn-outline-cancel btn-xs"
+                      >
                         <i className="fa-solid fa-pen-to-square"></i>
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-
             </div>
           </div>
         </div>

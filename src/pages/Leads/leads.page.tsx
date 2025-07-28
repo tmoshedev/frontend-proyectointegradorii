@@ -1,10 +1,10 @@
-import { use, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { useLeads, useLeadStatus, useSidebarResponsive } from '../../hooks';
 import KanbanBoardComponent from './components/kanban-board.component';
 import ImportarLeadComponent from './components/importar-lead.component';
 import ModalComponent from '../../components/shared/modal.component';
 import LeadFormComponent from './components/form-lead.component';
-import { LeadStatusResponse, TableCrmResponse } from '../../models/responses';
+import { EtapaConPaginacion, TableCrmResponse, TableHeaderResponse } from '../../models/responses';
 import { LeadStatus } from '../../models';
 import DistribuirLeadComponent from './components/distrubir-leads.component';
 import LeadAsesorEditComponent from './components/lead-asesor-edit.component';
@@ -27,26 +27,35 @@ export const LeadsPage = () => {
   useSidebarResponsive(true);
   const authState = useSelector((state: AppStore) => state.auth);
   const rolActual = localStorage.getItem('rolActual') || '';
-
   const dispatch = useDispatch();
-  //LEADS TABLE
-  const { getLeads } = useLeads();
+
+  // ---- ESTADOS ----
+  const [etapas, setEtapas] = useState<EtapaConPaginacion[]>([]); // Para Kanban
+  const [leads, setLeads] = useState<LeadStatus[]>([]); // Para Tabla
   const [metaData, setMetaData] = useState({
     current_page: 1,
     last_page: 0,
     per_page: 50,
     total: 0,
-  });
-  //KANBAN
-  const { getLeadStatus } = useLeadStatus();
-  const [leads, setLeads] = useState<LeadStatus[]>([]);
-  const [etapas, setEtapas] = useState<LeadStatus[]>([]);
+  }); // Para Tabla
+  const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
   const [stateView, setStateView] = useState<string>('KANBAN');
+  const [isTableLoading, setIsTableLoading] = useState(false);
+
+  // Estados de datos estáticos (usuarios, etiquetas, etc.)
   const [users, setUsers] = useState<any[]>([]);
   const [labels, setLabels] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [stages, setStages] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+
+  // Estados de filtros
+  const [filtros, setFiltros] = useState<any[]>([]);
+  const [nivelesInteres, setNivelesInteres] = useState<string[]>([]);
+
+  // Hooks de API
+  const { getLeads } = useLeads();
+  const { getLeadStatus, getLeadByEtapa } = useLeadStatus();
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
@@ -72,10 +81,10 @@ export const LeadsPage = () => {
       value: 'channel_ids',
       opciones: channels.map((c) => ({ label: c.name, value: c.id })),
     },
-    Etapas: {
+    /* Etapas: {
       value: 'stage_ids',
       opciones: stages.map((c) => ({ label: c.name, value: c.id })),
-    },
+    }, */
     Etiquetas: {
       value: 'lead_labels_ids',
       opciones: labels.map((c) => ({ label: c.name, value: c.id })),
@@ -101,7 +110,10 @@ export const LeadsPage = () => {
       ],
     },
   };
-  const [filtros, setFiltros] = useState<any[]>([]);
+
+  //KANBAN
+  const [isLoadingKanban, setIsLoadingKanban] = useState(true);
+
   //MODAL NUEVO LEAD
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -139,14 +151,9 @@ export const LeadsPage = () => {
     });
 
   const handleStateView = (view: string) => {
-    setStateView(view);
     setFiltros([]);
-    setMetaData({
-      current_page: 1,
-      last_page: 0,
-      per_page: 200,
-      total: 0,
-    });
+    setNivelesInteres([]);
+    setStateView(view);
   };
 
   const onCloseModalForm = () => {
@@ -187,35 +194,7 @@ export const LeadsPage = () => {
   };
 
   const onRefreshLeads = () => {
-    const getValorFiltro = (tipoApi: string) => {
-      const filtro = filtros.find(
-        (f) =>
-          f.tipo && TODOS_LOS_FILTROS[f.tipo as keyof typeof TODOS_LOS_FILTROS]?.value === tipoApi
-      );
-      return filtro?.valoresSeleccionados.map((v: any) => v.value).join(',') || '';
-    };
-
-    const user_ids = getValorFiltro('user_ids');
-    const channel_ids = getValorFiltro('channel_ids');
-    const lead_label_ids = getValorFiltro('lead_labels_ids');
-    const stage_ids = getValorFiltro('stage_ids');
-    const project_ids = getValorFiltro('project_ids');
-    const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
-
-    getLeadStatus(
-      '1',
-      '1',
-      'get',
-      user_ids,
-      channel_ids,
-      lead_label_ids,
-      stage_ids,
-      project_ids,
-      activity_expiration_ids,
-      true
-    ).then((response: LeadStatusResponse) => {
-      setEtapas(response.data.lead_etapas);
-    });
+    onAplicarFiltros(filtros, nivelesInteres);
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -263,27 +242,27 @@ export const LeadsPage = () => {
 
   const onHandleDeleteFiltro = (id: number) => {
     const nuevosFiltros = filtros.filter((f) => f.id !== id);
-    setFiltros(nuevosFiltros);
-    onAplicarFiltros(nuevosFiltros);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres);
   };
+
+  // En LeadsPage.tsx
 
   const onHandleChangeTipoFiltro = (id: number, nuevoTipo: string) => {
     const nuevosFiltros = filtros.map((f) =>
-      f.id === id
-        ? { ...f, tipo: nuevoTipo, valoresSeleccionados: [] } // Resetea valores al cambiar tipo
-        : f
+      f.id === id ? { ...f, tipo: nuevoTipo, valoresSeleccionados: [] } : f
     );
+
     setFiltros(nuevosFiltros);
-    onAplicarFiltros(nuevosFiltros);
   };
 
+  // En LeadsPage.tsx (ESTA FUNCIÓN ESTÁ BIEN, NO LA CAMBIES)
+
   const onHandleChangeValoresFiltro = (id: number, nuevosValores: any[]) => {
-    const newFiltros = filtros.map((f) =>
+    const nuevosFiltros = filtros.map((f) =>
       f.id === id ? { ...f, valoresSeleccionados: nuevosValores } : f
     );
-    setFiltros(newFiltros);
 
-    onAplicarFiltros(newFiltros);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres);
   };
 
   const refreshDataLeads = (
@@ -321,6 +300,7 @@ export const LeadsPage = () => {
         per_page: response.meta.per_page,
         total: response.meta.total,
       });
+      setTableHeader(response.table_header || []);
     });
   };
 
@@ -356,7 +336,7 @@ export const LeadsPage = () => {
     );
   };
 
-  const onAplicarFiltros = (filtrosAplicados: any[]) => {
+  const filtrosActuales = (filtrosAplicados: any[]) => {
     let user_ids = '';
     let channel_ids = '';
     let lead_label_ids = '';
@@ -387,14 +367,125 @@ export const LeadsPage = () => {
             break;
           case 'activity_expiration_ids':
             activity_expiration_ids = valores;
+            break;
           default:
             break;
         }
       }
     });
+    return {
+      user_ids,
+      channel_ids,
+      lead_label_ids,
+      stage_ids,
+      project_ids,
+      activity_expiration_ids,
+    };
+  };
 
-    if (dataModalFiltrosResourceState.type == 'LEADS_KANBAN') {
-      getLeadStatus(
+  const onAplicarFiltros = (filtrosAplicados: any[], nivelesAplicados: string[]) => {
+    setFiltros(filtrosAplicados);
+    setNivelesInteres(nivelesAplicados);
+
+    if (stateView === 'KANBAN') {
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados);
+    } else if (stateView === 'LEADS_TABLE') {
+      recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
+    }
+  };
+
+  const handleNivelInteresChange = (nivel: string) => {
+    // 1. Calcula el nuevo array de niveles de interés seleccionados
+    const nuevosNiveles = nivelesInteres.includes(nivel)
+      ? nivelesInteres.filter((n) => n !== nivel)
+      : [...nivelesInteres, nivel];
+
+    // 2. Llama al "director de orquesta" con los filtros de modal actuales
+    onAplicarFiltros(filtros, nuevosNiveles);
+  };
+
+  const cargarMasLeads = (etapaId: number | string) => {
+    const etapaActual = etapas.find((e) => String(e.id) === String(etapaId));
+    if (
+      !etapaActual ||
+      etapaActual.meta.is_loading ||
+      etapaActual.meta.current_page >= etapaActual.meta.last_page
+    ) {
+      return;
+    }
+
+    const nextPage = etapaActual.meta.current_page + 1;
+
+    setEtapas((prev) =>
+      prev.map((e) =>
+        String(e.id) === String(etapaId) ? { ...e, meta: { ...e.meta, is_loading: true } } : e
+      )
+    );
+
+    const {
+      user_ids,
+      channel_ids,
+      lead_label_ids,
+      stage_ids,
+      project_ids,
+      activity_expiration_ids,
+    } = filtrosActuales(filtros);
+
+    const nivel_interes = nivelesInteres.join(',');
+
+    getLeadByEtapa(
+      '1', // business_id
+      '1', // lead_activos
+      String(etapaId),
+      user_ids,
+      channel_ids,
+      lead_label_ids,
+      stage_ids,
+      project_ids,
+      activity_expiration_ids,
+      nivel_interes,
+      20, // per_page
+      nextPage,
+      false
+    ).then((response) => {
+      // 5. Actualiza el estado con los nuevos leads
+      setEtapas((prev) =>
+        prev.map((e) => {
+          if (String(e.id) === String(etapaId)) {
+            return {
+              ...e,
+              // Añade los nuevos leads a la lista existente
+              leads: [...e.leads, ...response.leads],
+              // Actualiza la meta de paginación
+              meta: {
+                ...e.meta,
+                ...response.meta,
+                is_loading: false,
+              },
+            };
+          }
+          return e;
+        })
+      );
+    });
+  };
+
+  const recargarDatosKanban = useCallback(
+    async (currentFiltros: any[], currentNiveles: string[]) => {
+      // Lógica para recargar el Kanban:
+      // 1. Obtiene los parámetros de los filtros
+      const {
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids,
+        project_ids,
+        activity_expiration_ids,
+      } = filtrosActuales(currentFiltros);
+      const nivel_interes = currentNiveles.join(',');
+
+      // 2. Llama a la API para obtener la estructura y los conteos ya filtrados
+      const response = await getLeadStatus(
         '1',
         '1',
         'get',
@@ -404,34 +495,125 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        nivel_interes,
         false
-      ).then((response: LeadStatusResponse) => {
-        setEtapas(response.data.lead_etapas);
-      });
-    } else if (dataModalFiltrosResourceState.type == 'LEADS_TABLE') {
-      refreshDataLeads(
+      );
+
+      // 3. Prepara el estado inicial del tablero con los nuevos conteos
+      const etapasIniciales: EtapaConPaginacion[] = response.data.lead_etapas.map((etapa) => ({
+        ...etapa,
+        leads: [],
+        meta: {
+          total: etapa.leads_count,
+          current_page: 0,
+          last_page: 1,
+          per_page: 20,
+          is_loading: true,
+        },
+      }));
+
+      setEtapas(etapasIniciales);
+      setUsers(response.data.users);
+      setLabels(response.data.labels);
+      setChannels(response.data.channels);
+      setStages(response.data.stages);
+      setProjects(response.data.projects);
+
+      // 4. Llama a la API para obtener la primera página de leads de CADA etapa
+      const promesasDeCarga = etapasIniciales.map((etapa) =>
+        getLeadByEtapa(
+          '1',
+          '1',
+          String(etapa.id),
+          user_ids,
+          channel_ids,
+          lead_label_ids,
+          stage_ids,
+          project_ids,
+          activity_expiration_ids,
+          nivel_interes,
+          20,
+          1,
+          false
+        )
+      );
+      const responsesLeads = await Promise.all(promesasDeCarga);
+
+      // 5. Rellena el tablero con los leads
+      setEtapas((currentEtapas) =>
+        currentEtapas.map((etapa, index) => {
+          const responseParaEstaEtapa = responsesLeads[index];
+          return {
+            ...etapa,
+            leads: responseParaEstaEtapa.leads,
+            meta: { ...etapa.meta, ...responseParaEstaEtapa.meta, is_loading: false },
+          };
+        })
+      );
+    },
+    [getLeadStatus, getLeadByEtapa]
+  );
+
+  const recargarDatosTabla = useCallback(
+    async (currentFiltros: any[], currentNiveles: string[], page = 1) => {
+      setIsTableLoading(true);
+      const {
         user_ids,
         channel_ids,
         lead_label_ids,
         stage_ids,
         project_ids,
         activity_expiration_ids,
+      } = filtrosActuales(currentFiltros);
+      const nivel_interes = currentNiveles.join(',');
+
+      const response = await getLeads(
+        user_ids,
+        channel_ids,
+        lead_label_ids,
+        stage_ids,
+        project_ids,
+        activity_expiration_ids,
+        nivel_interes,
         50,
-        1,
-        false,
+        page,
         false
       );
-    }
-  };
+
+      setLeads(response.data);
+      setMetaData(response.meta);
+      setTableHeader(response.table_header || []);
+      setIsTableLoading(false);
+    },
+    [getLeads]
+  );
 
   useEffect(() => {
     dispatch(setTitleSidebar('Leads'));
-
-    // Limpia el estado al desmontar
     return () => {
       dispatch(setTitleSidebar(''));
     };
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    //Debe reiniciar los datos al cambiar la vista
+    setEtapas([]);
+    setMetaData({
+      current_page: 1,
+      last_page: 0,
+      per_page: 50,
+      total: 0,
+    }); // Para Tabla
+    setLeads([]); // Para Tabla
+    setTableHeader([]); // Para Tabla
+    const filtrosReseteados: any[] = [];
+    const nivelesReseteados: string[] = [];
+    if (stateView === 'KANBAN') {
+      recargarDatosKanban(filtros, nivelesInteres);
+    } else if (stateView === 'LEADS_TABLE') {
+      recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
+    }
+  }, [stateView]);
 
   return (
     <>
@@ -445,12 +627,11 @@ export const LeadsPage = () => {
           handleModalAsesor={handleModalAsesor}
           onFiltrosLeads={onFiltrosLeads}
           users={users}
-          setUsers={setUsers}
-          setLabels={setLabels}
-          setChannels={setChannels}
-          setStages={setStages}
-          setProjects={setProjects}
           filtros={filtros}
+          nivelesInteres={nivelesInteres}
+          handleNivelInteresChange={handleNivelInteresChange}
+          cargarMasLeads={cargarMasLeads}
+          setIsLoadingKanban={setIsLoadingKanban}
         />
       )}
       {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
@@ -461,11 +642,12 @@ export const LeadsPage = () => {
           handleModalLeadForm={handleModalLeadForm}
           onFiltrosLeads={onFiltrosLeads}
           leads={leads}
-          setLeads={setLeads}
-          metaData={metaData}
-          setMetaData={setMetaData}
           cargarDataLeads={cargarDataLeads}
           filtros={filtros}
+          metaData={metaData}
+          tableHeader={tableHeader}
+          setTableHeader={setTableHeader}
+          isTableLoading={isTableLoading}
         />
       )}
 

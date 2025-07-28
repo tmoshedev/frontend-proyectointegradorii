@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 
-export type DropAction = 'CONCLUIDO' | 'SALIDA' | 'GANADO' | 'mover';
+export type DropAction = 'ELIMINADO' | 'PERDIDO' | 'GANADO' | 'mover';
 
 interface LeadFooterProps {
   onDropAction: (leadId: number, action: DropAction) => void;
 }
 const actions: { id: DropAction; label: string; className: string }[] = [
-  { id: 'CONCLUIDO', label: 'CONCLUIDOS', className: '' },
-  { id: 'SALIDA', label: 'SALIDAS', className: 'lead-perdido-text' },
+  { id: 'ELIMINADO', label: 'ELIMINADOS', className: 'lead-eliminado-text' },
+  { id: 'PERDIDO', label: 'PERDIDOS', className: 'lead-perdido-text' },
   { id: 'GANADO', label: 'GANADOS', className: 'lead-ganado-text' },
 ];
 

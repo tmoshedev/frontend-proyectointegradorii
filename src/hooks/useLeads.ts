@@ -11,10 +11,10 @@ export function useLeads() {
   const dispatch = useDispatch();
 
   //POST - CHANGE LEAD STATE
-  const changeState = async (business_id: string, type: string, loading: boolean) => {
+  const postChangeEtapa = async (business_id: string, type: string, loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.postChangeState(business_id, type);
+      const response = await leadsService.postChangeEtapa(business_id, type);
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -36,7 +36,7 @@ export function useLeads() {
   const requirements = async (loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.requirements(loading);
+      const response = await leadsService.requirements();
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -97,7 +97,6 @@ export function useLeads() {
       dispatch(setLoading(false));
     }
   };
-
 
   //POST - UPDATE LABELS
   const updateLabels = async (lead_uuid: string, labels: any[], loading: boolean) => {
@@ -218,8 +217,19 @@ export function useLeads() {
     }
   };
 
+  //PATCH - CHANGE INTEREST LEVEL
+  const changeNivelInteres = async (uuid: string, nivel_interes: string, loading: boolean) => {
+    dispatch(setLoading(loading));
+    try {
+      const response = await leadsService.changeNivelInteres(uuid, nivel_interes);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   return {
-    changeState,
+    postChangeEtapa,
     updateLead,
     requirements,
     importLeads,
@@ -235,5 +245,6 @@ export function useLeads() {
     changeEstadoFinal,
     getLeads,
     updateChannels,
+    changeNivelInteres,
   };
 }

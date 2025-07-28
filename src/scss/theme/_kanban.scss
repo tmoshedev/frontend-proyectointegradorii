@@ -184,8 +184,8 @@ $arrow-width: 0.7rem;
   }
 
   &.caliente {
-    background-color: #ffe5d9;
-    color: #d90429;
+    background-color: rgb($lead-caliente, 0.15);
+    color: $lead-caliente;
 
     i {
       animation: pulseFire 1.2s infinite;
@@ -193,17 +193,16 @@ $arrow-width: 0.7rem;
   }
 
   &.tibio {
-    background-color: #fff3cd;
-    color: #856404;
-
+    background-color: rgb($lead-tibio, 0.15);
+    color: $lead-tibio;
     i {
       animation: blink 2s infinite;
     }
   }
 
   &.frio {
-    background-color: #e0f7fa;
-    color: #007bff;
+    background-color: rgb($lead-frio, 0.15);
+    color: $lead-frio;
 
     i {
       animation: frostFade 3s ease-in-out infinite;
@@ -291,7 +290,7 @@ $arrow-width: 0.7rem;
   }
   50% {
     transform: scale(1.3);
-    color: #ff4500;
+    color: $lead-caliente;
   }
   100% {
     transform: scale(1);
@@ -362,4 +361,26 @@ $arrow-width: 0.7rem;
   50% {
     opacity: 0.6;
   }
+}
+
+.lead-header-state {
+  span {
+    line-height: 0;
+  }
+  .item-testado-lead {
+    i {
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+  }
+}
+
+.color-lead-caliente {
+  color: $lead-caliente !important;
+}
+.color-lead-tibio {
+  color: $lead-tibio !important;
+}
+.color-lead-frio {
+  color: $lead-frio !important;
 }

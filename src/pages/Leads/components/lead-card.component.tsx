@@ -1,209 +1,248 @@
+import { useRef, useState } from 'react';
 import { Lead, LeadProject } from '../../../models';
 import CanCheck from '../../../resources/can';
-//Proteger contra ataques XSS
+// Proteger contra ataques XSS
 import DOMPurify from 'dompurify';
+import { Dropdown } from 'bootstrap';
 
-interface LeacCardProps {
+// Define interest levels and their properties in a single place for easy management.
+const INTEREST_LEVELS = {
+  CALIENTE: {
+    label: 'Lead Caliente',
+    icon: 'fa-solid fa-fire',
+    className: 'caliente',
+  },
+  TIBIO: {
+    label: 'Lead Tibio',
+    icon: 'fa-solid fa-temperature-half',
+    className: 'tibio',
+  },
+  FRIO: {
+    label: 'Lead Frío',
+    icon: 'fa-solid fa-snowflake',
+    className: 'frio',
+  },
+};
+
+// A fallback for when the interest level is not set.
+const UNKNOWN_INTEREST = {
+  label: 'Lead Desconocido',
+  icon: 'fa-solid fa-question-circle',
+  className: 'desconocido',
+};
+
+interface LeadCardProps {
   lead: Lead;
   onClickLead: (lead_uuid: string) => void;
   onEditarAsesor: (lead: Lead) => void;
-  onChangeStateLead: (lead_uuid: string, state: string) => void;
+  onChangeStateLead: (lead_uuid: string, nivel_interes: string) => void;
 }
-export const LeadCardComponent = (props: LeacCardProps) => {
-  const getInitials = (user_names: string, user_father_names: string) => {
-    if (user_names && user_father_names) {
-      return `${user_names.charAt(0)}${user_father_names.charAt(0)}`;
-    }
-    return 'U'; // Si no hay datos, usa 'U' por defecto
-  };
+
+/**
+ * A component to display a summary of a Lead in a Kanban view.
+ */
+export const LeadCardComponent = ({
+  lead,
+  onClickLead,
+  onEditarAsesor,
+  onChangeStateLead,
+}: LeadCardProps) => {
+  // Destructure lead properties for cleaner access.
+  const {
+    uuid,
+    id,
+    names,
+    last_names,
+    cellphone,
+    lead_projects,
+    channel_icon_html,
+    channel_name,
+    supervisor_names,
+    interes,
+    user_id,
+    user_names,
+    user_father_last_name,
+    user_mother_last_name,
+    user_rol_name,
+    actividad_estado,
+  } = lead;
+
+  // Retrieve current role from localStorage.
   const rolActual = localStorage.getItem('rolActual') || '';
+  const dropdownToggleRef = useRef<HTMLDivElement>(null);
+  const [nivelInteres, setNivelInteres] = useState(interes);
+
+  /**
+   * Generates initials from user names.
+   * @param userNames - The user's first names.
+   * @param userFatherName - The user's paternal last name.
+   * @returns A string with the initials, or 'U' as a fallback.
+   */
+  const getInitials = (userNames?: string, userFatherName?: string): string => {
+    if (userNames && userFatherName) {
+      return `${userNames.charAt(0)}${userFatherName.charAt(0)}`.toUpperCase();
+    }
+    return 'U';
+  };
+
+  /**
+   * Handles the state change for the lead's interest level.
+   * Prevents the event from bubbling up to the card's main click handler.
+   * @param e - The mouse event.
+   * @param state - The new interest state ('CALIENTE', 'TIBIO', 'FRIO').
+   */
+  const handleInterestChange = (e: React.MouseEvent, nivel_interes: string) => {
+    e.stopPropagation();
+    onChangeStateLead(uuid, nivel_interes);
+    setNivelInteres(nivel_interes);
+
+    if (dropdownToggleRef.current) {
+      const dropdown = Dropdown.getOrCreateInstance(dropdownToggleRef.current);
+      dropdown.hide();
+    }
+  };
+
+  // Determine the current interest level's properties or use the unknown fallback.
+  const currentInterest =
+    INTEREST_LEVELS[nivelInteres as keyof typeof INTEREST_LEVELS] || UNKNOWN_INTEREST;
 
   return (
     <div
-      className={`kanban-card ${props.lead.actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
-      data-id={props.lead.id}
-      onClick={() => props.onClickLead(props.lead.uuid)}
+      className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
+      data-id={id}
+      onClick={() => onClickLead(uuid)}
     >
+      {/* Header Section */}
       <div className="kanban-card-header">
-        {props.lead.actividad_estado.state_view && (
+        {actividad_estado.state_view && (
           <div
             data-tooltip-id="tooltip-component"
-            data-tooltip-content={`${props.lead.actividad_estado.state} - ${props.lead.actividad_estado.fecha_actividad}`}
+            data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.fecha_actividad}`}
             className={`alert-lead ${
-              props.lead.actividad_estado.type == 'VENCIDA'
-                ? 'alert-lead-vencido'
-                : 'alert-lead-porvencer'
+              actividad_estado.type === 'VENCIDA' ? 'alert-lead-vencido' : 'alert-lead-porvencer'
             }`}
           >
             !
           </div>
         )}
-        <h4 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              flex: 1,
-              marginRight: '0.5rem',
-            }}
-          >
-            {props.lead.names} {props.lead.last_names}
+        <h4 className="kanban-card-title">
+          <span>
+            {names} {last_names}
           </span>
         </h4>
-        <small>Celular: {props.lead.cellphone}</small>
+        <small>Celular: {cellphone}</small>
       </div>
+
+      {/* Body Section */}
       <div className="kanban-card-body">
         <p>
           <b>Proyectos interesados:</b>
         </p>
         <div className="d-flex flex-wrap gap-2 mt-1">
-          {props.lead.lead_projects.map((project: LeadProject, key: number) => (
-            <span key={key} className="badge bg-light text-dark">
-              {project.name}
-            </span>
-          ))}
-          {props.lead.lead_projects.length === 0 && (
+          {lead_projects.length > 0 ? (
+            lead_projects.map((project: LeadProject, index: number) => (
+              <span key={`${project.id}-${index}`} className="badge bg-light text-dark">
+                {project.name}
+              </span>
+            ))
+          ) : (
             <span className="badge bg-light text-dark">Sin proyectos</span>
           )}
         </div>
+
         <p className="mt-2">
           <b>Origen/Canal: </b>
           <span
             className="me-1"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(props.lead.channel_icon_html || ''),
-            }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(channel_icon_html || '') }}
           />
-          <span>{props.lead.channel_name != '' ? props.lead.channel_name : '-'}</span>
+          <span>{channel_name || '-'}</span>
         </p>
-        {(rolActual == 'COMMERCIAL_LEADER' ||
-          rolActual == 'DEVELOPER' ||
-          rolActual == 'ADMINISTRATOR') && (
+
+        {['COMMERCIAL_LEADER', 'DEVELOPER', 'ADMINISTRATOR'].includes(rolActual) && (
           <p className="mt-1">
             <b>Supervisor: </b>
-            <span>{props.lead.supervisor_names ?? '-'}</span>
+            <span>{supervisor_names ?? '-'}</span>
           </p>
         )}
-        <div className="d-flex justify-content-center">
+
+        {/* Interest Level Dropdown */}
+        <div className="d-flex justify-content-center mt-2">
           <div className="dropdown">
             <span
               onClick={(e) => e.stopPropagation()}
-              className={`lead-icon ${props.lead.interes}`}
+              ref={dropdownToggleRef}
+              className={`lead-icon ${currentInterest.className}`}
               data-bs-toggle="dropdown"
               aria-expanded="false"
+              role="button"
             >
-              {(() => {
-                switch (props.lead.interes) {
-                  case 'caliente':
-                    return (
-                      <>
-                        <i className="fa-solid fa-fire"></i> Lead Caliente
-                      </>
-                    );
-                  case 'tibio':
-                    return (
-                      <>
-                        <i className="fa-solid fa-temperature-half"></i> Lead Tibio
-                      </>
-                    );
-                  case 'frio':
-                    return (
-                      <>
-                        <i className="fa-solid fa-snowflake"></i> Lead Frío
-                      </>
-                    );
-                  default:
-                    return (
-                      <>
-                        <i className="fa-solid fa-question-circle"></i> Lead Desconocido
-                      </>
-                    );
-                }
-              })()}
+              <i className={currentInterest.icon}></i> {currentInterest.label}
             </span>
-
             <ul className="dropdown-menu">
-              <li>
-                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'caliente'); }}>
-                  <span
-                    className={`lead-icon ${
-                      props.lead.interes === 'caliente' ? props.lead.interes : 'menu-estado'
-                    }`}
+              {Object.entries(INTEREST_LEVELS).map(([stateKey, { label, icon, className }]) => (
+                <li key={stateKey}>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => handleInterestChange(e, stateKey)}
                   >
-                    <i className="fa-solid fa-fire"></i> Lead Caliente
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'tibio'); }}>
-                  <span
-                    className={`lead-icon ${
-                      props.lead.interes === 'tibio' ? props.lead.interes : 'menu-estado'
-                    }`}
-                  >
-                    <i className="fa-solid fa-temperature-half"></i> Lead Tibio
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" onClick={(e) => { e.stopPropagation(); props.onChangeStateLead(props.lead.uuid, 'frio'); }}>
-                  <span
-                    className={`lead-icon ${
-                      props.lead.interes === 'frio' ? props.lead.interes : 'menu-estado'
-                    }`}
-                  >
-                    <i className="fa-solid fa-snowflake"></i> Lead Frío
-                  </span>
-                </a>
-              </li>
+                    <span
+                      className={`lead-icon ${
+                        nivelInteres === stateKey ? className : 'menu-estado'
+                      }`}
+                    >
+                      <i className={icon}></i> {label}
+                    </span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
       </div>
+
+      {/* Footer Section */}
       <div
         className="d-flex kanban-card-footer justify-content-between mt-2"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="d-flex align-items-center kanban-card-footer-user">
-          {props.lead.user_id ? (
+          {user_id ? (
             <>
               <div
                 className="avatar user-avatar user-avatar-menu mb-0"
                 style={{ height: '1.8rem', width: '1.8rem' }}
               >
-                {getInitials(props.lead.user_names, props.lead.user_father_last_name)}
+                {getInitials(user_names, user_father_last_name)}
               </div>
               <div className="ms-2">
                 <div className="d-flex flex-column">
                   <p>
-                    {props.lead.user_names} {props.lead.user_father_last_name}{' '}
-                    {props.lead.user_mother_last_name}
+                    {user_names} {user_father_last_name} {user_mother_last_name}
                   </p>
-                  <small>{props.lead.user_rol_name}</small>
+                  <small>{user_rol_name}</small>
                 </div>
               </div>
             </>
           ) : (
-            <>
-              <div className="ms-2">
-                <div className="d-flex flex-column">
-                  <p>---</p>
-                  <small>Sin asesor asignado</small>
-                </div>
+            <div className="ms-2">
+              <div className="d-flex flex-column">
+                <p>---</p>
+                <small>Sin asesor asignado</small>
               </div>
-            </>
+            </div>
           )}
         </div>
         {CanCheck('update-asesor') && (
           <div className="d-flex align-items-center">
             <button
               data-tooltip-id="tooltip-component"
-              data-tooltip-content={`${
+              data-tooltip-content={
                 rolActual === 'COMMERCIAL_LEADER' ? 'Editar Supervisor' : 'Editar asesor'
-              }`}
+              }
               className="btn btn-outline-cancel btn-xs"
-              onClick={() => props.onEditarAsesor(props.lead)}
+              onClick={() => onEditarAsesor(lead)}
             >
               <i className="fa-solid fa-pen-to-square"></i>
             </button>

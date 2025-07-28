@@ -1,24 +1,28 @@
-import { useEffect, useState } from 'react';
 import TableCRM from '../../../components/page/table-crm.component';
-import { useLeads, useSidebarResponsive } from '../../../hooks';
-import { TableCrmResponse, TableHeaderResponse } from '../../../models/responses';
+import { useSidebarResponsive } from '../../../hooks';
+import { TableHeaderResponse } from '../../../models/responses';
 import TableCRMHeaderComponent from '../../../components/page/table-crm-header.component';
+import TableCRMSkeleton from '../../../components/shared/TableCRMSkeleton';
 
 interface Props {
   handleStateView: (view: string) => void;
   handleModalLeadForm: (type: string) => void;
   onFiltrosLeads: (type: string) => void;
   leads: any[];
-  setLeads: any;
-  metaData: any;
-  setMetaData: any;
   cargarDataLeads: (page: number) => void;
   filtros: any[];
+  metaData: {
+    current_page: number;
+    last_page: number;
+    total: number;
+    per_page: number;
+  };
+  tableHeader: TableHeaderResponse[];
+  setTableHeader: React.Dispatch<React.SetStateAction<TableHeaderResponse[]>>;
+  isTableLoading: boolean;
 }
 export const LeadsTableComponent = (props: Props) => {
   useSidebarResponsive(true);
-  const { getLeads } = useLeads();
-  const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
 
   const cargarData = (page: number, onFinish?: () => void) => {
     console.log('Cargando datos de la página:', page);
@@ -46,34 +50,6 @@ export const LeadsTableComponent = (props: Props) => {
     props.handleStateView('IMPORTAR');
   };
 
-  useEffect(() => {
-    const dataInicial = () => {
-      getLeads(
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        props.metaData.per_page,
-        props.metaData.current_page,
-        true
-      ).then((response: TableCrmResponse) => {
-        props.setLeads(response.data);
-        setTableHeader(response.table_header);
-        props.setMetaData({
-          current_page: response.meta.current_page,
-          last_page: response.meta.last_page,
-          per_page: response.meta.per_page,
-          total: response.meta.total,
-        });
-      });
-    };
-
-    dataInicial();
-  }, []);
-
   return (
     <div
       className="main-content app-content main-content--page"
@@ -100,22 +76,32 @@ export const LeadsTableComponent = (props: Props) => {
               onDistributes={onDistributes}
               onImports={onImports}
               metaData={props.metaData}
-              tableHeader={tableHeader}
-              setTableHeader={setTableHeader}
+              tableHeader={props.tableHeader}
+              setTableHeader={props.setTableHeader}
               onFiltros={() => props.onFiltrosLeads('LEADS_TABLE')}
               filtros={props.filtros}
             />
           </div>
           <div className="table-crm-body">
-            <TableCRM
-              tableHeader={tableHeader}
-              tableData={props.leads}
-              activateCheckBoot={false}
-              metaData={props.metaData}
-              cargarData={cargarData}
-              buttonsAcctions={[]}
-              onClickButtonPersonalizado={() => {}}
-            />
+            {props.isTableLoading ? (
+              <TableCRMSkeleton
+                columnCount={
+                  props.tableHeader.length > 0
+                    ? props.tableHeader.filter((h) => h.visible).length
+                    : 8
+                }
+              />
+            ) : (
+              <TableCRM
+                tableHeader={props.tableHeader}
+                tableData={props.leads}
+                activateCheckBoot={false}
+                metaData={props.metaData}
+                cargarData={cargarData}
+                buttonsAcctions={[]}
+                onClickButtonPersonalizado={() => {}}
+              />
+            )}
           </div>
         </div>
       </div>

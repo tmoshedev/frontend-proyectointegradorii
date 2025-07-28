@@ -7,6 +7,8 @@ interface LeadHeaderComponentProps {
   handleModalLeadForm: (type: string) => void;
   onFiltrosLeads: () => void;
   filtros: any[];
+  nivelesInteres: string[];
+  handleNivelInteresChange: (nivel: string) => void;
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
@@ -64,6 +66,41 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
       </div>
 
       <div className="d-flex justify-content-center align-items-center">
+        <div className="d-flex align-items-center me-2 gap-1 lead-header-state justify-content-center align-items-center">
+          <span>
+            <strong>Estado lead:</strong>
+          </span>{' '}
+          <div
+            className={`item-testado-lead ${
+              props.nivelesInteres.includes('CALIENTE') ? 'color-lead-caliente' : ''
+            }`}
+            data-tooltip-id="tooltip-component"
+            data-tooltip-content={`Lead caliente`}
+            onClick={() => props.handleNivelInteresChange('CALIENTE')}
+          >
+            <i className="fa-solid fa-fire"></i>
+          </div>
+          <div
+            className={`item-testado-lead ${
+              props.nivelesInteres.includes('TIBIO') ? 'color-lead-tibio' : ''
+            }`}
+            data-tooltip-id="tooltip-component"
+            data-tooltip-content={`Lead tibio`}
+            onClick={() => props.handleNivelInteresChange('TIBIO')}
+          >
+            <i className="fa-solid fa-temperature-half"></i>
+          </div>
+          <div
+            className={`item-testado-lead ${
+              props.nivelesInteres.includes('FRIO') ? 'color-lead-frio' : ''
+            }`}
+            data-tooltip-id="tooltip-component"
+            data-tooltip-content={`Lead frío`}
+            onClick={() => props.handleNivelInteresChange('FRIO')}
+          >
+            <i className="fa-solid fa-snowflake"></i>
+          </div>
+        </div>
         <button
           onClick={props.onFiltrosLeads}
           className={`btn btn-xs ${

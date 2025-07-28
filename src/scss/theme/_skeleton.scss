@@ -1,0 +1,75 @@
+/* --- Estilos para Skeleton Loader --- */
+
+/* Estilo base para cualquier bloque del esqueleto */
+.skeleton {
+  background-color: #e0e0e0; /* Un gris claro */
+  border-radius: 4px;
+}
+
+/* Contenedor que permite la animación de brillo */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden; /* Muy importante para que el brillo no se salga */
+}
+
+/* El efecto de brillo (shimmer) creado con un pseudo-elemento */
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    /* El brillo es un gradiente semi-transparente */ transparent
+  );
+  animation: shimmer 1.5s infinite; /* Aplica la animación */
+}
+
+/* Define la animación */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Tamaños específicos para cada parte del esqueleto en la tarjeta */
+.skeleton-text {
+  width: 80%;
+  height: 20px;
+  margin-bottom: 0.2rem;
+}
+.skeleton-text-sm {
+  width: 50%;
+  height: 14px;
+  margin-bottom: 0.2rem;
+}
+.skeleton-text-xs {
+  width: 60%;
+  height: 12px;
+}
+.skeleton-badge {
+  width: 70px;
+  height: 22px;
+}
+.skeleton-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* Para que sea un círculo */
+}
+
+.skeleton-pill {
+  width: 130px;
+  height: 32px;
+  border-radius: 16px; /* Totalmente redondeado */
+}
+
+.skeleton-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px; /* Ligeramente redondeado como un botón */
+}
