@@ -25,7 +25,7 @@ export const patchUpdateLead = async (lead_id: string, data: any) => {
   return response;
 };
 
-export const requirements = async (p0: boolean) => {
+export const requirements = async () => {
   const response = await apiInstance.get(`/leads/requirements`);
   return response;
 };

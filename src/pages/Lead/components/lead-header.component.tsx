@@ -247,10 +247,10 @@ export const LeadHeaderComponent = () => {
               Ganado
             </button>
             <button
-              onClick={() => onLeadState('PERDIDO')}
+              onClick={() => onLeadState('SALIDA')}
               className="btn btn-primary btn-sm btn-perdido"
             >
-              Perdido
+              Salida
             </button>
           </div>
         )}
@@ -261,10 +261,10 @@ export const LeadHeaderComponent = () => {
             </button>
           </div>
         )}
-        {lead.estado_final == 'PERDIDO' && (
+        {lead.estado_final == 'SALIDA' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-perdido">
-              <i className="fa-solid fa-thumbs-down"></i> Lead perdido
+              <i className="fa-solid fa-thumbs-down"></i> Lead salida
             </button>
           </div>
         )}

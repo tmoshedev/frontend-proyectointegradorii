@@ -312,7 +312,7 @@ const [selectedChannelId, setSelectedChannelId] = useState<number | ''>(lead.cha
       </div>
       <div className="block-item">
         <div className="bock-item__title">
-          <h4>Etiquetas de salida</h4>
+          <h4>Etiquetas</h4>
         </div>
 
         <div className="bock-item__datos">
