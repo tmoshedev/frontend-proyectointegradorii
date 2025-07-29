@@ -469,7 +469,7 @@ export const LeadsPage = () => {
       activity_expiration_ids,
       nivel_interes,
       terminoBusqueda,
-      20, // per_page
+      50, // per_page
       nextPage,
       false
     ).then((response) => {
@@ -544,7 +544,7 @@ export const LeadsPage = () => {
           total: etapa.leads_count,
           current_page: 0,
           last_page: 1,
-          per_page: 20,
+          per_page: 50,
           is_loading: true,
         },
       }));
@@ -576,7 +576,7 @@ export const LeadsPage = () => {
           activity_expiration_ids,
           nivel_interes,
           termino,
-          20,
+          50,
           1,
           false
         )

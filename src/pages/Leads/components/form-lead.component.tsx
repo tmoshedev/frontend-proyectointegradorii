@@ -27,6 +27,7 @@ export const LeadFormComponent = (props: Props) => {
     cellphone: '',
     ciudad: '',
     asignarme_lead: false,
+    nivel_interes: '',
   };
   const [projects, setProjects] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
@@ -84,6 +85,24 @@ export const LeadFormComponent = (props: Props) => {
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
       <div className="modal-body">
         <div className="row">
+          {/*Nivel de interés*/}
+          <div className="col-md-12 mb-3">
+            <label className="form-label" htmlFor="nivel_interes">
+              Nivel de interés
+            </label>
+            <select
+              onChange={handleInputChangeSelect}
+              value={formik.values.nivel_interes ?? ''}
+              name="nivel_interes"
+              id="nivel_interes"
+              className="form-select form-select-sm"
+            >
+              <option value="">Seleccionar</option>
+              <option value="CALIENTE">Caliente</option>
+              <option value="TIBIO">Tíbio</option>
+              <option value="FRIO">Frío</option>
+            </select>
+          </div>
           {/* Proyecto */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="level_id">
@@ -132,7 +151,7 @@ export const LeadFormComponent = (props: Props) => {
             </select>
             <ErrorValidate state={formik.errors.channel_id} />
           </div>
-         {/* Dni */}
+          {/* Dni */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="document_number">
               Dni
@@ -146,11 +165,13 @@ export const LeadFormComponent = (props: Props) => {
               type="text"
               className={
                 'todo-mayuscula form-control form-control-sm' +
-                (formik.errors.document_number && formik.touched.document_number ? ' is-invalid' : '')
+                (formik.errors.document_number && formik.touched.document_number
+                  ? ' is-invalid'
+                  : '')
               }
             />
             <ErrorValidate state={formik.errors.cellphone} />
-          </div>    
+          </div>
           {/* Nombres */}
           <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="names">

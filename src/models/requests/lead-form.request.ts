@@ -9,4 +9,5 @@ export interface LeadFormRequest {
   cellphone: string;
   ciudad: string;
   asignarme_lead: boolean;
+  nivel_interes: string;
 }

@@ -113,7 +113,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
               tabIndex={0}
             >
               <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
-                {props.labels.filter((label) => label.select).length > 0 ? (
+                {props.labels.filter((label) => label.selected).length > 0 ? (
                   <i
                     style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
                     className="fa-solid fa-tag"
