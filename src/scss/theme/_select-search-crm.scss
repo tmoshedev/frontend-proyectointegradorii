@@ -1,0 +1,55 @@
+.select-search-crm {
+  .ssc-search {
+    flex-shrink: 0;
+    padding: 6px 8px;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #fff;
+  }
+  .scc-add-item {
+    color: rgb(var(--primary-rgb));
+    padding: 0.5rem 0rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(var(--primary-rgb), 0.1);
+    }
+  }
+  .ssc-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex: 1;
+    li {
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(var(--primary-rgb), 0.1);
+      }
+      .ssc-item-icon {
+        margin-right: 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+      .ssc-item-name {
+        flex: 1;
+        text-align: left;
+        font-weight: 500;
+        color: #232c47;
+      }
+      .ssc-item-checkbox {
+        margin-left: 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}

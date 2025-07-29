@@ -77,6 +77,7 @@
 @import 'theme/lead_actividad';
 @import 'theme/filtros';
 @import 'theme/_skeleton';
+@import 'theme/_input_select';
 
 /* CALENDARIO CRM */
 @import 'theme/WeeklyCalendar';
@@ -211,7 +212,7 @@
 }
 
 .form-scrollable {
-  max-height: calc(100vh - 6rem);
+  max-height: calc(100vh - 6.5rem);
   display: flex;
   flex-direction: column;
 }

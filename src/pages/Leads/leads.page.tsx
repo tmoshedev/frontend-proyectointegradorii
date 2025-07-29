@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setTitleSidebar } from '../../redux/states/auth.slice';
 import LeadFiltrosComponent from './components/lead-filtros.component';
 import { AppStore } from '../../redux/store';
+import { et } from 'date-fns/locale';
+import AddEtiquetasComponent from './components/add-etiquetas.component';
 
 interface DataModalState {
   type: string;
@@ -51,7 +53,7 @@ export const LeadsPage = () => {
 
   // Estados de filtros
   const [filtros, setFiltros] = useState<any[]>([]);
-  const [nivelesInteres, setNivelesInteres] = useState<string[]>([]);
+  const [nivelesInteres, setNivelesInteres] = useState<string[]>(['CALIENTE', 'TIBIO', 'FRIO']);
 
   // Hooks de API
   const { getLeads } = useLeads();
@@ -85,10 +87,10 @@ export const LeadsPage = () => {
       value: 'stage_ids',
       opciones: stages.map((c) => ({ label: c.name, value: c.id })),
     }, */
-    Etiquetas: {
+    /* Etiquetas: {
       value: 'lead_labels_ids',
       opciones: labels.map((c) => ({ label: c.name, value: c.id })),
-    },
+    }, */
     Proyectos: {
       value: 'project_ids',
       opciones: [
@@ -136,6 +138,18 @@ export const LeadsPage = () => {
     requirements: [],
     onCloseModalForm: () => {},
   });
+  //MODAL AGREGAR ETIQUETAS
+  const [isOpenModalEtiquetas, setIsOpenModalEtiquetas] = useState(false);
+  const [isStateModalEtiquetas, setIsStateModalEtiquetas] = useState(false);
+  const [dataModalEtiquetasResourceState, setDataModalEtiquetasResourceState] =
+    useState<DataModalState>({
+      type: '',
+      buttonSubmit: null,
+      row: null,
+      title: null,
+      requirements: [],
+      onCloseModalForm: () => {},
+    });
 
   //FILTROS
   const [isOpenModalFiltros, setIsOpenModalFiltros] = useState(false);
@@ -193,8 +207,15 @@ export const LeadsPage = () => {
     setIsStateModal(true);
   };
 
+  const handleCloseModalEtiquetas = () => {
+    setIsOpenModalEtiquetas(false);
+  };
+  const handleModalEtiquetasForm = () => {
+    setIsStateModalEtiquetas(false);
+  };
+
   const onRefreshLeads = () => {
-    onAplicarFiltros(filtros, nivelesInteres);
+    onAplicarFiltros(filtros, nivelesInteres, labels);
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -242,10 +263,8 @@ export const LeadsPage = () => {
 
   const onHandleDeleteFiltro = (id: number) => {
     const nuevosFiltros = filtros.filter((f) => f.id !== id);
-    onAplicarFiltros(nuevosFiltros, nivelesInteres);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels);
   };
-
-  // En LeadsPage.tsx
 
   const onHandleChangeTipoFiltro = (id: number, nuevoTipo: string) => {
     const nuevosFiltros = filtros.map((f) =>
@@ -262,7 +281,7 @@ export const LeadsPage = () => {
       f.id === id ? { ...f, valoresSeleccionados: nuevosValores } : f
     );
 
-    onAplicarFiltros(nuevosFiltros, nivelesInteres);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels);
   };
 
   const refreshDataLeads = (
@@ -383,25 +402,27 @@ export const LeadsPage = () => {
     };
   };
 
-  const onAplicarFiltros = (filtrosAplicados: any[], nivelesAplicados: string[]) => {
+  const onAplicarFiltros = (
+    filtrosAplicados: any[],
+    nivelesAplicados: string[],
+    etiquetasAplicadas: string[]
+  ) => {
     setFiltros(filtrosAplicados);
     setNivelesInteres(nivelesAplicados);
+    setLabels(etiquetasAplicadas);
 
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtrosAplicados, nivelesAplicados);
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
   };
 
   const handleNivelInteresChange = (nivel: string) => {
-    // 1. Calcula el nuevo array de niveles de interés seleccionados
     const nuevosNiveles = nivelesInteres.includes(nivel)
       ? nivelesInteres.filter((n) => n !== nivel)
       : [...nivelesInteres, nivel];
-
-    // 2. Llama al "director de orquesta" con los filtros de modal actuales
-    onAplicarFiltros(filtros, nuevosNiveles);
+    onAplicarFiltros(filtros, nuevosNiveles, labels);
   };
 
   const cargarMasLeads = (etapaId: number | string) => {
@@ -471,7 +492,12 @@ export const LeadsPage = () => {
   };
 
   const recargarDatosKanban = useCallback(
-    async (currentFiltros: any[], currentNiveles: string[]) => {
+    async (
+      currentFiltros: any[],
+      currentNiveles: string[],
+      etiquetas: any[],
+      first: boolean = false
+    ) => {
       // Lógica para recargar el Kanban:
       // 1. Obtiene los parámetros de los filtros
       const {
@@ -483,6 +509,12 @@ export const LeadsPage = () => {
         activity_expiration_ids,
       } = filtrosActuales(currentFiltros);
       const nivel_interes = currentNiveles.join(',');
+      const etiquetas_ids = Array.isArray(etiquetas)
+        ? etiquetas
+            .filter((etiqueta) => etiqueta.selected)
+            .map((etiqueta) => etiqueta.id)
+            .join(',')
+        : '';
 
       // 2. Llama a la API para obtener la estructura y los conteos ya filtrados
       const response = await getLeadStatus(
@@ -491,7 +523,7 @@ export const LeadsPage = () => {
         'get',
         user_ids,
         channel_ids,
-        lead_label_ids,
+        etiquetas_ids,
         stage_ids,
         project_ids,
         activity_expiration_ids,
@@ -514,7 +546,13 @@ export const LeadsPage = () => {
 
       setEtapas(etapasIniciales);
       setUsers(response.data.users);
-      setLabels(response.data.labels);
+      if (first) {
+        const etiquetasInicializadas = response.data.labels.map((label: any) => ({
+          ...label,
+          selected: false,
+        }));
+        setLabels(etiquetasInicializadas);
+      }
       setChannels(response.data.channels);
       setStages(response.data.stages);
       setProjects(response.data.projects);
@@ -527,7 +565,7 @@ export const LeadsPage = () => {
           String(etapa.id),
           user_ids,
           channel_ids,
-          lead_label_ids,
+          etiquetas_ids,
           stage_ids,
           project_ids,
           activity_expiration_ids,
@@ -588,6 +626,23 @@ export const LeadsPage = () => {
     [getLeads]
   );
 
+  const handleEtiquetasKanban = (etiquetas: any[]) => {
+    onAplicarFiltros(filtros, nivelesInteres, etiquetas);
+  };
+
+  const handleCrearEtiqueta = () => {
+    setDataModalEtiquetasResourceState({
+      type: 'CREAR_ETIQUETA',
+      buttonSubmit: 'Crear etiqueta',
+      row: null,
+      title: 'Nueva etiqueta',
+      requirements: [],
+      onCloseModalForm: handleModalEtiquetasForm,
+    });
+    setIsOpenModalEtiquetas(true);
+    setIsStateModalEtiquetas(true);
+  };
+
   useEffect(() => {
     dispatch(setTitleSidebar('Leads'));
     return () => {
@@ -609,7 +664,7 @@ export const LeadsPage = () => {
     const filtrosReseteados: any[] = [];
     const nivelesReseteados: string[] = [];
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtros, nivelesInteres);
+      recargarDatosKanban(filtros, nivelesInteres, labels, true);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
     }
@@ -632,6 +687,10 @@ export const LeadsPage = () => {
           handleNivelInteresChange={handleNivelInteresChange}
           cargarMasLeads={cargarMasLeads}
           setIsLoadingKanban={setIsLoadingKanban}
+          labels={labels}
+          setLabels={setLabels}
+          handleEtiquetasKanban={handleEtiquetasKanban}
+          handleCrearEtiqueta={handleCrearEtiqueta}
         />
       )}
       {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}
@@ -697,6 +756,23 @@ export const LeadsPage = () => {
               onDelete={onHandleDeleteFiltro}
               onTipoChange={onHandleChangeTipoFiltro}
               onValoresChange={onHandleChangeValoresFiltro}
+            />
+          }
+        />
+      )}
+      {isOpenModalEtiquetas && (
+        <ModalComponent
+          vHactive={true}
+          stateModal={isStateModalEtiquetas}
+          typeModal={'static'}
+          onClose={handleCloseModalEtiquetas}
+          title={dataModalEtiquetasResourceState.title || ''}
+          size="modal-md"
+          content={
+            <AddEtiquetasComponent
+              data={dataModalEtiquetasResourceState}
+              labels={labels}
+              setLabels={setLabels}
             />
           }
         />

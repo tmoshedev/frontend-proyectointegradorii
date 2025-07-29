@@ -22,6 +22,7 @@ import {
 import LeadActividadComponent from './components/lead-actividad.component';
 import ModalComponent from '../../components/shared/modal.component';
 import CancelarActividadComponent from './actividades-componentes/cancelar-actividad.component';
+import AddEtiquetasComponent from './components/add-etiquetas.component';
 
 interface DataModalState {
   type: string;
@@ -50,6 +51,18 @@ export const LeadPage = () => {
     requirements: [],
     onCloseModalForm: () => {},
   });
+  //MODAL AGREGAR ETIQUETAS
+  const [isOpenModalEtiquetas, setIsOpenModalEtiquetas] = useState(false);
+  const [isStateModalEtiquetas, setIsStateModalEtiquetas] = useState(false);
+  const [dataModalEtiquetasResourceState, setDataModalEtiquetasResourceState] =
+    useState<DataModalState>({
+      type: '',
+      buttonSubmit: null,
+      row: null,
+      title: null,
+      requirements: [],
+      onCloseModalForm: () => {},
+    });
 
   const changeHistorialView = (view: string) => {
     const stateView = view === '' ? stateViewHistorial : view;
@@ -88,6 +101,26 @@ export const LeadPage = () => {
     setIsStateModal(true);
   };
 
+  const handleCloseModalEtiquetas = () => {
+    setIsOpenModalEtiquetas(false);
+  };
+  const handleModalEtiquetasForm = () => {
+    setIsStateModalEtiquetas(false);
+  };
+
+  const onCrearNuevaEtiqueta = () => {
+    setDataModalEtiquetasResourceState({
+      type: 'crear-etiqueta',
+      buttonSubmit: 'Guardar',
+      row: null,
+      title: 'Crear nueva etiqueta',
+      requirements: [],
+      onCloseModalForm: handleModalEtiquetasForm,
+    });
+    setIsOpenModalEtiquetas(true);
+    setIsStateModalEtiquetas(true);
+  };
+
   useEffect(() => {
     getLead(uuid ?? '', true).then((response: LeadResponse) => {
       dispatch(
@@ -108,7 +141,6 @@ export const LeadPage = () => {
       dispatch(clearLeadState());
     };
   }, []);
-  
 
   return (
     <div
@@ -126,7 +158,7 @@ export const LeadPage = () => {
           </div>
         </div>
         <div className="lead-content">
-          <LeadDetailsComponent />
+          <LeadDetailsComponent onCrearNuevaEtiqueta={onCrearNuevaEtiqueta}/>
           <div className="lead-content__content scroll-personalizado">
             <div className="timeline-content">
               <div className="w-100">
@@ -175,6 +207,18 @@ export const LeadPage = () => {
               changeHistorialView={changeHistorialView}
             />
           }
+        />
+      )}
+      {/* MODAL ETIQUETAS */}
+      {isOpenModalEtiquetas && (
+        <ModalComponent
+          vHactive={true}
+          stateModal={isStateModalEtiquetas}
+          typeModal={'static'}
+          onClose={handleCloseModalEtiquetas}
+          title={dataModalEtiquetasResourceState.title || ''}
+          size="modal-md"
+          content={<AddEtiquetasComponent data={dataModalEtiquetasResourceState} />}
         />
       )}
     </div>

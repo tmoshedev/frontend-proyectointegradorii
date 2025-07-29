@@ -8,4 +8,4 @@ export * from './useUserHierarchy';
 export * from './useLeadNotes';
 export * from './useCalendarioActividades';
 export * from './useUsers';
-
+export * from './useLabels';

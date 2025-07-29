@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Lead, LeadProject } from '../../../models';
 import CanCheck from '../../../resources/can';
 // Proteger contra ataques XSS
@@ -106,11 +106,42 @@ export const LeadCardComponent = ({
   const currentInterest =
     INTEREST_LEVELS[nivelInteres as keyof typeof INTEREST_LEVELS] || UNKNOWN_INTEREST;
 
+  const multiBorderStyle = useMemo(() => {
+    // Asegúrate de que el array de etiquetas exista y no esté vacío
+    if (!lead.lead_labels || lead.lead_labels.length === 0) {
+      return {}; // No se aplica ningún estilo si no hay etiquetas
+    }
+
+    const colors = lead.lead_labels.map((label) => label.color);
+
+    // Si solo hay un color, creamos un fondo sólido simple
+    if (colors.length === 1) {
+      // Usamos una variable CSS para pasar el color al pseudo-elemento
+      return { '--multi-border-color': colors[0] };
+    }
+
+    // Si hay múltiples colores, construimos el gradiente
+    const percentage = 100 / colors.length;
+    const gradientStops = colors
+      .map((color, index) => {
+        const start = index * percentage;
+        const end = (index + 1) * percentage;
+        return `${color} ${start}%, ${color} ${end}%`;
+      })
+      .join(', ');
+
+    const gradientString = `linear-gradient(to bottom, ${gradientStops})`;
+
+    // Devolvemos el estilo con la variable CSS que contiene nuestro gradiente
+    return { '--multi-border-color': gradientString };
+  }, [lead.lead_labels]);
+
   return (
     <div
       className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
       data-id={id}
       onClick={() => onClickLead(uuid)}
+      style={multiBorderStyle as React.CSSProperties}
     >
       {/* Header Section */}
       <div className="kanban-card-header">

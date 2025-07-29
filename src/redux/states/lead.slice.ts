@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Lead, LeadProject, LeadLabel, User, UserSelect2, Activity } from '../../models';
 import { LeadHistorialResponse } from '../../models/responses';
+import { add } from 'date-fns';
 
 interface LeadState {
   lead: Lead;
@@ -102,6 +103,14 @@ export const leadSlice = createSlice({
       state.count_historial = action.payload.count_historial;
     },
 
+    //Actualizamos labels_available
+    addLabelAvailable(state, action: PayloadAction<LeadLabel>) {
+      const existingLabel = state.labelsAvailable.find((label) => label.id == action.payload.id);
+      if (!existingLabel) {
+        state.labelsAvailable.push(action.payload);
+      }
+    },
+
     //Clear the lead state
     clearLeadState(state) {
       state.lead = {} as Lead;
@@ -126,6 +135,7 @@ export const {
   setStateViewHistorial,
   updateLeadField,
   setOnlyHistorialData,
+  addLabelAvailable,
   clearLeadState,
 } = leadSlice.actions;
 

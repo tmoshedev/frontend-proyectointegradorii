@@ -1,5 +1,15 @@
-import { KanbanSquare, AlignJustify, RefreshCw, CloudDownload, Plus, Share2 } from 'lucide-react';
+import {
+  KanbanSquare,
+  AlignJustify,
+  RefreshCw,
+  CloudDownload,
+  Plus,
+  Share2,
+  Tag,
+} from 'lucide-react';
 import CanCheck from '../../../resources/can';
+import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
+import { useState } from 'react';
 
 interface LeadHeaderComponentProps {
   onRefreshLeads: () => void;
@@ -9,9 +19,15 @@ interface LeadHeaderComponentProps {
   filtros: any[];
   nivelesInteres: string[];
   handleNivelInteresChange: (nivel: string) => void;
+  labels: any[];
+  setLabels: React.Dispatch<React.SetStateAction<any[]>>;
+  handleEtiquetasKanban: (etiquetas: any[]) => void;
+  handleCrearEtiqueta: () => void;
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
+  const [openDropdown, setOpenDropdown] = useState(false);
+
   return (
     <div className="d-flex justify-content-between align-items-center mt-1 mb-1">
       <div className="d-flex justify-content-center align-items-center">
@@ -65,50 +81,84 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
         </button>
       </div>
 
-      <div className="d-flex justify-content-center align-items-center">
-        <div className="d-flex align-items-center me-2 gap-1 lead-header-state justify-content-center align-items-center">
-          <span>
-            <strong>Estado lead:</strong>
-          </span>{' '}
-          <div
-            className={`item-testado-lead ${
-              props.nivelesInteres.includes('CALIENTE') ? 'color-lead-caliente' : ''
-            }`}
-            data-tooltip-id="tooltip-component"
-            data-tooltip-content={`Lead caliente`}
-            onClick={() => props.handleNivelInteresChange('CALIENTE')}
-          >
-            <i className="fa-solid fa-fire"></i>
-          </div>
-          <div
-            className={`item-testado-lead ${
-              props.nivelesInteres.includes('TIBIO') ? 'color-lead-tibio' : ''
-            }`}
-            data-tooltip-id="tooltip-component"
-            data-tooltip-content={`Lead tibio`}
-            onClick={() => props.handleNivelInteresChange('TIBIO')}
-          >
-            <i className="fa-solid fa-temperature-half"></i>
-          </div>
-          <div
-            className={`item-testado-lead ${
-              props.nivelesInteres.includes('FRIO') ? 'color-lead-frio' : ''
-            }`}
-            data-tooltip-id="tooltip-component"
-            data-tooltip-content={`Lead frío`}
-            onClick={() => props.handleNivelInteresChange('FRIO')}
-          >
-            <i className="fa-solid fa-snowflake"></i>
+      <div className="header-controls-container">
+        {/* Grupo 1: Etiquetas */}
+        <div className="control-group">
+          <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
+            <div
+              className="dropdown"
+              onClick={() => setOpenDropdown(true)}
+              onBlur={() => setOpenDropdown(false)}
+              tabIndex={0}
+            >
+              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
+                {props.labels.filter((label) => label.select).length > 0 ? (
+                  <i
+                    style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
+                    className="fa-solid fa-tag"
+                  ></i>
+                ) : (
+                  <Tag height={20} />
+                )}
+              </span>
+              <SelectSearchCrm
+                maxHeight="250px"
+                minWidth="220px"
+                items={props.labels}
+                icon={`fa-solid fa-tag`}
+                open={openDropdown}
+                onChange={props.handleEtiquetasKanban}
+                store={props.handleCrearEtiqueta}
+              />
+            </div>
           </div>
         </div>
-        <button
-          onClick={props.onFiltrosLeads}
-          className={`btn btn-xs ${
-            props.filtros.length > 0 ? 'btn-primary' : 'btn-outline-primary'
-          }`}
-        >
-          Filtros{props.filtros.length > 0 && ` (${props.filtros.length})`}
-        </button>
+        {/* Grupo 2: Estados de Interés */}
+        <div className="control-group">
+          <div className="d-flex align-items-center gap-1 lead-header-state justify-content-center align-items-center">
+            <div
+              className={`item-testado-lead ${
+                props.nivelesInteres.includes('CALIENTE') ? 'color-lead-caliente' : ''
+              }`}
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content={`Lead caliente`}
+              onClick={() => props.handleNivelInteresChange('CALIENTE')}
+            >
+              <i className="fa-solid fa-fire"></i>
+            </div>
+            <div
+              className={`item-testado-lead ${
+                props.nivelesInteres.includes('TIBIO') ? 'color-lead-tibio' : ''
+              }`}
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content={`Lead tibio`}
+              onClick={() => props.handleNivelInteresChange('TIBIO')}
+            >
+              <i className="fa-solid fa-temperature-half"></i>
+            </div>
+            <div
+              className={`item-testado-lead ${
+                props.nivelesInteres.includes('FRIO') ? 'color-lead-frio' : ''
+              }`}
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content={`Lead frío`}
+              onClick={() => props.handleNivelInteresChange('FRIO')}
+            >
+              <i className="fa-solid fa-snowflake"></i>
+            </div>
+          </div>
+        </div>
+        {/* Grupo 3: Filtros del Modal */}
+        <div className="control-group">
+          <button
+            onClick={props.onFiltrosLeads}
+            className={`btn btn-xs ${
+              props.filtros.length > 0 ? 'btn-primary' : 'btn-outline-primary'
+            }`}
+          >
+            Filtros{props.filtros.length > 0 && ` (${props.filtros.length})`}
+          </button>
+        </div>
       </div>
     </div>
   );

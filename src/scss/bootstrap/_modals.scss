@@ -24,7 +24,7 @@
   }
 }
 .modal-footer {
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 0.7rem;
   border-block-start: 1px solid $default-border;
 }
 
@@ -204,5 +204,9 @@
 }
 
 .modal-no-scroll .form-scrollable .modal-body {
+  overflow: auto;
+}
+
+.form-scrollable .modal-body {
   overflow: auto;
 }

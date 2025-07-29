@@ -12,13 +12,16 @@ import {
   updateLeadProjects,
 } from '../../../redux/states/lead.slice';
 
-import { updateUserLabels } from '../../../redux/states/user.slice';
-
 //Utilities
 import { Bounce, toast } from 'react-toastify';
 import { useLeads, useUsers } from '../../../hooks';
+import EditarSelectSearchCrm from '../../../components/EditarSelectSearchCrm';
 
-export const LeadDetailsComponent = () => {
+interface Props {
+  onCrearNuevaEtiqueta: () => void;
+}
+
+export const LeadDetailsComponent = (props: Props) => {
   const dispatch = useDispatch();
   const { updateProjects, updateLabels } = useLeads();
   const { updateUserLabels } = useUsers();
@@ -96,8 +99,8 @@ export const LeadDetailsComponent = () => {
     setEditUserLabels(false);
   };
 
-  const onGuardarLabels = () => {
-    updateLabels(lead.uuid, selectedLabels, false)
+  const onGuardarLabels = (items: any[]) => {
+    updateLabels(lead.uuid, items, false)
       .then((response) => {
         toast.success(response.message, {
           position: 'top-center',
@@ -110,7 +113,7 @@ export const LeadDetailsComponent = () => {
           theme: 'light',
           transition: Bounce,
         });
-        dispatch(updateLeadLabels(selectedLabels));
+        dispatch(updateLeadLabels(items));
         setEditLabels(false);
       })
       .catch((error) => {
@@ -319,13 +322,14 @@ export const LeadDetailsComponent = () => {
         <div className="bock-item__datos">
           <div className="fields-list-row">
             {editLabels ? (
-              <MultiSelectDropdown
+              <EditarSelectSearchCrm
                 options={labelsAvailable}
                 selected={selectedLabels}
                 onChange={setSelectedLabels}
                 placeholder="Seleccionar etiquetas"
                 onCancel={onCancelLabels}
                 onGuardar={onGuardarLabels}
+                onCrearNuevaEtiqueta={props.onCrearNuevaEtiqueta}
               />
             ) : (
               <div className="fields-list__components">
@@ -334,7 +338,10 @@ export const LeadDetailsComponent = () => {
                     {lead.lead_labels?.map((label: LeadLabel, index: number) => (
                       <li key={index} className="fields-list__item">
                         <div className="fields-list__item__block">
-                          <span className="fields-list__item_content">{label.name}</span>
+                          <span className="fields-list__item_content">
+                            <i style={{ color: label.color }} className="fa-solid fa-tag"></i>{' '}
+                            {label.name}
+                          </span>
                         </div>
                       </li>
                     ))}
