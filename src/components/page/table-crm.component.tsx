@@ -14,7 +14,7 @@ interface TableCRMProps {
     per_page: number;
     total: number;
   };
-  cargarData: (page: number, callback?: () => void) => void;
+  cargarData: (page: number) => Promise<void>;
   buttonsAcctions: any[];
   onClickButtonPersonalizado: (row: any, id: string) => void;
 }
@@ -25,6 +25,7 @@ export const TableCRM = (props: TableCRMProps) => {
   const typeToggleRef = useRef<HTMLButtonElement>(null);
   const [openActionRow, setOpenActionRow] = useState<number | null>(null);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
+  const loadingLockRef = useRef(false);
 
   //
   const visibleHeadersCount = props.tableHeader.filter(
@@ -54,13 +55,19 @@ export const TableCRM = (props: TableCRMProps) => {
       const container = tableContainerRef.current;
       if (!container) return;
 
-      if (
-        container.scrollTop + container.clientHeight >= container.scrollHeight - 5 &&
-        metaDataRef.current.current_page < metaDataRef.current.last_page &&
-        !isLoading
-      ) {
+      const canLoadMore = metaDataRef.current.current_page < metaDataRef.current.last_page;
+      const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 5;
+
+      if (isAtBottom && canLoadMore && !loadingLockRef.current) {
+        loadingLockRef.current = true;
         setIsLoading(true);
-        props.cargarData(metaDataRef.current.current_page + 1, () => setIsLoading(false));
+
+        // CAMBIO: Ahora usamos la promesa con .finally()
+        props.cargarData(metaDataRef.current.current_page + 1).finally(() => {
+          // Este código se ejecutará SIEMPRE después de que la API termine
+          setIsLoading(false);
+          loadingLockRef.current = false;
+        });
       }
     };
 
@@ -73,7 +80,7 @@ export const TableCRM = (props: TableCRMProps) => {
         container.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [props.cargarData, isLoading]);
+  }, [props.cargarData]);
 
   return (
     <div

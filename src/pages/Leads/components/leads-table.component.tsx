@@ -16,6 +16,7 @@ interface Props {
     last_page: number;
     total: number;
     per_page: number;
+    showing: number;
   };
   tableHeader: TableHeaderResponse[];
   setTableHeader: React.Dispatch<React.SetStateAction<TableHeaderResponse[]>>;
@@ -24,10 +25,8 @@ interface Props {
 export const LeadsTableComponent = (props: Props) => {
   useSidebarResponsive(true);
 
-  const cargarData = (page: number, onFinish?: () => void) => {
-    console.log('Cargando datos de la página:', page);
-    props.cargarDataLeads(page);
-    if (onFinish) onFinish();
+  const cargarData = async (page: number): Promise<void> => {
+    await props.cargarDataLeads(page);
   };
 
   const onKankan = () => {
@@ -80,6 +79,7 @@ export const LeadsTableComponent = (props: Props) => {
               setTableHeader={props.setTableHeader}
               onFiltros={() => props.onFiltrosLeads('LEADS_TABLE')}
               filtros={props.filtros}
+              leads={props.leads}
             />
           </div>
           <div className="table-crm-body">

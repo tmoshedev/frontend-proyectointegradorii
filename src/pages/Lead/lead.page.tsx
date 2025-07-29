@@ -158,7 +158,7 @@ export const LeadPage = () => {
           </div>
         </div>
         <div className="lead-content">
-          <LeadDetailsComponent onCrearNuevaEtiqueta={onCrearNuevaEtiqueta}/>
+          <LeadDetailsComponent onCrearNuevaEtiqueta={onCrearNuevaEtiqueta} />
           <div className="lead-content__content scroll-personalizado">
             <div className="timeline-content">
               <div className="w-100">

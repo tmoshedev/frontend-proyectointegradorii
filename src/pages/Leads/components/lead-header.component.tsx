@@ -6,6 +6,7 @@ import {
   Plus,
   Share2,
   Tag,
+  Search,
 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
@@ -23,6 +24,8 @@ interface LeadHeaderComponentProps {
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
   handleCrearEtiqueta: () => void;
+  terminoBusqueda: string;
+  setTerminoBusqueda: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
@@ -79,6 +82,24 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
         >
           <CloudDownload height={20} /> Importar Leads
         </button>
+      </div>
+
+      <div className="d-flex justify-content-center align-items-center">
+        <div className="lead-header-search me-2">
+          <Search className="search-icon" size={18} />
+          <div role="group" className="btn-group w-100">
+            <input
+              type="text"
+              className="form-control form-control-sm todo-mayuscula"
+              placeholder="Buscar por nombre, DNI, celular o correo..."
+              value={props.terminoBusqueda}
+              onChange={(e) => props.setTerminoBusqueda(e.target.value)}
+            />
+            <button onClick={() => props.setTerminoBusqueda('')} className="btn btn-primary btn-xs">
+              Limpiar
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="header-controls-container">

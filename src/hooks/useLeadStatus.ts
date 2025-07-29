@@ -56,6 +56,7 @@ export function useLeadStatus() {
     project_ids: string,
     activity_expiration_ids: string,
     nivel_interes: string,
+    text: string,
     limit: number,
     page: number,
     loading: boolean
@@ -73,6 +74,7 @@ export function useLeadStatus() {
         project_ids,
         activity_expiration_ids,
         nivel_interes,
+        text,
         limit,
         page
       );

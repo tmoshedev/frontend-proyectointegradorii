@@ -39,12 +39,14 @@ export const LeadsPage = () => {
     last_page: 0,
     per_page: 50,
     total: 0,
+    showing: 0,
   }); // Para Tabla
   const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
   const [stateView, setStateView] = useState<string>('KANBAN');
   const [isTableLoading, setIsTableLoading] = useState(false);
 
   // Estados de datos estáticos (usuarios, etiquetas, etc.)
+  const [terminoBusqueda, setTerminoBusqueda] = useState('');
   const [users, setUsers] = useState<any[]>([]);
   const [labels, setLabels] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
@@ -166,7 +168,7 @@ export const LeadsPage = () => {
 
   const handleStateView = (view: string) => {
     setFiltros([]);
-    setNivelesInteres([]);
+    setNivelesInteres(['CALIENTE', 'TIBIO', 'FRIO']);
     setStateView(view);
   };
 
@@ -296,7 +298,7 @@ export const LeadsPage = () => {
     add_data: boolean = false,
     loanding: boolean
   ) => {
-    getLeads(
+    return getLeads(
       user_ids,
       channel_ids,
       lead_label_ids,
@@ -318,6 +320,7 @@ export const LeadsPage = () => {
         last_page: response.meta.last_page,
         per_page: response.meta.per_page,
         total: response.meta.total,
+        showing: response.meta.showing,
       });
       setTableHeader(response.table_header || []);
     });
@@ -341,7 +344,7 @@ export const LeadsPage = () => {
 
     const addData = page == 1 ? false : true;
 
-    refreshDataLeads(
+    return refreshDataLeads(
       user_ids,
       channel_ids,
       lead_label_ids,
@@ -412,7 +415,7 @@ export const LeadsPage = () => {
     setLabels(etiquetasAplicadas);
 
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas);
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, terminoBusqueda);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
@@ -465,6 +468,7 @@ export const LeadsPage = () => {
       project_ids,
       activity_expiration_ids,
       nivel_interes,
+      terminoBusqueda,
       20, // per_page
       nextPage,
       false
@@ -496,6 +500,7 @@ export const LeadsPage = () => {
       currentFiltros: any[],
       currentNiveles: string[],
       etiquetas: any[],
+      termino: string,
       first: boolean = false
     ) => {
       // Lógica para recargar el Kanban:
@@ -570,6 +575,7 @@ export const LeadsPage = () => {
           project_ids,
           activity_expiration_ids,
           nivel_interes,
+          termino,
           20,
           1,
           false
@@ -589,7 +595,7 @@ export const LeadsPage = () => {
         })
       );
     },
-    [getLeadStatus, getLeadByEtapa]
+    [getLeadStatus, getLeadByEtapa, labels, users]
   );
 
   const recargarDatosTabla = useCallback(
@@ -612,7 +618,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
-        nivel_interes,
+        '',
         50,
         page,
         false
@@ -643,6 +649,12 @@ export const LeadsPage = () => {
     setIsStateModalEtiquetas(true);
   };
 
+  const onBuscarKanban = (termino: string) => {
+    console.log('Buscando leads con término:', termino);
+    setTerminoBusqueda(termino);
+    recargarDatosKanban(filtros, nivelesInteres, labels, termino);
+  };
+
   useEffect(() => {
     dispatch(setTitleSidebar('Leads'));
     return () => {
@@ -651,20 +663,20 @@ export const LeadsPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    //Debe reiniciar los datos al cambiar la vista
     setEtapas([]);
     setMetaData({
       current_page: 1,
       last_page: 0,
       per_page: 50,
       total: 0,
+      showing: 0,
     }); // Para Tabla
     setLeads([]); // Para Tabla
     setTableHeader([]); // Para Tabla
     const filtrosReseteados: any[] = [];
     const nivelesReseteados: string[] = [];
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtros, nivelesInteres, labels, true);
+      recargarDatosKanban(filtros, nivelesInteres, labels, terminoBusqueda, true);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
     }
@@ -691,6 +703,8 @@ export const LeadsPage = () => {
           setLabels={setLabels}
           handleEtiquetasKanban={handleEtiquetasKanban}
           handleCrearEtiqueta={handleCrearEtiqueta}
+          terminoBusqueda={terminoBusqueda}
+          setTerminoBusqueda={onBuscarKanban}
         />
       )}
       {stateView == 'IMPORTAR' && <ImportarLeadComponent handleStateView={handleStateView} />}

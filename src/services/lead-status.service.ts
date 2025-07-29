@@ -31,12 +31,13 @@ export const getLeadByEtapa = async (
   project_ids: string,
   activity_expiration_ids: string,
   nivel_interes: string,
+  text: string,
   limit: number,
   page: number
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<EtapaConPaginacion>(
-    `/lead-status/leads?business_id=${business_id}&lead_activos=${lead_activos}&etapa_ids=${etapa_ids}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&nivel_interes=${nivel_interes}&limit=${limit}&page=${page}`
+    `/lead-status/leads?business_id=${business_id}&lead_activos=${lead_activos}&etapa_ids=${etapa_ids}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&nivel_interes=${nivel_interes}&text=${text}&limit=${limit}&page=${page}`
   );
   return response;
 };

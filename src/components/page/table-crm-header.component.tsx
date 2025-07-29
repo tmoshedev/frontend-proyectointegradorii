@@ -21,6 +21,7 @@ interface Props {
     last_page: number;
     per_page: number;
     total: number;
+    showing: number;
   };
   name_resource: string;
   name_plural_resource: string;
@@ -38,6 +39,7 @@ interface Props {
   setTableHeader: (updatedHeader: any[]) => void;
   onFiltros?: () => void;
   filtros: any[];
+  leads: any[];
 }
 export const TableCRMHeaderComponent = (props: Props) => {
   const atLeastOneView = props.view_kanban || props.view_table || props.view_refresh;
@@ -116,7 +118,7 @@ export const TableCRMHeaderComponent = (props: Props) => {
       </div>
       <div className="d-flex justify-content-center align-items-center gap-1">
         <span style={{ color: '#21232c' }}>
-          {props.metaData.total} {props.name_plural_resource}
+          Mostrando {props.leads.length} / {props.metaData.total} {props.name_plural_resource}
         </span>
         {props.view_refresh && (
           <button

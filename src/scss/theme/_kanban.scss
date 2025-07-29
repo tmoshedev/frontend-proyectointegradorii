@@ -409,3 +409,22 @@ $arrow-width: 0.7rem;
   border-left: 1px solid #e5e7eb;
   padding-left: 0.7rem;
 }
+
+.lead-header-search {
+  position: relative;
+}
+
+.lead-header-search .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lead-header-search input {
+  padding-left: 35px;
+  width: 350px;
+}

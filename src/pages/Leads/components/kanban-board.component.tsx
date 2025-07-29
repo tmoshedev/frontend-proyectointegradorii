@@ -29,6 +29,8 @@ interface KanbanBoardComponentProps {
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
   handleCrearEtiqueta: () => void;
+  terminoBusqueda: string;
+  setTerminoBusqueda: any;
 }
 
 export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
@@ -113,6 +115,8 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             setLabels={props.setLabels}
             handleEtiquetasKanban={props.handleEtiquetasKanban}
             handleCrearEtiqueta={props.handleCrearEtiqueta}
+            terminoBusqueda={props.terminoBusqueda}
+            setTerminoBusqueda={props.setTerminoBusqueda}
           />
           <div className="kanban-columns">
             {props.etapas.map((etapa) => (
