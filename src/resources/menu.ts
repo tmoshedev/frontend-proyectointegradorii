@@ -17,6 +17,13 @@ const Menu: MenuItem[] = [
     rolesPermitidos: ['ALLS'],
   },
   {
+    name: 'Campaña',
+    path: '/campaigns',
+    icon: 'ri-megaphone-line',
+    permission: 'home-index',
+    rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
+  },
+  {
     name: 'Calendario',
     path: '/calendar',
     icon: 'ri-calendar-2-line',

@@ -18,3 +18,4 @@ export * from './calendar-event.model';
 export * from './user-calendario.model';
 export * from './user-label.model';
 export * from './etapa-meta.model';
+export * from './campaign.model';
