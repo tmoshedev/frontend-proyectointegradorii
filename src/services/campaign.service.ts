@@ -3,6 +3,7 @@ import { CampaignResponse } from '../models/responses';
 import apiInstance from './api';
 
 export const getCampaigns = async (
+  channel_id: string,
   text: string,
   type: string,
   page: number,
@@ -10,8 +11,9 @@ export const getCampaigns = async (
   orderBy: string,
   order: string
 ) => {
+  const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get(
-    `/campaigns?text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
+    `/campaigns?rolActual=${rolActual}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}&channel_id=${channel_id}`
   );
   return response;
 };

@@ -20,9 +20,9 @@ interface DataModalState {
 export const CampaignsPage = () => {
   const [requirements, setRequirements] = useState<any>([]);
   const [filterState, setFilterState] = useState({
-    name: '',
-    code: '',
     channel_id: '',
+    text: '',
+    type: '',
     page: 1,
     limit: '',
     orderBy: '',
@@ -68,7 +68,7 @@ export const CampaignsPage = () => {
           { name: 'name', alias: 'Nombre', roles: [] },
           { name: 'channel_name', alias: 'Canal', roles: [] },
           { name: 'start_date', alias: 'Fecha Inicio', roles: [] },
-          { name: 'end_date', alias: 'Fecha Fin', roles: [] },
+          { name: 'leads', alias: 'Leads', roles: [] },
           {
             name: 'state',
             alias: 'Estado',
@@ -81,13 +81,44 @@ export const CampaignsPage = () => {
                 1: 'badge bg-success-transparent',
               },
               names: {
-                0: 'Inactiva',
-                1: 'Activa',
+                0: 'Inactiva para no recepcionar leads',
+                1: 'Activa para recepcionar leads',
               },
             },
           },
         ],
-        buttons: [], // si quieres activar/desactivar campañas, se define aquí
+        buttons: [
+           {
+            name: 'status',
+            tooltip: 'Desactivar campaña',
+            text: '',
+            css: 'me-3 text-danger',
+            icon: 'fa-solid fa-user-slash',
+            play: {
+              type: 'states',
+              name: 'state',
+              values: {
+                '0': false,
+                '1': true,
+              },
+            },
+          },
+          {
+            name: 'status_active',
+            tooltip: 'Activar campaña',
+            text: '',
+            css: 'me-3 text-success',
+            icon: 'fa-solid fa-user-check',
+            play: {
+              type: 'states',
+              name: 'state',
+              values: {
+                '0': true,
+                '1': false,
+              },
+            },
+          },
+        ], // si quieres activar/desactivar campañas, se define aquí
       },
     },
   };
@@ -100,8 +131,9 @@ export const CampaignsPage = () => {
     setFilterState({ ...filterState, page: newPage });
 
     getCampaigns(
-      filterState.code,
       filterState.channel_id,
+      filterState.text,
+      filterState.type,
       newPage,
       filterState.limit,
       filterState.orderBy,
@@ -112,24 +144,25 @@ export const CampaignsPage = () => {
   };
 
   const onClearFilters = () => {
-    const cleared = {
-      name: '',
-      code: '',
+     setFilterState({
+      ...filterState,
       channel_id: '',
+      text: '',
+      type: '',
       page: 1,
       limit: '',
       orderBy: '',
       order: '',
-    };
-    setFilterState(cleared);
-    getCampaigns( '', '', 1, '', '', '', true, true);
+    });
+    getCampaigns('', '', '', 1, '', '', '', true, true);
   };
 
   const handleFilterSearch = (newFilters: any, state: boolean) => {
     setFilterState(newFilters);
     getCampaigns(
-      newFilters.code,
       newFilters.channel_id,
+      newFilters.text,
+      newFilters.type,
       1,
       newFilters.limit,
       newFilters.orderBy,
@@ -179,8 +212,9 @@ export const CampaignsPage = () => {
         setRequirements(response);
       });
       getCampaigns(
-        filterState.code,
         filterState.channel_id,
+        filterState.text,
+        filterState.type,
         filterState.page,
         filterState.limit,
         filterState.orderBy,
