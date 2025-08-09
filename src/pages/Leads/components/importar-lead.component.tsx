@@ -38,7 +38,9 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
     reader.readAsArrayBuffer(file); // Usar ArrayBuffer es la alternativa recomendada
 
     reader.onload = (event) => {
-      if (!event.target?.result) return;
+      if (!event.target?.result) {
+        return;
+      }
       const arrayBuffer = event.target.result as ArrayBuffer;
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
@@ -47,8 +49,17 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
 
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         defval: '',
-        range: 2, // Saltar las dos primeras filas
-        header: ['campaign_id','project_id', 'channel_id', 'document_number','names', 'last_names', 'cellphone', 'ciudad'],
+        range: 1, // Saltar las dos primeras filas
+        header: [
+          'campaign_id',
+          'project_id',
+          'channel_id',
+          'document_number',
+          'names',
+          'last_names',
+          'cellphone',
+          'ciudad',
+        ],
       });
       setData(jsonData as ImportarLeadRequest[]);
     };
@@ -124,12 +135,12 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
           <div className="importa-data-body">
             <div className="tabla-zize-resource">
               <div className="tabla-zize-header">
-                <div className="tabla-zize-col tabla-zize-col-15 text-center">Campaña</div>
-                <div className="tabla-zize-col tabla-zize-col-15 text-center">Proyecto</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Campaña</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Proyecto</div>
                 <div className="tabla-zize-col tabla-zize-col-15">Canal captación</div>
-                <div className="tabla-zize-col tabla-zize-col-10 text-center">Dni</div>
-                <div className="tabla-zize-col tabla-zize-col-15 text-center">Nombres</div>
-                <div className="tabla-zize-col tabla-zize-col-20 text-center">Apellidos</div>
+                <div className="tabla-zize-col tabla-zize-col-5 text-center">Dni</div>
+                <div className="tabla-zize-col tabla-zize-col-10 text-center">Nombres</div>
+                <div className="tabla-zize-col tabla-zize-col-15 text-center">Apellidos</div>
                 <div className="tabla-zize-col tabla-zize-col-10 text-center">Celular</div>
                 <div className="tabla-zize-col tabla-zize-col-10 text-center">Ciudad</div>
                 <div className="tabla-zize-col tabla-zize-col-15 text-center">Acción</div>
@@ -140,16 +151,15 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                   const isEmpty = (value: any) => !value || String(value).trim() === '';
                   const isRowIncomplete =
                     //isEmpty(item.project_id) ||
+                    isEmpty(item.campaign_id) ||
                     isEmpty(item.document_number) ||
                     isEmpty(item.names) ||
                     isEmpty(item.last_names) ||
                     isEmpty(item.cellphone) ||
                     isEmpty(item.ciudad);
                   return (
-                    
                     <div className="tabla-zize-body-item" key={index}>
-
-                       <div className="tabla-zize-col tabla-zize-col-15">
+                      <div className="tabla-zize-col tabla-zize-col-10">
                         <select
                           className={`form-select form-select-sm ${
                             erroresValidacion[index]?.campaign_id ? 'is-invalid' : ''
@@ -173,7 +183,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                         </select>
                       </div>
 
-                      <div className="tabla-zize-col tabla-zize-col-15">
+                      <div className="tabla-zize-col tabla-zize-col-10">
                         <select
                           className={`form-select form-select-sm ${
                             erroresValidacion[index]?.project_id ? 'is-invalid' : ''
@@ -220,8 +230,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                           ))}
                         </select>
                       </div>
-                      
-                      <div className="tabla-zize-col tabla-zize-col-15">
+                      <div className="tabla-zize-col tabla-zize-col-5">
                         <input
                           type="text"
                           className={`form-control form-control-sm todo-mayuscula ${
@@ -238,7 +247,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                           }}
                         />
                       </div>
-                      <div className="tabla-zize-col tabla-zize-col-15">
+                      <div className="tabla-zize-col tabla-zize-col-10">
                         <input
                           type="text"
                           className={`form-control form-control-sm todo-mayuscula ${
@@ -255,7 +264,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                           }}
                         />
                       </div>
-                      <div className="tabla-zize-col tabla-zize-col-20">
+                      <div className="tabla-zize-col tabla-zize-col-15">
                         <input
                           type="text"
                           className="form-control form-control-sm todo-mayuscula"

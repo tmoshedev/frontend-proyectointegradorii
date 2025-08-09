@@ -14,7 +14,7 @@ interface TableCRMProps {
     per_page: number;
     total: number;
   };
-  cargarData: (page: number) => Promise<void>;
+  cargarData: any;
   buttonsAcctions: any[];
   onClickButtonPersonalizado: (row: any, id: string) => void;
 }

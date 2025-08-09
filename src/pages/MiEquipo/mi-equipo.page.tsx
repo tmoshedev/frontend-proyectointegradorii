@@ -31,6 +31,7 @@ export const MiEquipoPage = () => {
     last_page: 0,
     per_page: 10,
     total: 0,
+    showing: 0,
   });
   const { getUserHierarchy, deleteUserHierarchy, postHabilitarUserHierarchy } = useUserHierarchy();
   const rolActual = localStorage.getItem('rolActual') || '';
@@ -38,47 +39,47 @@ export const MiEquipoPage = () => {
   const nameModelPlural = rolActual == 'COMMERCIAL_LEADER' ? 'Supervisores' : 'Asesores';
   //BOTONES DE ACCIONES
   const buttonsAcctions = [
-  ...(rolActual === 'COMMERCIAL_LEADER'
-    ? [
-        {
-          id: 'add_agente',
-          name: 'Agregar agente',
-          name_class: '',
-          icon: '<i class="fa-solid fa-user-plus"></i>',
-          type: 'states',
-          type_value: 'state',
-          values: [{ '1': true }, { '0': false }],
-        },
-        {
-          id: 'agentes_ventas',
-          name: 'Agente de ventas',
-          name_class: '',
-          icon: '<i class="fa-solid fa-users"></i>',
-          type: 'states',
-          type_value: 'state',
-          values: [{ '1': true }, { '0': false }],
-        },
-      ]
-    : []),
-  {
-    id: 'desactivar',
-    name: 'Desactivar',
-    name_class: 'text-danger',
-    icon: '<i class="fa-solid fa-power-off"></i>',
-    type: 'states',
-    type_value: 'state',
-    values: [{ '1': true }, { '0': false }],
-  },
-  {
-    id: 'habilitar',
-    name: 'Habilitar',
-    name_class: 'text-success',
-    icon: '<i class="fa-solid fa-power-off"></i>',
-    type: 'states',
-    type_value: 'state',
-    values: [{ '1': false }, { '0': true }],
-  },
-];
+    ...(rolActual === 'COMMERCIAL_LEADER'
+      ? [
+          {
+            id: 'add_agente',
+            name: 'Agregar agente',
+            name_class: '',
+            icon: '<i class="fa-solid fa-user-plus"></i>',
+            type: 'states',
+            type_value: 'state',
+            values: [{ '1': true }, { '0': false }],
+          },
+          {
+            id: 'agentes_ventas',
+            name: 'Agente de ventas',
+            name_class: '',
+            icon: '<i class="fa-solid fa-users"></i>',
+            type: 'states',
+            type_value: 'state',
+            values: [{ '1': true }, { '0': false }],
+          },
+        ]
+      : []),
+    {
+      id: 'desactivar',
+      name: 'Desactivar',
+      name_class: 'text-danger',
+      icon: '<i class="fa-solid fa-power-off"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': true }, { '0': false }],
+    },
+    {
+      id: 'habilitar',
+      name: 'Habilitar',
+      name_class: 'text-success',
+      icon: '<i class="fa-solid fa-power-off"></i>',
+      type: 'states',
+      type_value: 'state',
+      values: [{ '1': false }, { '0': true }],
+    },
+  ];
   //MODAL NUEVO LEAD
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -110,6 +111,7 @@ export const MiEquipoPage = () => {
         last_page: response.meta.last_page,
         per_page: response.meta.per_page,
         total: response.meta.total,
+        showing: response.meta.showing,
       });
     });
   };
@@ -153,6 +155,7 @@ export const MiEquipoPage = () => {
           last_page: response.meta.last_page,
           per_page: response.meta.per_page,
           total: response.meta.total,
+          showing: response.meta.showing,
         });
       }
     );
@@ -238,6 +241,7 @@ export const MiEquipoPage = () => {
             last_page: response.meta.last_page,
             per_page: response.meta.per_page,
             total: response.meta.total,
+            showing: response.meta.showing,
           });
         }
       );
@@ -274,6 +278,7 @@ export const MiEquipoPage = () => {
               tableHeader={tableHeader}
               setTableHeader={setTableHeader}
               filtros={[]}
+              datas={data}
             />
           </div>
           <div className="table-crm-body">

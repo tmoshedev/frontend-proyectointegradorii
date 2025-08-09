@@ -79,7 +79,7 @@ export const LeadsTableComponent = (props: Props) => {
               setTableHeader={props.setTableHeader}
               onFiltros={() => props.onFiltrosLeads('LEADS_TABLE')}
               filtros={props.filtros}
-              leads={props.leads}
+              datas={props.leads}
             />
           </div>
           <div className="table-crm-body">

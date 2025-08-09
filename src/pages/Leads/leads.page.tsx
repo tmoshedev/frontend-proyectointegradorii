@@ -650,7 +650,6 @@ export const LeadsPage = () => {
   };
 
   const onBuscarKanban = (termino: string) => {
-    console.log('Buscando leads con término:', termino);
     setTerminoBusqueda(termino);
     recargarDatosKanban(filtros, nivelesInteres, labels, termino);
   };

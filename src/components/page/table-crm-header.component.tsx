@@ -39,7 +39,7 @@ interface Props {
   setTableHeader: (updatedHeader: any[]) => void;
   onFiltros?: () => void;
   filtros: any[];
-  leads: any[];
+  datas: any[];
 }
 export const TableCRMHeaderComponent = (props: Props) => {
   const atLeastOneView = props.view_kanban || props.view_table || props.view_refresh;
@@ -118,7 +118,7 @@ export const TableCRMHeaderComponent = (props: Props) => {
       </div>
       <div className="d-flex justify-content-center align-items-center gap-1">
         <span style={{ color: '#21232c' }}>
-          Mostrando {props.leads.length} / {props.metaData.total} {props.name_plural_resource}
+          Mostrando {props.datas.length} / {props.metaData.total} {props.name_plural_resource}
         </span>
         {props.view_refresh && (
           <button

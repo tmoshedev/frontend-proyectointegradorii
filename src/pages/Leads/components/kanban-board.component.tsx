@@ -148,6 +148,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                     ghostClass="ghost"
                     dragClass="drag"
                     className="sortable-container"
+                    style={{ minHeight: '100px' }}
                     forceFallback
                     onStart={handleDragStart}
                     onEnd={handleDragEnd}
