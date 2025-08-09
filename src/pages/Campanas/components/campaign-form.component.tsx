@@ -28,10 +28,6 @@ export const CampaignFormComponent = (props: Props) => {
   const validationSchema = Yup.object({
     name: Yup.string().required('El nombre de la campaña es obligatorio'),
     fecha_inicio: Yup.date().required('La fecha de inicio es obligatoria'),
-    precio: Yup.number()
-      .typeError('El precio debe ser un número')
-      .positive('El precio debe ser mayor a 0')
-      .required('El precio es obligatorio'),
     codigo: Yup.string().required('El código es obligatorio'),
     channel_id: Yup.string().required('El canal es obligatorio'),
   });
@@ -131,7 +127,7 @@ export const CampaignFormComponent = (props: Props) => {
           {/* Precio */}
           <div className="col-md-6 mb-3">
             <label className="form-label" htmlFor="precio">
-              Precio<span className="text-danger">*</span>
+              Precio
             </label>
             <input
               autoComplete="off"
@@ -215,8 +211,8 @@ export const CampaignFormComponent = (props: Props) => {
               id="state"
               className="form-select form-select-sm"
             >
-              <option value={1}>Activo</option>
-              <option value={0}>Inactivo</option>
+              <option value={1}>Recepcionar Leads</option>
+              <option value={0}>No recepcionar Leads</option>
             </select>
           </div>
         </div>

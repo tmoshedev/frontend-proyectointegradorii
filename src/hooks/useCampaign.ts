@@ -16,6 +16,7 @@ export function useCampaigns() {
   const dispatch = useDispatch();
 
   const getCampaigns = async (
+    channel_id: string,
     text: string,
     type: string,
     page: number,
@@ -28,6 +29,7 @@ export function useCampaigns() {
     dispatch(setLoading(loading));
     try {
       const response = await campaignsService.getCampaigns(
+        channel_id,
         text,
         type,
         page,

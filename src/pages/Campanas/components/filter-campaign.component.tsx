@@ -9,7 +9,7 @@ interface Props {
   requirements: any;
 }
 
-export const FilterAccessUserComponent = (props: Props) => {
+export const FilterCampaignComponent = (props: Props) => {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedFilters = { ...props.filterState, text: event.target.value };
     props.handleFilterSearch(updatedFilters, false);
@@ -23,25 +23,25 @@ export const FilterAccessUserComponent = (props: Props) => {
   return (
     <div className="mt-1 mb-3 row">
       <div className="col-md-3">
-        <label className="form-label" htmlFor="role_id">
-          <i className="fa-solid fa-filter"></i> Rol
+        <label className="form-label" htmlFor="channel_id">
+          <i className="fa-solid fa-filter"></i> Canal
         </label>
         <select
-          name="role_id"
-          id="role_id"
-          value={props.filterState.role_id}
+          name="channel_id"
+          id="channel_id"
+          value={props.filterState.channel_id}
           onChange={handleSelectChange}
           className="form-select form-select-sm"
         >
           <option value="">Todos</option>
-          {props.requirements?.roles?.map((role: any) => (
-            <option key={role.id} value={role.id}>
-              {role.name}
+          {props.requirements?.channel?.map((channel: any) => (
+            <option key={channel.id} value={channel.id}>
+              {channel.name}
             </option>
           ))}
         </select>
       </div>
-      {/* Buscar */}
+      {/* Buscar 
       <div className="col-md-6">
         <label htmlFor="text" className="form-label">
           <i className="fa-solid fa-magnifying-glass"></i> Buscar usuario
@@ -61,9 +61,9 @@ export const FilterAccessUserComponent = (props: Props) => {
             Limpiar
           </button>
         </div>
-      </div>
+      </div>*/}
     </div>
   );
 };
 
-export default FilterAccessUserComponent;
+export default FilterCampaignComponent;

@@ -20,7 +20,7 @@ const Menu: MenuItem[] = [
     name: 'Campaña',
     path: '/campaigns',
     icon: 'ri-megaphone-line',
-    permission: 'home-index',
+    permission: 'campaigns-index',
     rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
   },
   {

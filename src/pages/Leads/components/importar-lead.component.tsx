@@ -13,6 +13,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [data, setData] = useState<ImportarLeadRequest[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [erroresValidacion, setErroresValidacion] = useState<any[]>([]);
   const rolActual = localStorage.getItem('rolActual') || '';
@@ -46,8 +47,8 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
 
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         defval: '',
-        range: 1, // Saltar las dos primeras filas
-        header: ['project_id', 'channel_id', 'document_number','names', 'last_names', 'cellphone', 'ciudad'],
+        range: 2, // Saltar las dos primeras filas
+        header: ['campaign_id','project_id', 'channel_id', 'document_number','names', 'last_names', 'cellphone', 'ciudad'],
       });
       setData(jsonData as ImportarLeadRequest[]);
     };
@@ -92,6 +93,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
   useEffect(() => {
     const dataInicial = () => {
       requirements(true).then((response: any) => {
+        setCampaigns(response.campaigns);
         setProjects(response.projects);
         setChannels(response.channels);
       });
@@ -122,6 +124,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
           <div className="importa-data-body">
             <div className="tabla-zize-resource">
               <div className="tabla-zize-header">
+                <div className="tabla-zize-col tabla-zize-col-15 text-center">Campaña</div>
                 <div className="tabla-zize-col tabla-zize-col-15 text-center">Proyecto</div>
                 <div className="tabla-zize-col tabla-zize-col-15">Canal captación</div>
                 <div className="tabla-zize-col tabla-zize-col-10 text-center">Dni</div>
@@ -143,7 +146,33 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                     isEmpty(item.cellphone) ||
                     isEmpty(item.ciudad);
                   return (
+                    
                     <div className="tabla-zize-body-item" key={index}>
+
+                       <div className="tabla-zize-col tabla-zize-col-15">
+                        <select
+                          className={`form-select form-select-sm ${
+                            erroresValidacion[index]?.campaign_id ? 'is-invalid' : ''
+                          }`}
+                          value={item.campaign_id}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].campaign_id = value;
+                              return newData;
+                            });
+                          }}
+                        >
+                          <option value="">Seleccionar</option>
+                          {campaigns.map((campaign: any) => (
+                            <option key={campaign.id} value={campaign.id}>
+                              {campaign.codigo}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
                       <div className="tabla-zize-col tabla-zize-col-15">
                         <select
                           className={`form-select form-select-sm ${
@@ -163,6 +192,30 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                           {projects.map((project: any) => (
                             <option key={project.id} value={project.id}>
                               {project.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="tabla-zize-col tabla-zize-col-15">
+                        <select
+                          className={`form-select form-select-sm ${
+                            erroresValidacion[index]?.channel_id ? 'is-invalid' : ''
+                          }`}
+                          value={item.channel_id}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setData((prev) => {
+                              const newData = [...prev];
+                              newData[index].channel_id = value;
+                              return newData;
+                            });
+                          }}
+                        >
+                          <option value="">Seleccionar</option>
+                          {channels.map((channel: any) => (
+                            <option key={channel.id} value={channel.id}>
+                              {channel.name}
                             </option>
                           ))}
                         </select>
