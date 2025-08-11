@@ -1,5 +1,5 @@
 export interface ImportarLeadRequest {
-  campaign_id: string;
+  campaign_codigo: string;
   project_id: string;
   document_number: string;
   channel_id: string;

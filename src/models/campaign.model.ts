@@ -1,5 +1,5 @@
 export interface Campaign {
-  codigo?: string;       // Código de la campaña
+  codigo: string;       // Código de la campaña
   name: string;          // Nombre de la campaña
   fecha_inicio: string;  // Fecha de inicio (YYYY-MM-DD)
   channel: string;       // Canal asignado

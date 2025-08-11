@@ -193,6 +193,7 @@ export function useLeads() {
     stage_ids: string,
     project_ids: string,
     activity_expiration_ids: string,
+    lead_label_names: string,
     text: string,
     limit: number,
     page: number,
@@ -207,6 +208,7 @@ export function useLeads() {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_label_names,
         text,
         limit,
         page

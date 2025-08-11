@@ -25,6 +25,9 @@ interface KanbanBoardComponentProps {
   handleNivelInteresChange: (nivel: string) => void;
   cargarMasLeads: (etapaId: string) => void;
   setIsLoadingKanban: React.Dispatch<React.SetStateAction<boolean>>;
+  campaigns: any[];
+  setCampaigns: React.Dispatch<React.SetStateAction<any[]>>;
+  handleCampanasKanban: (campanas: any[]) => void;
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
@@ -111,6 +114,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             filtros={props.filtros}
             nivelesInteres={props.nivelesInteres}
             handleNivelInteresChange={props.handleNivelInteresChange}
+            campaigns={props.campaigns}
+            setCampaigns={props.setCampaigns}
+            handleCampanasKanban={props.handleCampanasKanban}
             labels={props.labels}
             setLabels={props.setLabels}
             handleEtiquetasKanban={props.handleEtiquetasKanban}

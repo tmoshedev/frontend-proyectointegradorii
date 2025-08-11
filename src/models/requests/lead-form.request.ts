@@ -10,4 +10,5 @@ export interface LeadFormRequest {
   ciudad: string;
   asignarme_lead: boolean;
   nivel_interes: string;
+  campaign_codigo: string;
 }

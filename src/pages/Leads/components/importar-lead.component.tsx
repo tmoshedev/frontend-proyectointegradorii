@@ -51,7 +51,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
         defval: '',
         range: 1, // Saltar las dos primeras filas
         header: [
-          'campaign_id',
+          'campaign_codigo',
           'project_id',
           'channel_id',
           'document_number',
@@ -151,7 +151,6 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                   const isEmpty = (value: any) => !value || String(value).trim() === '';
                   const isRowIncomplete =
                     //isEmpty(item.project_id) ||
-                    isEmpty(item.campaign_id) ||
                     isEmpty(item.document_number) ||
                     isEmpty(item.names) ||
                     isEmpty(item.last_names) ||
@@ -162,14 +161,14 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                       <div className="tabla-zize-col tabla-zize-col-10">
                         <select
                           className={`form-select form-select-sm ${
-                            erroresValidacion[index]?.campaign_id ? 'is-invalid' : ''
+                            erroresValidacion[index]?.campaign_codigo ? 'is-invalid' : ''
                           }`}
-                          value={item.campaign_id}
+                          value={item.campaign_codigo}
                           onChange={(e) => {
                             const value = e.target.value;
                             setData((prev) => {
                               const newData = [...prev];
-                              newData[index].campaign_id = value;
+                              newData[index].campaign_codigo = value;
                               return newData;
                             });
                           }}

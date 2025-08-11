@@ -49,6 +49,7 @@ export const LeadsPage = () => {
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
   const [users, setUsers] = useState<any[]>([]);
   const [labels, setLabels] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
   const [stages, setStages] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
@@ -217,7 +218,7 @@ export const LeadsPage = () => {
   };
 
   const onRefreshLeads = () => {
-    onAplicarFiltros(filtros, nivelesInteres, labels);
+    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns);
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -265,7 +266,7 @@ export const LeadsPage = () => {
 
   const onHandleDeleteFiltro = (id: number) => {
     const nuevosFiltros = filtros.filter((f) => f.id !== id);
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns);
   };
 
   const onHandleChangeTipoFiltro = (id: number, nuevoTipo: string) => {
@@ -283,7 +284,7 @@ export const LeadsPage = () => {
       f.id === id ? { ...f, valoresSeleccionados: nuevosValores } : f
     );
 
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns);
   };
 
   const refreshDataLeads = (
@@ -293,6 +294,7 @@ export const LeadsPage = () => {
     stage_ids: string,
     project_ids: string,
     activity_expiration_ids: string,
+    lead_campaign_names: string,
     per_page: number,
     current_page: number,
     add_data: boolean = false,
@@ -305,6 +307,7 @@ export const LeadsPage = () => {
       stage_ids,
       project_ids,
       activity_expiration_ids,
+      lead_campaign_names,
       '',
       per_page,
       current_page,
@@ -341,6 +344,7 @@ export const LeadsPage = () => {
     const stage_ids = getValorFiltro('stage_ids');
     const project_ids = getValorFiltro('project_ids');
     const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
+    const lead_campaign_names = getValorFiltro('lead_campaign_names');
 
     const addData = page == 1 ? false : true;
 
@@ -351,6 +355,7 @@ export const LeadsPage = () => {
       stage_ids,
       project_ids,
       activity_expiration_ids,
+      lead_campaign_names,
       metaData.per_page,
       page,
       addData,
@@ -365,6 +370,7 @@ export const LeadsPage = () => {
     let stage_ids = '';
     let project_ids = '';
     let activity_expiration_ids = '';
+    let lead_campaign_names = '';
 
     filtrosAplicados.forEach((filtro) => {
       if (filtro.tipo && filtro.valoresSeleccionados && filtro.valoresSeleccionados.length > 0) {
@@ -390,6 +396,9 @@ export const LeadsPage = () => {
           case 'activity_expiration_ids':
             activity_expiration_ids = valores;
             break;
+          case 'lead_campaign_names':
+            lead_campaign_names = valores;
+            break;
           default:
             break;
         }
@@ -402,20 +411,23 @@ export const LeadsPage = () => {
       stage_ids,
       project_ids,
       activity_expiration_ids,
+      lead_campaign_names
     };
   };
 
   const onAplicarFiltros = (
     filtrosAplicados: any[],
     nivelesAplicados: string[],
-    etiquetasAplicadas: string[]
+    etiquetasAplicadas: string[],
+    campanasAplicadas: string[],
   ) => {
     setFiltros(filtrosAplicados);
     setNivelesInteres(nivelesAplicados);
     setLabels(etiquetasAplicadas);
+    setCampaigns(campanasAplicadas);
 
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, terminoBusqueda);
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, campanasAplicadas, terminoBusqueda);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
@@ -425,7 +437,7 @@ export const LeadsPage = () => {
     const nuevosNiveles = nivelesInteres.includes(nivel)
       ? nivelesInteres.filter((n) => n !== nivel)
       : [...nivelesInteres, nivel];
-    onAplicarFiltros(filtros, nuevosNiveles, labels);
+    onAplicarFiltros(filtros, nuevosNiveles, labels, campaigns);
   };
 
   const cargarMasLeads = (etapaId: number | string) => {
@@ -453,6 +465,7 @@ export const LeadsPage = () => {
       stage_ids,
       project_ids,
       activity_expiration_ids,
+      lead_campaign_names
     } = filtrosActuales(filtros);
 
     const nivel_interes = nivelesInteres.join(',');
@@ -467,6 +480,7 @@ export const LeadsPage = () => {
       stage_ids,
       project_ids,
       activity_expiration_ids,
+      lead_campaign_names,
       nivel_interes,
       terminoBusqueda,
       50, // per_page
@@ -500,6 +514,7 @@ export const LeadsPage = () => {
       currentFiltros: any[],
       currentNiveles: string[],
       etiquetas: any[],
+      campanas: any[],
       termino: string,
       first: boolean = false
     ) => {
@@ -512,12 +527,19 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+
       } = filtrosActuales(currentFiltros);
       const nivel_interes = currentNiveles.join(',');
       const etiquetas_ids = Array.isArray(etiquetas)
         ? etiquetas
             .filter((etiqueta) => etiqueta.selected)
             .map((etiqueta) => etiqueta.id)
+            .join(',')
+        : '';
+      const lead_campaign_names = Array.isArray(campanas)
+        ? campanas
+            .filter((campana) => campana.selected)
+            .map((campana) => campana.name)
             .join(',')
         : '';
 
@@ -532,6 +554,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names,
         nivel_interes,
         false
       );
@@ -574,6 +597,7 @@ export const LeadsPage = () => {
           stage_ids,
           project_ids,
           activity_expiration_ids,
+          lead_campaign_names,
           nivel_interes,
           termino,
           50,
@@ -608,6 +632,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names,
       } = filtrosActuales(currentFiltros);
       const nivel_interes = currentNiveles.join(',');
 
@@ -618,6 +643,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names,
         '',
         50,
         page,
@@ -633,7 +659,7 @@ export const LeadsPage = () => {
   );
 
   const handleEtiquetasKanban = (etiquetas: any[]) => {
-    onAplicarFiltros(filtros, nivelesInteres, etiquetas);
+    onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns);
   };
 
   const handleCrearEtiqueta = () => {
@@ -651,7 +677,7 @@ export const LeadsPage = () => {
 
   const onBuscarKanban = (termino: string) => {
     setTerminoBusqueda(termino);
-    recargarDatosKanban(filtros, nivelesInteres, labels, termino);
+    recargarDatosKanban(filtros, nivelesInteres, labels,campaigns , termino);
   };
 
   useEffect(() => {
@@ -675,11 +701,15 @@ export const LeadsPage = () => {
     const filtrosReseteados: any[] = [];
     const nivelesReseteados: string[] = [];
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtros, nivelesInteres, labels, terminoBusqueda, true);
+      recargarDatosKanban(filtros, nivelesInteres, labels,campaigns, terminoBusqueda, true);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
     }
   }, [stateView]);
+
+  function handleCampanasKanban(campanas: any[]): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <>
@@ -698,6 +728,9 @@ export const LeadsPage = () => {
           handleNivelInteresChange={handleNivelInteresChange}
           cargarMasLeads={cargarMasLeads}
           setIsLoadingKanban={setIsLoadingKanban}
+          campaigns={campaigns}
+          setCampaigns={setCampaigns}
+          handleCampanasKanban={handleCampanasKanban}
           labels={labels}
           setLabels={setLabels}
           handleEtiquetasKanban={handleEtiquetasKanban}
@@ -790,6 +823,7 @@ export const LeadsPage = () => {
           }
         />
       )}
+      
     </>
   );
 };

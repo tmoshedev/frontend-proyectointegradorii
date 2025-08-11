@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
+import SelectSearchCrmCampaign from '../../../components/shared/SelectSearchCrmCampaign';
 import { useState } from 'react';
 
 interface LeadHeaderComponentProps {
@@ -20,6 +21,11 @@ interface LeadHeaderComponentProps {
   filtros: any[];
   nivelesInteres: string[];
   handleNivelInteresChange: (nivel: string) => void;
+
+  campaigns: any[];
+  setCampaigns: React.Dispatch<React.SetStateAction<any[]>>;
+  handleCampanasKanban: (campanas: any[]) => void;
+
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
@@ -103,7 +109,35 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
       </div>
 
       <div className="header-controls-container">
-        {/* Grupo 1: Etiquetas */}
+        {/* Grupo 1: Campaña */}
+          <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
+            <div
+              className="dropdown"
+              onClick={() => setOpenDropdown(true)}
+              onBlur={() => setOpenDropdown(false)}
+              tabIndex={0}
+            >
+              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
+                {props.campaigns.filter((campaign) => campaign.selected).length > 0 ? (
+                  <i
+                    style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
+                    className="ri-megaphone-line"
+                  ></i>
+                ) : (
+                  <Tag height={20} />
+                )}  
+              </span>
+              <SelectSearchCrmCampaign
+                maxHeight="250px"
+                minWidth="220px"
+                items={props.campaigns}
+                open={openDropdown}
+                onChange={props.handleCampanasKanban}
+              />
+            </div>
+          </div>
+
+        {/* Grupo 2: Etiquetas */}
         <div className="control-group">
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
@@ -134,7 +168,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             </div>
           </div>
         </div>
-        {/* Grupo 2: Estados de Interés */}
+        {/* Grupo 3: Estados de Interés */}
         <div className="control-group">
           <div className="d-flex align-items-center gap-1 lead-header-state justify-content-center align-items-center">
             <div
@@ -169,7 +203,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             </div>
           </div>
         </div>
-        {/* Grupo 3: Filtros del Modal */}
+        {/* Grupo 4: Filtros del Modal */}
         <div className="control-group">
           <button
             onClick={props.onFiltrosLeads}

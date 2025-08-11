@@ -26,4 +26,5 @@ export interface Lead {
   supervisor_names: string;
   fecha_creacion?: string;
   actividad_estado: LeadActividadEstado;
+  campaign_codigo: string;
 }

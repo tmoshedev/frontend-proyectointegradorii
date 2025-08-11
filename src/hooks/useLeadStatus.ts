@@ -20,6 +20,7 @@ export function useLeadStatus() {
     stage_ids: string,
     project_ids: string,
     activity_expiration_ids: string,
+    lead_campaign_names: string,
     nivel_interes: string,
     /**Loading */
     loading: boolean
@@ -36,6 +37,7 @@ export function useLeadStatus() {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names,
         nivel_interes
       );
       return response;
@@ -55,6 +57,7 @@ export function useLeadStatus() {
     stage_ids: string,
     project_ids: string,
     activity_expiration_ids: string,
+    lead_campaign_names: string,
     nivel_interes: string,
     text: string,
     limit: number,
@@ -73,6 +76,7 @@ export function useLeadStatus() {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names,
         nivel_interes,
         text,
         limit,

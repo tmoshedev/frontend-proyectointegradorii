@@ -141,8 +141,28 @@ export const LeadCardComponent = ({
       className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
       data-id={id}
       onClick={() => onClickLead(uuid)}
-      style={multiBorderStyle as React.CSSProperties}
+      style={{ ...multiBorderStyle, position: 'relative' } as React.CSSProperties} // importante para posicionar
     >
+
+      {channel_name === 'ALITORRES' && (
+  <img
+    src="/images/alitorres.png"
+    alt="Logo Alitorres"
+    style={{
+      position: 'absolute',
+      top: '28px',
+      right: '-5px',
+      width: '2rem',
+      height: '1.8rem',
+      zIndex: 2,
+      border: '1px solid #f0f0f0',
+      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+    }}
+  />
+)}
+
+
+
       {/* Header Section */}
       <div className="kanban-card-header">
         {actividad_estado.state_view && (
@@ -158,7 +178,12 @@ export const LeadCardComponent = ({
         )}
         <h4 className="kanban-card-title">
           <span>
-            {names} {last_names}
+            {names}
+          </span>
+        </h4>
+        <h4 className="kanban-card-title">
+          <span>
+            {last_names}
           </span>
         </h4>
         <small>Celular: {cellphone}</small>
