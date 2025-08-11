@@ -175,7 +175,7 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                         >
                           <option value="">Seleccionar</option>
                           {campaigns.map((campaign: any) => (
-                            <option key={campaign.id} value={campaign.id}>
+                            <option key={campaign.codigo} value={campaign.codigo}>
                               {campaign.codigo}
                             </option>
                           ))}

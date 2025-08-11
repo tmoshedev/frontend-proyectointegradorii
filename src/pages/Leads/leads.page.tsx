@@ -662,6 +662,10 @@ export const LeadsPage = () => {
     onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns);
   };
 
+  const handleCampanasKanban = (campanas: any[]) => {
+    onAplicarFiltros(filtros, nivelesInteres, labels, campanas);
+  };
+
   const handleCrearEtiqueta = () => {
     setDataModalEtiquetasResourceState({
       type: 'CREAR_ETIQUETA',
@@ -707,9 +711,7 @@ export const LeadsPage = () => {
     }
   }, [stateView]);
 
-  function handleCampanasKanban(campanas: any[]): void {
-    throw new Error('Function not implemented.');
-  }
+  
 
   return (
     <>

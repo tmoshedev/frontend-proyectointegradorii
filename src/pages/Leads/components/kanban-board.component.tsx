@@ -27,7 +27,7 @@ interface KanbanBoardComponentProps {
   setIsLoadingKanban: React.Dispatch<React.SetStateAction<boolean>>;
   campaigns: any[];
   setCampaigns: React.Dispatch<React.SetStateAction<any[]>>;
-  handleCampanasKanban: (campanas: any[]) => void;
+  handleCampanasKanban: (campaign: any[]) => void;
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
