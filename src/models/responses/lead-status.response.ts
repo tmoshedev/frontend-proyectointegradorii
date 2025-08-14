@@ -10,5 +10,6 @@ export interface LeadStatusResponse {
     labels: any[];
     stages: any[];
     projects: any[];
+    campaigns: any[];
   };
 }

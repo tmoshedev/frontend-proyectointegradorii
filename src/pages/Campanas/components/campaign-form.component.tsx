@@ -20,21 +20,23 @@ export const CampaignFormComponent = (props: Props) => {
     precio: '',
     codigo: '',
     channel_id: '',
-    state: 1,
+    state: '',
   };
 
   const [errors, setErrors] = useState<any>({});
 
-  const validationSchema = Yup.object({
+  const getValidationSchema = (type: string) => {
+      return Yup.object({
     name: Yup.string().required('El nombre de la campaña es obligatorio'),
     fecha_inicio: Yup.date().required('La fecha de inicio es obligatoria'),
     codigo: Yup.string().required('El código es obligatorio'),
     channel_id: Yup.string().required('El canal es obligatorio'),
   });
+  };
 
   const formik = useFormik({
     initialValues: formData,
-    validationSchema,
+    validationSchema: getValidationSchema(props.data.type),
     onSubmit: () => {
       if (props.data.type === 'store') {
         props
@@ -46,7 +48,7 @@ export const CampaignFormComponent = (props: Props) => {
           .catch((error: any) => {
             setErrors(error.response.data.errors);
           });
-      } else {
+      } else if (props.data.type == 'edit') {
         props
           .updateCampaign(formik.values)
           .then(() => {
@@ -74,7 +76,7 @@ export const CampaignFormComponent = (props: Props) => {
   };
 
   const generarCodigo = () => {
-    const randomCode = 'CMP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const randomCode = 'ALI-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     formik.setFieldValue('codigo', randomCode);
   };
 
@@ -206,7 +208,7 @@ export const CampaignFormComponent = (props: Props) => {
             </label>
             <select
               onChange={handleInputChangeSelect}
-              value={formik.values.state ?? 1}
+              value={formik.values.state ?? ''}
               name="state"
               id="state"
               className="form-select form-select-sm"

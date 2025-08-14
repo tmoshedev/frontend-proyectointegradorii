@@ -527,6 +527,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
+        lead_campaign_names
 
       } = filtrosActuales(currentFiltros);
       const nivel_interes = currentNiveles.join(',');
@@ -536,7 +537,7 @@ export const LeadsPage = () => {
             .map((etiqueta) => etiqueta.id)
             .join(',')
         : '';
-      const lead_campaign_names = Array.isArray(campanas)
+      const campanas_names = Array.isArray(campanas)
         ? campanas
             .filter((campana) => campana.selected)
             .map((campana) => campana.name)
@@ -554,7 +555,7 @@ export const LeadsPage = () => {
         stage_ids,
         project_ids,
         activity_expiration_ids,
-        lead_campaign_names,
+        campanas_names,
         nivel_interes,
         false
       );
@@ -584,7 +585,13 @@ export const LeadsPage = () => {
       setChannels(response.data.channels);
       setStages(response.data.stages);
       setProjects(response.data.projects);
-
+      if (first) {
+        const campanasInicializadas = response.data.campaigns.map((campaign: any) => ({
+          ...campaign,
+          selected: false,
+        }));
+        setCampaigns(campanasInicializadas);
+      }
       // 4. Llama a la API para obtener la primera página de leads de CADA etapa
       const promesasDeCarga = etapasIniciales.map((etapa) =>
         getLeadByEtapa(
@@ -597,7 +604,7 @@ export const LeadsPage = () => {
           stage_ids,
           project_ids,
           activity_expiration_ids,
-          lead_campaign_names,
+          campanas_names,
           nivel_interes,
           termino,
           50,
@@ -658,13 +665,14 @@ export const LeadsPage = () => {
     [getLeads]
   );
 
-  const handleEtiquetasKanban = (etiquetas: any[]) => {
-    onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns);
-  };
+const handleEtiquetasKanban = (etiquetas: any[]) => {
+  onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns);
+};
 
-  const handleCampanasKanban = (campanas: any[]) => {
-    onAplicarFiltros(filtros, nivelesInteres, labels, campanas);
-  };
+const handleCampanasKanban = (campanas: any[]) => {
+  onAplicarFiltros(filtros, nivelesInteres, labels, campanas);
+};
+
 
   const handleCrearEtiqueta = () => {
     setDataModalEtiquetasResourceState({

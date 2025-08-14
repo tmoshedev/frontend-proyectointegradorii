@@ -13,7 +13,7 @@ export const getCampaigns = async (
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get(
-    `/campaigns?rolActual=${rolActual}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}&channel_id=${channel_id}`
+    `/campaigns?rolActual=${rolActual}&channel_id=${channel_id}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
   );
   return response;
 };
@@ -32,17 +32,17 @@ export const updateCampaign = async (campaign: Campaign) => {
   return response;
 };
 
-export const stateCampaign = async (id: string | number) => {
+export const stateCampaign = async (campaign: Campaign) => {
   const response = await apiInstance.patch<CampaignResponse>(`/campaigns/state`, {
     campaign: {
-      id,
+      id: campaign,
     },
   });
   return response;
 };
 
 // Si tu API de campañas necesita un "requirements" similar
-export const getCampaignRequirements = async () => {
+export const getRequirements = async () => {
   const response = await apiInstance.get(`/campaigns/requirements`);
   return response;
 };

@@ -7,6 +7,8 @@ import {
   Share2,
   Tag,
   Search,
+  Megaphone,
+  
 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
@@ -32,10 +34,12 @@ interface LeadHeaderComponentProps {
   handleCrearEtiqueta: () => void;
   terminoBusqueda: string;
   setTerminoBusqueda: React.Dispatch<React.SetStateAction<string>>;
+  
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
   const [openDropdown, setOpenDropdown] = useState(false);
+console.log("Campañas recibidas:", props.campaigns);
 
   return (
     <div className="d-flex justify-content-between align-items-center mt-1 mb-1">
@@ -124,7 +128,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
                     className="ri-megaphone-line"
                   ></i>
                 ) : (
-                  <Tag height={20} />
+                  <Megaphone height={30} />
                 )}  
               </span>
               <SelectSearchCrmCampaign

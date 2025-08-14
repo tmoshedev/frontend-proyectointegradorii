@@ -49,6 +49,7 @@ export function useCampaigns() {
     }
   };
 
+//STORE
   const storeCampaign = async (campaign: Campaign) => {
     dispatch(setLoading(true));
     try {
@@ -60,6 +61,7 @@ export function useCampaigns() {
     }
   };
 
+  //UPDATE
   const updateCampaign = async (campaign: Campaign) => {
     dispatch(setLoading(true));
     try {
@@ -71,10 +73,10 @@ export function useCampaigns() {
     }
   };
 
-  const stateCampaign = async (id: string) => {
+  const stateCampaign = async (campaign: Campaign) => {
     dispatch(setLoading(true));
     try {
-      const response = await campaignsService.stateCampaign(id);
+      const response = await campaignsService.stateCampaign(campaign);
       dispatch(dataTable_updateResource(response.campaign));
       return response;
     } finally {
@@ -85,16 +87,20 @@ export function useCampaigns() {
   const getRequirements = async (loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await campaignsService.getCampaignRequirements();
+      const response = await campaignsService.getRequirements();
       return response;
     } finally {
       dispatch(setLoading(false));
     }
   };
 
-  useEffect(() => {
-    return () => {
+useEffect(() => {
+    const resetData = () => {
       dispatch(dataTable_clearAll());
+    };
+
+    return () => {
+      resetData(); // Esto se ejecutará cuando el componente se desmonte
     };
   }, []);
 

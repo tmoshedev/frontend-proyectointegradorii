@@ -13,7 +13,7 @@ interface DataModalState {
   buttonSubmit: string | null;
   row: any | null;
   title: string | null;
-  requirements: any;
+  requirements: any[];
   onCloseModalForm: any;
 }
 
@@ -28,17 +28,16 @@ export const CampaignsPage = () => {
     orderBy: '',
     order: '',
   });
-
   const {
     getCampaigns,
     getRequirements,
     storeCampaign,
     updateCampaign,
+    stateCampaign
   } = useCampaigns(); // ← hook adaptado
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
-
   const [dataModalResourceState, setDataModalResourceState] = useState<DataModalState>({
     type: '',
     buttonSubmit: null,
@@ -123,6 +122,44 @@ export const CampaignsPage = () => {
     },
   };
 
+
+  const onClickButtonPersonalizado = (row: any, name: any) => {
+    switch (name) {
+      case 'status':
+        onStatus(
+          row,
+          '¿Está seguro que desea desactivar al usuario?',
+          'Usuario desactivado correctamente.'
+        );
+        break;
+      case 'status_active':
+        onStatus(
+          row,
+          '¿Está seguro que desea activar al usuario?',
+          'Usuario activado correctamente.'
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+
+  const onStatus = (row: any, text: string, message: string) => {
+    SweetAlert.onConfirmation(
+      () => handleDelete(row.id, message),
+      handleCancelDelete,
+      text,
+      row.names
+    );
+  };
+
+  const handleDelete = (id: any, text: string) => {
+    stateCampaign(id).then(() => {
+      SweetAlert.success(text);
+    });
+  };
+  const handleCancelDelete = () => {};
   const onChangePage = (page: number, type: string) => {
     let newPage = page;
     if (type === 'prev') newPage = filterState.page - 1;
@@ -247,7 +284,7 @@ export const CampaignsPage = () => {
                 <PageBodyComponent
                   tableCss="table-resource"
                   state={state}
-                  onClickButtonPersonalizado={() => null}
+                  onClickButtonPersonalizado={onClickButtonPersonalizado}
                   onChangeEdit={onClickEditResource}
                   onChangeDelete={() => null}
                   onChangePage={onChangePage}

@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react';
 import '../../scss/theme/_select-search-crm.scss';
 import { useEffect, useRef, useState } from 'react';
 
@@ -9,19 +8,20 @@ interface SelectSearchCrmCampaignProps {
   open: boolean;
   onChange: (newItems: any[]) => void;
 }
+
 export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
 
-  const toggleSelect = (id: any) => {
+  const toggleSelect = (codigo: string) => {
     const newItems = props.items.map((item) =>
-      item.id == id ? { ...item, selected: !item.selected } : item
+      item.codigo === codigo ? { ...item, selected: !item.selected } : item
     );
     props.onChange(newItems);
   };
 
   const filteredItems = props.items.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+    item.nombre?.toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -33,6 +33,8 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
   return (
     <div className="dropdown-menu select-search-crm" style={{ minWidth: props.minWidth }}>
       <div className="d-flex flex-column" style={{ maxHeight: props.maxHeight }}>
+        
+        {/* Barra de búsqueda */}
         <div className="ssc-search">
           <input
             ref={inputRef}
@@ -44,6 +46,7 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
           />
         </div>
         
+        {/* Lista de campañas */}
         <ul className="ssc-items scroll-personalizado">
           {filteredItems.map((item, index) => (
             <li
@@ -55,12 +58,12 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
               className={item.selected ? 'selected' : ''}
               style={{ userSelect: 'none' }}
             >
-              <div className="ssc-item-name">{item.codigo}</div>
+              <div className="ssc-item-name">{item.codigo}-{item.nombre}</div>
               <span
                 className="ssc-item-checkbox"
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleSelect(item.id);
+                  toggleSelect(item.codigo);
                 }}
               >
                 <input
