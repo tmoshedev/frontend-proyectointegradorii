@@ -8,7 +8,7 @@ import {
   Tag,
   Search,
   Megaphone,
-  
+  UserRoundSearch
 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
@@ -72,12 +72,14 @@ console.log("Campañas recibidas:", props.campaigns);
             <RefreshCw height={20} />
           </button>
         </div>
+        
         <button
           onClick={() => props.handleModalLeadForm('STORE')}
           className="btn btn-primary btn-sm ms-2"
         >
           <Plus height={20} /> Lead
         </button>
+        
         {CanCheck('leads-distrubir') && (
           <button
             onClick={() => props.handleStateView('DISTRIBUIR')}
@@ -86,12 +88,13 @@ console.log("Campañas recibidas:", props.campaigns);
             <Share2 height={20} /> Distribuir Leads
           </button>
         )}
+        {CanCheck('leads-importar') && (
         <button
           onClick={() => props.handleStateView('IMPORTAR')}
           className="btn btn-success btn-sm ms-2"
         >
           <CloudDownload height={20} /> Importar Leads
-        </button>
+        </button>)}
       </div>
 
       <div className="d-flex justify-content-center align-items-center">
@@ -113,7 +116,35 @@ console.log("Campañas recibidas:", props.campaigns);
       </div>
 
       <div className="header-controls-container">
-        {/* Grupo 1: Campaña */}
+        {/* Grupo 1: Mis leads */}
+          <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
+            <div
+              className="dropdown"
+              onClick={() => setOpenDropdown(true)}
+              onBlur={() => setOpenDropdown(false)}
+              tabIndex={0}
+            >
+              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
+                {props.campaigns.filter((campaign) => campaign.selected).length > 0 ? (
+                  <i
+                    style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
+                    className="ri-megaphone-line"
+                  ></i>
+                ) : (
+                  <UserRoundSearch height={30} />
+                )}  
+              </span>
+              <SelectSearchCrmCampaign
+                maxHeight="250px"
+                minWidth="220px"
+                items={props.campaigns}
+                open={openDropdown}
+                onChange={props.handleCampanasKanban}
+              />
+            </div>
+          </div>
+
+        {/* Grupo 2: Campaña */}
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
               className="dropdown"
@@ -141,7 +172,7 @@ console.log("Campañas recibidas:", props.campaigns);
             </div>
           </div>
 
-        {/* Grupo 2: Etiquetas */}
+        {/* Grupo 3: Etiquetas */}
         <div className="control-group">
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
@@ -172,7 +203,7 @@ console.log("Campañas recibidas:", props.campaigns);
             </div>
           </div>
         </div>
-        {/* Grupo 3: Estados de Interés */}
+        {/* Grupo 4: Estados de Interés */}
         <div className="control-group">
           <div className="d-flex align-items-center gap-1 lead-header-state justify-content-center align-items-center">
             <div
@@ -207,7 +238,7 @@ console.log("Campañas recibidas:", props.campaigns);
             </div>
           </div>
         </div>
-        {/* Grupo 4: Filtros del Modal */}
+        {/* Grupo 5: Filtros del Modal */}
         <div className="control-group">
           <button
             onClick={props.onFiltrosLeads}

@@ -109,7 +109,7 @@ export const TableCRMHeaderComponent = (props: Props) => {
               <Share2 height={20} /> Distribuir {props.name_plural_resource}
             </button>
           )}
-          {props.view_imports && (
+          {CanCheck('leads-distrubir') && props.view_distributes && (
             <button onClick={props.onImports} className="btn btn-success btn-sm d-ocultar-menu">
               <CloudDownload height={20} /> Importar {props.name_plural_resource}
             </button>

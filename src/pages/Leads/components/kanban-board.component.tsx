@@ -162,7 +162,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                     {etapa.leads.map((lead) => (
                       <LeadCardComponent
                         lead={lead}
-                        key={lead.id}
+                        key={`${lead.id}-${lead.lead_state_id}`}
                         onClickLead={onClickLead}
                         onEditarAsesor={onEditarAsesor}
                         onChangeStateLead={onChangeStateLead}

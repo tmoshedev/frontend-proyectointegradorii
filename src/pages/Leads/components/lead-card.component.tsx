@@ -65,6 +65,8 @@ export const LeadCardComponent = ({
     user_mother_last_name,
     user_rol_name,
     actividad_estado,
+    lead_state_id,
+    conteo_actividad
   } = lead;
 
   // Retrieve current role from localStorage.
@@ -137,6 +139,8 @@ export const LeadCardComponent = ({
   }, [lead.lead_labels]);
 
   return (
+
+    
     <div
       className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
       data-id={id}
@@ -145,21 +149,48 @@ export const LeadCardComponent = ({
     >
 
       {channel_name === 'ALITORRES' && (
-  <img
-    src="/images/alitorres.png"
-    alt="Logo Alitorres"
-    style={{
-      position: 'absolute',
-      top: '28px',
-      right: '-5px',
-      width: '2rem',
-      height: '1.8rem',
-      zIndex: 2,
-      border: '1px solid #f0f0f0',
-      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-    }}
-  />
-)}
+        <img
+          src="/images/alitorres.png"
+          alt="Logo Alitorres"
+          style={{
+            position: 'absolute',
+            top: '25px',
+            right: '-5px',
+            width: '2rem',
+            height: '1.8rem',
+            zIndex: 2,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          }}
+        />
+      )}
+
+      {lead.lead_state_id == "2" && (
+        <div
+          data-tooltip-id="tooltip-component"
+          data-tooltip-content={`Número de actividades: ${lead.conteo_actividad}`}
+          style={{
+            position: 'absolute',
+            top: '55px',
+            right: '-5px',
+            color: 'white',
+            borderRadius: '50%',
+            width: '2rem',
+            height: '2rem',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2,
+            border: '1px solid #f0f0f0',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+            backgroundColor: 'green',
+          }}
+        >
+          {lead.conteo_actividad}
+        </div>
+      )}
 
 
 
@@ -175,7 +206,10 @@ export const LeadCardComponent = ({
           >
             !
           </div>
+          
         )}
+        
+        
         <h4 className="kanban-card-title">
           <span>
             {names}
@@ -186,7 +220,7 @@ export const LeadCardComponent = ({
             {last_names}
           </span>
         </h4>
-        <small>Celular: {cellphone}</small>
+        {/*<small>Celular: {cellphone}</small>*/}
       </div>
 
       {/* Body Section */}

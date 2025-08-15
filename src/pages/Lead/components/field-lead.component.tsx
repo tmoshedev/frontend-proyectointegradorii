@@ -8,33 +8,24 @@ interface Props {
   label: string;
   value: string;
   onUpdateRest: (name: string, value: string) => void;
+  options?: string[]; // ✅ nueva prop opcional
 }
+
 export const FieldLeadComponent = (props: Props) => {
   const { updateLeadValue } = useLeads();
   const [editMode, setEditMode] = useState(false);
   const [inputValue, setInputValue] = useState(props.value ?? '');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeValue = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setInputValue(e.target.value);
   };
 
   const onUpdate = () => {
-    if (inputValue.trim() === '') {
-      return;
-    }
+    if (inputValue.trim() === '') return;
+
     updateLeadValue(props.uuid, props.name, inputValue, false).then(() => {
-      toast.success('Datos actualizados correctamente.', {
-        position: 'top-center',
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-        transition: Bounce,
-      });
+      toast.success('Datos actualizados correctamente.', { /* tu config */ });
       props.onUpdateRest(props.name, inputValue);
       setEditMode(false);
     });
@@ -57,21 +48,33 @@ export const FieldLeadComponent = (props: Props) => {
         {editMode ? (
           <>
             <div className="fields-list__input">
-              <input
-                ref={inputRef}
-                type="text"
-                name={props.name}
-                autoComplete="off"
-                className="form-control form-control-sm todo-mayuscula"
-                value={inputValue}
-                onChange={onChangeValue}
-              />
+              {props.options ? (
+                <select
+                  className="form-control form-control-sm"
+                  value={inputValue}
+                  onChange={onChangeValue}
+                >
+                  <option value="">Seleccione...</option>
+                  {props.options.map((op, i) => (
+                    <option key={i} value={op}>
+                      {op}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  name={props.name}
+                  autoComplete="off"
+                  className="form-control form-control-sm todo-mayuscula"
+                  value={inputValue}
+                  onChange={onChangeValue}
+                />
+              )}
             </div>
             <div className="list-fields-actions">
-              <button
-                onClick={() => setEditMode(false)}
-                className="btn btn-xs btn-outline-cancel me-2"
-              >
+              <button onClick={() => setEditMode(false)} className="btn btn-xs btn-outline-cancel me-2">
                 Cancelar
               </button>
               <button onClick={onUpdate} className="btn btn-xs btn-primary">

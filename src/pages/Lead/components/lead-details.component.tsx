@@ -264,6 +264,13 @@ export const LeadDetailsComponent = (props: Props) => {
             name="ciudad"
             uuid={lead.uuid}
           />
+          <FieldLeadComponent
+            onUpdateRest={onUpdateLead}
+            label={'Precio'}
+            value={lead.precio}
+            name="precio"
+            uuid={lead.uuid}
+          />
         </div>
       </div>
       <div className="block-item">
