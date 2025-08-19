@@ -9,6 +9,7 @@ interface Props {
   value: string;
   onUpdateRest: (name: string, value: string) => void;
   options?: string[]; // ✅ nueva prop opcional
+  disabled?: boolean; // Nueva prop para deshabilitar el campo
 }
 
 export const FieldLeadComponent = (props: Props) => {
@@ -53,6 +54,7 @@ export const FieldLeadComponent = (props: Props) => {
                   className="form-control form-control-sm"
                   value={inputValue}
                   onChange={onChangeValue}
+                  disabled={props.disabled} // Deshabilitar el select
                 >
                   <option value="">Seleccione...</option>
                   {props.options.map((op, i) => (
@@ -70,6 +72,7 @@ export const FieldLeadComponent = (props: Props) => {
                   className="form-control form-control-sm todo-mayuscula"
                   value={inputValue}
                   onChange={onChangeValue}
+                  disabled={props.disabled} // Deshabilitar el input
                 />
               )}
             </div>
@@ -77,7 +80,7 @@ export const FieldLeadComponent = (props: Props) => {
               <button onClick={() => setEditMode(false)} className="btn btn-xs btn-outline-cancel me-2">
                 Cancelar
               </button>
-              <button onClick={onUpdate} className="btn btn-xs btn-primary">
+              <button onClick={onUpdate} className="btn btn-xs btn-primary" disabled={props.disabled}>
                 Guardar
               </button>
             </div>
@@ -86,7 +89,11 @@ export const FieldLeadComponent = (props: Props) => {
           <>
             <div className="fields-list__value">{props.value}</div>
             <div className="list-fields-edit">
-              <button onClick={() => setEditMode(true)} className="btn btn-outline-cancel btn-xs">
+              <button
+                onClick={() => setEditMode(true)}
+                className="btn btn-outline-cancel btn-xs"
+                disabled={props.disabled} // Deshabilitar el botón de editar
+              >
                 <i className="fa-solid fa-pen-to-square"></i>
               </button>
             </div>

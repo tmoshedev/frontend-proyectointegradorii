@@ -233,6 +233,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.document_number}
             name="document_number"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id === userid)}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -240,6 +241,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.names}
             name="names"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -247,6 +249,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.last_names}
             name="last_names"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
           {lead.user_id ? (
           (userid && lead.user_id == userid) ? (
@@ -256,6 +259,7 @@ export const LeadDetailsComponent = (props: Props) => {
               value={lead.cellphone}
               name="cellphone"
               uuid={lead.uuid}
+              disabled={!(userid && lead.user_id == userid)}
             />
           ) : (
             <FieldLeadComponent
@@ -264,6 +268,7 @@ export const LeadDetailsComponent = (props: Props) => {
               value={'NO DISPONIBLE'}
               name="cellphone"
               uuid={lead.uuid}
+              disabled={!(userid && lead.user_id == userid)}
             />
           )
         ) : (
@@ -273,6 +278,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={'SIN ASESOR ASIGNADO'}
             name="cellphone"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
         )}
           <FieldLeadComponent
@@ -281,6 +287,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.email}
             name="email"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -288,6 +295,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.ciudad}
             name="ciudad"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -295,6 +303,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.precio}
             name="precio"
             uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
           />
         </div>
       </div>
@@ -313,6 +322,7 @@ export const LeadDetailsComponent = (props: Props) => {
                 placeholder="Seleccionar proyectos"
                 onCancel={onCancelProyectos}
                 onGuardar={onGuardarProyectos}
+                
               />
             ) : (
               <div className="fields-list__components">
@@ -337,9 +347,17 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 <div className="list-fields-edit">
-                  <button onClick={onActivarEditProjects} className="btn btn-outline-cancel btn-xs">
-                    <i className="fa-solid fa-pen-to-square"></i>
-                  </button>
+                  {lead.user_id ? (
+                    (userid && lead.user_id == userid) ? (
+                      <button onClick={onActivarEditProjects} className="btn btn-outline-cancel btn-xs" >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                    ) : (
+                      <button className="btn btn-outline-cancel btn-xs" disabled>
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                    )
+                  ) : null}
                 </div>
               </div>
             )}
@@ -386,17 +404,29 @@ export const LeadDetailsComponent = (props: Props) => {
                     )}
                   </ul>
                 </div>
+                {lead.user_id ? (
+                    (userid && lead.user_id == userid) ? (
                 <div className="list-fields-edit">
                   <button onClick={onActivarEditLabel} className="btn btn-outline-cancel btn-xs">
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
                 </div>
+                    ) : (
+                <div className="list-fields-edit">
+                  <button className="btn btn-outline-cancel btn-xs" disabled>
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </div>
+                )
+              ) : null}
               </div>
             )}
           </div>
         </div>
       </div>
+      
       <div className="block-item">
+        {/*
         <div className="bock-item__title">
           <h4>Etiquetas propias</h4>
         </div>
@@ -434,17 +464,30 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 <div className="list-fields-edit">
+                  {lead.user_id ? (
+                    (userid && lead.user_id == userid) ? (
                   <button
                     onClick={onActivarEditUserLabel}
                     className="btn btn-outline-cancel btn-xs"
                   >
                     <i className="fa-solid fa-pen-to-square"></i>
                   </button>
-                </div>
+                    ) : (
+                      <button
+                        onClick={onActivarEditUserLabel}
+                        className="btn btn-outline-cancel btn-xs"
+                      >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+
+                )
+                  ) : null}
+               </div>
+
               </div>
             )}
           </div>
-        </div>
+        </div>*/}
       </div>
       <div className="block-item">
         <div className="bock-item__title">
@@ -495,12 +538,25 @@ export const LeadDetailsComponent = (props: Props) => {
                       <span>{lead.channel_name !== '' ? lead.channel_name : 'SIN ASIGNAR'}</span>
                     </div>
                     <div className="list-fields-edit">
+      {lead.user_id ? (
+                    (userid && lead.user_id == userid) ? (
+
                       <button
                         onClick={onActivarEditChannel}
                         className="btn btn-outline-cancel btn-xs"
                       >
                         <i className="fa-solid fa-pen-to-square"></i>
                       </button>
+                    ) : (
+
+ <button
+                        onClick={onActivarEditChannel}
+                        className="btn btn-outline-cancel btn-xs"
+                      disabled>
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                  )): null}
+
                     </div>
                   </div>
                 )}

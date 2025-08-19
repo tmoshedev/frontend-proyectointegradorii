@@ -63,6 +63,10 @@ export const LeadPage = () => {
       requirements: [],
       onCloseModalForm: () => {},
     });
+  const { user } = useSelector((store: AppStore) => store.user);
+
+  const userlocal = localStorage.getItem('user');
+  const userid = userlocal ? JSON.parse(userlocal).id : null;
 
   const changeHistorialView = (view: string) => {
     const stateView = view === '' ? stateViewHistorial : view;
@@ -170,13 +174,25 @@ export const LeadPage = () => {
                         <LeadTabsComponent stateMenu={stateMenu} setStateMenu={setStateMenu} />
                         <div className="timeline_tabs__content">
                           {stateMenu == 'Notas' && (
-                            <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
+                            userid && lead.user_id == userid ? (
+                              <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
+                            ) : (
+                               <div className="content-tabs-app" >
+                                  <div>Solo el asesor asignado puede gestionar notas.</div>
+                                </div>
+                            )
                           )}
                           {stateMenu == 'Actividad' && (
-                            <LeadActividadComponent
-                              changeHistorialView={changeHistorialView}
-                              setStateMenu={setStateMenu}
-                            />
+                            userid && lead.user_id == userid ? (
+                              <LeadActividadComponent
+                                changeHistorialView={changeHistorialView}
+                                setStateMenu={setStateMenu}
+                              />
+                            ) : (
+                              <div className="content-tabs-app" >
+                                <div>Solo el asesor asignado puede gestionar actividades.</div>
+                              </div>
+                            )
                           )}
                         </div>
                       </div>
