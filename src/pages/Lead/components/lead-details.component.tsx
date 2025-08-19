@@ -31,6 +31,9 @@ export const LeadDetailsComponent = (props: Props) => {
   );
   const { user, userlabelsAvailable } = useSelector((store: AppStore) => store.user);
 
+  const userlocal = localStorage.getItem('user');
+  const userid = userlocal ? JSON.parse(userlocal).id : null;
+
   const [editProjects, setEditProjects] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
   const [editChannels, setEditChannels] = useState(false);
@@ -215,6 +218,8 @@ export const LeadDetailsComponent = (props: Props) => {
     });
   }, []);
 
+  console.log(lead?.user_id, userid);
+
   return (
     <div className="lead-content__sidebar scroll-personalizado">
       <div className="block-item">
@@ -244,7 +249,7 @@ export const LeadDetailsComponent = (props: Props) => {
             uuid={lead.uuid}
           />
           {lead.user_id ? (
-          user && lead.user_id == user.id ? (
+          (userid && lead.user_id == userid) ? (
             <FieldLeadComponent
               onUpdateRest={onUpdateLead}
               label={'Celular'}
