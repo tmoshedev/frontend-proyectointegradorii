@@ -14,5 +14,6 @@ export interface LeadHistorialResponse {
     activity_name: string;
     state: string;
     uuid: string;
+    motivo: string;
   };
 }

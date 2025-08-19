@@ -15,6 +15,7 @@ interface LeadItemActividadProps {
     activity_name: string;
     state: string;
     uuid: string;
+    motivo: string;
   };
   onActividadCompletada: (uuid: string) => void;
   handleModalCancelarActividad: (lead_activity_uuid: string) => void;
@@ -98,6 +99,9 @@ export const LeadItemActividad = (props: LeadItemActividadProps) => {
                 {props.user_names} {props.user_father_last_name} {props.user_mother_last_name}
               </span>
             </div>
+            {props.data.state == 'CANCELADO' && (
+              <div className="historial-item__content__description">{props.data.motivo}</div>
+            )}
           </div>
         </div>
       </div>

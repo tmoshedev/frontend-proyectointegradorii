@@ -243,13 +243,33 @@ export const LeadDetailsComponent = (props: Props) => {
             name="last_names"
             uuid={lead.uuid}
           />
+          {lead.user_id ? (
+          user && lead.user_id == user.id ? (
+            <FieldLeadComponent
+              onUpdateRest={onUpdateLead}
+              label={'Celular'}
+              value={lead.cellphone}
+              name="cellphone"
+              uuid={lead.uuid}
+            />
+          ) : (
+            <FieldLeadComponent
+              onUpdateRest={onUpdateLead}
+              label={'Celular'}
+              value={'NO DISPONIBLE'}
+              name="cellphone"
+              uuid={lead.uuid}
+            />
+          )
+        ) : (
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
             label={'Celular'}
-            value={lead.cellphone}
+            value={'SIN ASESOR ASIGNADO'}
             name="cellphone"
             uuid={lead.uuid}
           />
+        )}
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
             label={'Correo'}
