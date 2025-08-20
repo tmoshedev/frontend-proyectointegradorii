@@ -354,7 +354,7 @@ export const LeadCardComponent = ({
           )}
         </div>
         <div className="d-flex align-items-center">
-          {CanCheck('update-asesor') && (
+          { !user_id && (
             <button
               data-tooltip-id="tooltip-component"
               data-tooltip-content={
@@ -380,7 +380,7 @@ export const LeadCardComponent = ({
       </div>
     </div>
     {showAssignModal && leadToAssign && (
-      <div className="modal fade show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+      <div className="modal fade show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.7)' }}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
