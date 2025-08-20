@@ -29,10 +29,11 @@ export const LeadItemActividad = (props: LeadItemActividadProps) => {
 
   const userlocal = localStorage.getItem('user');
   const userid = userlocal ? JSON.parse(userlocal).id : null;
+  const rolActual = localStorage.getItem('rolActual') || '';
 
 const canPerformActions =
-    props.data.state === 'PENDIENTE' &&
-    (userid === props.activity_user_id || userid === props.lead_assigned_user_id);
+    props.data.state === 'PENDIENTE' ||
+    rolActual === 'ADMINISTRATOR' && (userid === props.activity_user_id || userid === props.lead_assigned_user_id);
 
   return (
     <div className="historial-content__item">

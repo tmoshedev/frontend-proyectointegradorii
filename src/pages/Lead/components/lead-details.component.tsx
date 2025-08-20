@@ -34,6 +34,9 @@ export const LeadDetailsComponent = (props: Props) => {
   const userlocal = localStorage.getItem('user');
   const userid = userlocal ? JSON.parse(userlocal).id : null;
 
+  const rolActual = localStorage.getItem('rolActual') || '';
+
+
   const [editProjects, setEditProjects] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
   const [editChannels, setEditChannels] = useState(false);
@@ -233,7 +236,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.document_number}
             name="document_number"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id === userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -241,7 +244,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.names}
             name="names"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -249,17 +252,17 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.last_names}
             name="last_names"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           {lead.user_id ? (
-          (userid && lead.user_id == userid) ? (
+          (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
             <FieldLeadComponent
               onUpdateRest={onUpdateLead}
               label={'Celular'}
               value={lead.cellphone}
               name="cellphone"
               uuid={lead.uuid}
-              disabled={!(userid && lead.user_id == userid)}
+              disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
             />
           ) : (
             <FieldLeadComponent
@@ -268,7 +271,7 @@ export const LeadDetailsComponent = (props: Props) => {
               value={'NO DISPONIBLE'}
               name="cellphone"
               uuid={lead.uuid}
-              disabled={!(userid && lead.user_id == userid)}
+              disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
             />
           )
         ) : (
@@ -278,7 +281,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={'SIN ASESOR ASIGNADO'}
             name="cellphone"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
         )}
           <FieldLeadComponent
@@ -287,7 +290,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.email}
             name="email"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -295,7 +298,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.ciudad}
             name="ciudad"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -303,7 +306,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.precio}
             name="precio"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
@@ -311,7 +314,7 @@ export const LeadDetailsComponent = (props: Props) => {
             value={lead.info}
             name="info"
             uuid={lead.uuid}
-            disabled={!(userid && lead.user_id == userid)}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
         </div>
       </div>
@@ -355,8 +358,8 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 <div className="list-fields-edit">
-                  {lead.user_id ? (
-                    (userid && lead.user_id == userid) ? (
+                  {lead.user_id && rolActual === 'ADMINISTRATOR' ?(
+                     (userid && lead.user_id == userid) ? (
                       <button onClick={onActivarEditProjects} className="btn btn-outline-cancel btn-xs" >
                         <i className="fa-solid fa-pen-to-square"></i>
                       </button>
@@ -413,7 +416,7 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 {lead.user_id ? (
-                    (userid && lead.user_id == userid) ? (
+                    rolActual === 'ADMINISTRATOR' ||(userid && lead.user_id == userid) ? (
                 <div className="list-fields-edit">
                   <button onClick={onActivarEditLabel} className="btn btn-outline-cancel btn-xs">
                     <i className="fa-solid fa-pen-to-square"></i>
@@ -547,7 +550,7 @@ export const LeadDetailsComponent = (props: Props) => {
                     </div>
                     <div className="list-fields-edit">
       {lead.user_id ? (
-                    (userid && lead.user_id == userid) ? (
+                    rolActual === 'ADMINISTRATOR' ||(userid && lead.user_id == userid) ? (
 
                       <button
                         onClick={onActivarEditChannel}

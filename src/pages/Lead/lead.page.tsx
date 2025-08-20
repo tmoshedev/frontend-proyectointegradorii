@@ -68,6 +68,9 @@ export const LeadPage = () => {
   const userlocal = localStorage.getItem('user');
   const userid = userlocal ? JSON.parse(userlocal).id : null;
 
+  const rolActual = localStorage.getItem('rolActual') || '';
+
+
   const changeHistorialView = (view: string) => {
     const stateView = view === '' ? stateViewHistorial : view;
     dispatch(setStateViewHistorial(stateView));
@@ -173,26 +176,24 @@ export const LeadPage = () => {
                       <div className="timeline_tabs">
                         <LeadTabsComponent stateMenu={stateMenu} setStateMenu={setStateMenu} />
                         <div className="timeline_tabs__content">
-                          {stateMenu == 'Notas' && (
-                            userid && lead.user_id == userid ? (
-                              <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
-                            ) : (
-                               <div className="content-tabs-app" >
-                                  <div>Solo el asesor asignado puede gestionar notas.</div>
-                                </div>
-                            )
+                          {stateMenu == 'Notas' &&
+                          (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
+                            <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
+                          ) : (
+                            <div className="content-tabs-app">
+                              <div>Solo el asesor asignado o un administrador puede gestionar notas.</div>
+                            </div>
                           )}
-                          {stateMenu == 'Actividad' && (
-                            userid && lead.user_id == userid ? (
-                              <LeadActividadComponent
-                                changeHistorialView={changeHistorialView}
-                                setStateMenu={setStateMenu}
-                              />
-                            ) : (
-                              <div className="content-tabs-app" >
-                                <div>Solo el asesor asignado puede gestionar actividades.</div>
-                              </div>
-                            )
+                          {stateMenu == 'Actividad' &&
+                          (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
+                            <LeadActividadComponent
+                              changeHistorialView={changeHistorialView}
+                              setStateMenu={setStateMenu}
+                            />
+                          ) : (
+                            <div className="content-tabs-app">
+                              <div>Solo el asesor asignado o un administrador puede gestionar actividades.</div>
+                            </div>
                           )}
                         </div>
                       </div>

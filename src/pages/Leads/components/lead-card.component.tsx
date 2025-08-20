@@ -35,6 +35,7 @@ interface LeadCardProps {
   lead: Lead;
   onClickLead: (lead_uuid: string) => void;
   onEditarAsesor: (lead: Lead) => void;
+  onAsignarmeLead: (lead_uuid: string) => void;
   onChangeStateLead: (lead_uuid: string, nivel_interes: string) => void;
   disabled?: boolean;
 }
@@ -46,6 +47,7 @@ export const LeadCardComponent = ({
   lead,
   onClickLead,
   onEditarAsesor,
+  onAsignarmeLead,
   onChangeStateLead,
   disabled = false, // Valor por defecto
 
@@ -77,6 +79,26 @@ export const LeadCardComponent = ({
   const rolActual = localStorage.getItem('rolActual') || '';
   const dropdownToggleRef = useRef<HTMLDivElement>(null);
   const [nivelInteres, setNivelInteres] = useState(interes);
+  // (Removed duplicate block: showAssignModal, leadToAssign, handleOpenAssignModal, handleCloseAssignModal, handleConfirmAssign)
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [leadToAssign, setLeadToAssign] = useState<Lead | null>(null);
+
+  const handleOpenAssignModal = (leadToAssign: Lead) => {
+    setLeadToAssign(leadToAssign);
+    setShowAssignModal(true);
+  };
+
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setLeadToAssign(null);
+  };
+
+  const handleConfirmAssign = () => {
+    if (leadToAssign) {
+      onAsignarmeLead(leadToAssign.uuid);
+      handleCloseAssignModal();
+    }
+  };
 
   /**
    * Generates initials from user names.
@@ -330,8 +352,8 @@ export const LeadCardComponent = ({
             </div>
           )}
         </div>
-        {CanCheck('update-asesor') && (
-          <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center">
+          {CanCheck('update-asesor') && (
             <button
               data-tooltip-id="tooltip-component"
               data-tooltip-content={
@@ -342,10 +364,39 @@ export const LeadCardComponent = ({
             >
               <i className="fa-solid fa-pen-to-square"></i>
             </button>
-          </div>
-        )}
+          )}
+          {rolActual === 'SALES_AGENT' && !user_id && (
+            <button
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content="Asignarme a mí"
+              className="btn btn-outline-success btn-xs ms-1"
+              onClick={() => handleOpenAssignModal(lead)}
+            >
+              <i className="fa-solid fa-user-plus"></i>
+            </button>
+          )}
+        </div>
       </div>
     </div>
+    {showAssignModal && leadToAssign && (
+      <div className="modal fade show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmar asignación</h5>
+              <button type="button" className="btn-close" onClick={handleCloseAssignModal} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <p>¿Estás seguro de que quieres asignarte este lead: "{leadToAssign.names} {leadToAssign.last_names}"?</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={handleCloseAssignModal}>Cancelar</button>
+              <button type="button" className="btn btn-primary" onClick={handleConfirmAssign}>Sí, asignar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
        </div>
  
   );
