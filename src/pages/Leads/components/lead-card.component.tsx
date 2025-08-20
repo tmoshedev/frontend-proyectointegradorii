@@ -366,7 +366,7 @@ export const LeadCardComponent = ({
               <i className="fa-solid fa-pen-to-square"></i>
             </button>
           )}
-          {rolActual === 'SALES_AGENT' && !user_id && (
+          {/*rolActual === 'SALES_AGENT' && !user_id && (
             <button
               data-tooltip-id="tooltip-component"
               data-tooltip-content="Asignarme a mí"
@@ -375,11 +375,11 @@ export const LeadCardComponent = ({
             >
               <i className="fa-solid fa-user-plus"></i>
             </button>
-          )}
+          )*/}
         </div>
       </div>
     </div>
-    {showAssignModal && leadToAssign && (
+    {/*howAssignModal && leadToAssign && (
       <div className="modal fade show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.7)' }}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -397,7 +397,7 @@ export const LeadCardComponent = ({
           </div>
         </div>
       </div>
-    )}
+    )*/}
        </div>
  
   );
