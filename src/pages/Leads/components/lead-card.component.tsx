@@ -163,7 +163,8 @@ export const LeadCardComponent = ({
     return { '--multi-border-color': gradientString };
   }, [lead.lead_labels]);
 
-  const cardClassName = `lead-card ${disabled ? 'disabled not-draggable' : ''}`;
+  const isDisabled = disabled && rolActual !== 'ADMINISTRATOR';
+  const cardClassName = `lead-card ${isDisabled ? 'disabled not-draggable' : ''}`;
 
   return (
 
@@ -229,7 +230,7 @@ export const LeadCardComponent = ({
             data-tooltip-id="tooltip-component"
             data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.fecha_actividad}`}
             className={`alert-lead ${
-              actividad_estado.type === 'VENCIDA' ? 'alert-lead-actividad' : 'alert-lead-porvencer'
+              actividad_estado.type === 'VENCIDA' ? 'alert-lead-vencido' : 'alert-lead-actividad'
             }`}
           >
             !

@@ -358,8 +358,8 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 <div className="list-fields-edit">
-                  {lead.user_id && rolActual === 'ADMINISTRATOR' ?(
-                     (userid && lead.user_id == userid) ? (
+                  {lead.user_id ? (
+                    (rolActual == 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                       <button onClick={onActivarEditProjects} className="btn btn-outline-cancel btn-xs" >
                         <i className="fa-solid fa-pen-to-square"></i>
                       </button>
