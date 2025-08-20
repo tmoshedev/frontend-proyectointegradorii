@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 import '../../scss/theme/_select-search-crm.scss';
 import { useEffect, useRef, useState } from 'react';
+import CanCheck from '../../resources/can';
 
 interface SelectSearchCrmProps {
   maxHeight: string;
@@ -45,9 +46,11 @@ export const SelectSearchCrm = (props: SelectSearchCrmProps) => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        {CanCheck('update-asesor') && (
         <div className="scc-add-item" onClick={props.store}>
           <Plus height={15} /> Crear nueva etiqueta
         </div>
+        )}
         <ul className="ssc-items scroll-personalizado">
           {filteredItems.map((item, index) => (
             <li
