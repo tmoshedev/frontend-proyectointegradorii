@@ -305,6 +305,14 @@ export const LeadDetailsComponent = (props: Props) => {
             uuid={lead.uuid}
             disabled={!(userid && lead.user_id == userid)}
           />
+          <FieldLeadComponent
+            onUpdateRest={onUpdateLead}
+            label={'Hora de llamada'}
+            value={lead.info}
+            name="info"
+            uuid={lead.uuid}
+            disabled={!(userid && lead.user_id == userid)}
+          />
         </div>
       </div>
       <div className="block-item">

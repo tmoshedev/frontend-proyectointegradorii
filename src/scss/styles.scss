@@ -355,3 +355,8 @@
     max-width: 80%;
   }
 }
+
+.lead-card.disabled {
+  cursor: not-allowed;
+  opacity: 0.5; /* Opcional: para indicar visualmente que está deshabilitado */
+}

@@ -23,6 +23,7 @@ export interface Lead {
   state_histories: LeadHistory[];
   ciudad: string;
   precio: string;
+  info: string;
   email: string;
   supervisor_names: string;
   fecha_creacion?: string;

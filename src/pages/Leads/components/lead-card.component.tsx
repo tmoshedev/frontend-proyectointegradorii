@@ -36,6 +36,7 @@ interface LeadCardProps {
   onClickLead: (lead_uuid: string) => void;
   onEditarAsesor: (lead: Lead) => void;
   onChangeStateLead: (lead_uuid: string, nivel_interes: string) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -46,6 +47,9 @@ export const LeadCardComponent = ({
   onClickLead,
   onEditarAsesor,
   onChangeStateLead,
+  disabled = false, // Valor por defecto
+
+  
 }: LeadCardProps) => {
   // Destructure lead properties for cleaner access.
   const {
@@ -133,14 +137,16 @@ export const LeadCardComponent = ({
       .join(', ');
 
     const gradientString = `linear-gradient(to bottom, ${gradientStops})`;
-
     // Devolvemos el estilo con la variable CSS que contiene nuestro gradiente
     return { '--multi-border-color': gradientString };
   }, [lead.lead_labels]);
 
+  const cardClassName = `lead-card ${disabled ? 'disabled not-draggable' : ''}`;
+
   return (
 
-    
+    <div className={cardClassName} data-id={lead.id}>
+
     <div
       className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
       data-id={id}
@@ -201,7 +207,7 @@ export const LeadCardComponent = ({
             data-tooltip-id="tooltip-component"
             data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.fecha_actividad}`}
             className={`alert-lead ${
-              actividad_estado.type === 'VENCIDA' ? 'alert-lead-vencido' : 'alert-lead-porvencer'
+              actividad_estado.type === 'VENCIDA' ? 'alert-lead-actividad' : 'alert-lead-porvencer'
             }`}
           >
             !
@@ -249,12 +255,12 @@ export const LeadCardComponent = ({
           <span>{channel_name || '-'}</span>
         </p>
 
-        {['COMMERCIAL_LEADER', 'DEVELOPER', 'ADMINISTRATOR'].includes(rolActual) && (
+        {/*['COMMERCIAL_LEADER', 'DEVELOPER', 'ADMINISTRATOR'].includes(rolActual) && (
           <p className="mt-1">
             <b>Supervisor: </b>
             <span>{supervisor_names ?? '-'}</span>
           </p>
-        )}
+        )*/}
 
         {/* Interest Level Dropdown */}
         <div className="d-flex justify-content-center mt-2">
@@ -340,6 +346,8 @@ export const LeadCardComponent = ({
         )}
       </div>
     </div>
+       </div>
+ 
   );
 };
 

@@ -27,6 +27,7 @@ export const LeadFormComponent = (props: Props) => {
     cellphone: '',
     ciudad: '',
     precio: '',
+    info: '',
     asignarme_lead: false,
     nivel_interes: '',
   };

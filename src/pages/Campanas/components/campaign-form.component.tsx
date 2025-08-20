@@ -213,6 +213,7 @@ export const CampaignFormComponent = (props: Props) => {
               id="state"
               className="form-select form-select-sm"
             >
+              <option value="">Seleccionar estado</option>
               <option value={1}>Recepcionar Leads</option>
               <option value={0}>No recepcionar Leads</option>
             </select>

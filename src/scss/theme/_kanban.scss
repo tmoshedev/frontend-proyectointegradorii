@@ -367,6 +367,10 @@ $arrow-width: 0.7rem;
   background-color: $color-actividad-por-vencer;
 }
 
+.alert-lead-actividad {
+  background-color: $color-lead-actividad;
+}
+
 @keyframes parpadeo-alerta {
   0%,
   100% {

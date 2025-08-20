@@ -238,7 +238,7 @@ export const LeadHeaderComponent = () => {
             </div>
           </div>
         )}
-        {lead.estado_final == null && (
+        {/*lead.estado_final == null && (
           <div className="d-flex ms-2">
             <button
               onClick={() => onLeadState('GANADO')}
@@ -253,7 +253,7 @@ export const LeadHeaderComponent = () => {
               Perdido
             </button>
           </div>
-        )}
+        )*/}
         {lead.estado_final == 'GANADO' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-ganado">

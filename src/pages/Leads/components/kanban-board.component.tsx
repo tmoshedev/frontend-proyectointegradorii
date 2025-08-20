@@ -99,6 +99,10 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
     changeNivelInteres(lead_uuid, nivel_interes, false).then(() => {});
   };
 
+  const userlocal = localStorage.getItem('user');
+  const userid = userlocal ? JSON.parse(userlocal).id : null;
+
+
   return (
     <div
       className="main-content app-content main-content--page"
@@ -158,7 +162,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                     forceFallback
                     onStart={handleDragStart}
                     onEnd={handleDragEnd}
+                    filter=".not-draggable"
                   >
+                  
                     {etapa.leads.map((lead) => (
                       <LeadCardComponent
                         lead={lead}
@@ -166,6 +172,8 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                         onClickLead={onClickLead}
                         onEditarAsesor={onEditarAsesor}
                         onChangeStateLead={onChangeStateLead}
+                        disabled={!(userid && lead.user_id == userid)} // Deshabilitar la tarjeta
+
                       />
                     ))}
                   </ReactSortable>
@@ -187,7 +195,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
               </div>
             ))}
           </div>
-          {isDragging && <LeadFooterComponent onDropAction={handleDropAction} />}
+          {/*isDragging && <LeadFooterComponent onDropAction={handleDropAction}/>*/}
         </div>
       </div>
     </div>

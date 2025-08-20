@@ -98,6 +98,9 @@ export const LeadHistoriaComponent = (props: LeadHistoriaComponentProps) => {
                   stateUltimo={stateUltimo}
                   onActividadCompletada={onActividadCompletada}
                   handleModalCancelarActividad={props.handleModalCancelarActividad}
+                  activity_user_id={item.user_id} // El ID del creador de la actividad
+                   lead_assigned_user_id={lead.user_id}
+                  
                 />
               );
             case 'action':

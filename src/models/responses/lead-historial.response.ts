@@ -5,6 +5,7 @@ export interface LeadHistorialResponse {
   user_names: string;
   user_father_last_name: string;
   user_mother_last_name: string;
+  user_id?: number;
   data: {
     state_current: string;
     state_moved: string;
