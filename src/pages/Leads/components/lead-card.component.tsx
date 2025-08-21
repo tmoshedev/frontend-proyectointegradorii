@@ -171,7 +171,7 @@ export const LeadCardComponent = ({
     <div className={cardClassName} data-id={lead.id}>
 
     <div
-      className={`kanban-card ${actividad_estado.state_view ? 'kanban-card-alert' : ''}`}
+      className={`kanban-card ${actividad_estado?.state_view ? 'kanban-card-alert' : ''}`}
       data-id={id}
       onClick={() => onClickLead(uuid)}
       style={{ ...multiBorderStyle, position: 'relative' } as React.CSSProperties} // importante para posicionar
@@ -225,7 +225,7 @@ export const LeadCardComponent = ({
 
       {/* Header Section */}
       <div className="kanban-card-header">
-        {actividad_estado.state_view && (
+        {actividad_estado?.state_view && (
           <div
             data-tooltip-id="tooltip-component"
             data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.fecha_actividad}`}
