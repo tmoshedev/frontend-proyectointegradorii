@@ -40,7 +40,7 @@ export const LeadActividadComponent = (props: Props) => {
     fecha_final: moment().format('YYYY-MM-DD'),
     hora_inicial: '',
     hora_final: '',
-    disponibilidad: 'OCUPADO',
+    disponibilidad: 'LIBRE',
     ubicacion: '',
     check_actividad: false,
   };
