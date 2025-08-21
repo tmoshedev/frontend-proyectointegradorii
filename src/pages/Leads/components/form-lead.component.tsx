@@ -20,7 +20,7 @@ export const LeadFormComponent = (props: Props) => {
     date: moment().format('YYYY-MM-DD'),
     lead_state_id: '1',
     project_id: '',
-    channel_id: '',
+    channel_id: '7',
     document_number: '',
     names: '',
     last_names: '',
@@ -29,7 +29,8 @@ export const LeadFormComponent = (props: Props) => {
     precio: '',
     info: '',
     asignarme_lead: false,
-    nivel_interes: '',
+    nivel_interes: 'FRIO',
+    campaign_codigo: '',
   };
   const [projects, setProjects] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
@@ -99,10 +100,9 @@ export const LeadFormComponent = (props: Props) => {
               id="nivel_interes"
               className="form-select form-select-sm"
             >
-              <option value="">Seleccionar</option>
+              <option value="FRIO">Frío</option>
               <option value="CALIENTE">Caliente</option>
               <option value="TIBIO">Tíbio</option>
-              <option value="FRIO">Frío</option>
             </select>
           </div>
           {/* Proyecto */}

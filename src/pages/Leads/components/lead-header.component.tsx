@@ -73,12 +73,12 @@ console.log("Campañas recibidas:", props.campaigns);
           </button>
         </div>
         
-        {/*<button
+        {<button
           onClick={() => props.handleModalLeadForm('STORE')}
           className="btn btn-primary btn-sm ms-2"
         >
           <Plus height={20} /> Lead
-        </button>*/}
+        </button>}
         
         {CanCheck('leads-distrubir') && (
           <button
