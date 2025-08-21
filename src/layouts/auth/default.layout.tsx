@@ -134,7 +134,7 @@ const DefaultLayout = () => {
 
   return (
     <>
-      <Tooltip id="tooltip-component" place="bottom" style={{ zIndex: 9999 }} />
+      <Tooltip id="tooltip-component" place="bottom" style={{ zIndex: 9999 }} html={undefined} />
       <ToastContainer />
       <Header openToggled={openToggled} onCambiarRol={onCambiarRol} />
       <Sidebar />

@@ -173,6 +173,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                         onEditarAsesor={onEditarAsesor}
                         onChangeStateLead={onChangeStateLead}
                         disabled={!(userid && lead.user_id == userid)} // Deshabilitar la tarjeta
+                        onAsignarmeLead={function (lead_uuid: string): void {
+                          throw new Error('Function not implemented.');
+                        }}
 
                       />
                     ))}

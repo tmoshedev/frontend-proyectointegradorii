@@ -166,6 +166,16 @@ export const LeadCardComponent = ({
   const isDisabled = disabled && rolActual !== 'ADMINISTRATOR';
   const cardClassName = `lead-card ${isDisabled ? 'disabled not-draggable' : ''}`;
 
+  const labelTooltipContent = useMemo(() => {
+    if (!lead.lead_labels || lead.lead_labels.length === 0) {
+      return undefined;
+    }
+    const labelsHtml = lead.lead_labels
+      .map(label => `<span style="color: ${label.color}; font-weight: bold;">${label.name}</span>`)
+      .join(', ');
+    return `<strong>ETIQUETAS ACTIVAS:</strong>&nbsp;&nbsp;${labelsHtml}`;
+  }, [lead.lead_labels]);
+
   return (
 
     <div className={cardClassName} data-id={lead.id}>
@@ -175,6 +185,8 @@ export const LeadCardComponent = ({
       data-id={id}
       onClick={() => onClickLead(uuid)}
       style={{ ...multiBorderStyle, position: 'relative' } as React.CSSProperties} // importante para posicionar
+      data-tooltip-id={labelTooltipContent ? "tooltip-component" : undefined}
+      data-tooltip-html={labelTooltipContent}
     >
 
       {channel_name === 'ALITORRES' && (
