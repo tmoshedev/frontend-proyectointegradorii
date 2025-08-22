@@ -32,34 +32,52 @@ export const PageBodyComponent = (props: Props) => {
   };
 
   const mtd_showTd = (row: any, col: any) => {
-    if (col.play) {
-      let html = null;
-      switch (col.play.type) {
-        case 'states':
-          html = (
-            <span className={`${col.play.values[row[col.name]]} me-1 badge bg-secondary`}>
-              {col.play.names[row[col.name]]}
-            </span>
-          );
-          break;
-        default:
-          break;
-      }
-      return html;
-    } else {
-      const verificaArray = row[col.name] instanceof Array;
-      if (verificaArray) {
-        return row[col.name].map((item: any, index: number) => (
-          <span key={index} className="badge bg-light text-dark me-1">
-            {item}
+  if (col.play) {
+    let html = null;
+    switch (col.play.type) {
+      case 'states':
+        html = (
+          <span className={`${col.play.values[row[col.name]]} me-1 badge bg-secondary`}>
+            {col.play.names[row[col.name]]}
           </span>
-        ));
-      } else {
-        const data = row[col.name];
-        return data == '' || data == null ? '---' : data;
-      }
+        );
+        break;
+
+      case 'color':
+        html = (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                backgroundColor: row[col.name],
+                width: '30px',
+                height: '15px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+              }}
+            ></div>
+            <span>{row[col.name]}</span> {/* si quieres mostrar el código HEX */}
+          </div>
+        );
+        break;
+
+      default:
+        break;
     }
-  };
+    return html;
+  } else {
+    const verificaArray = row[col.name] instanceof Array;
+    if (verificaArray) {
+      return row[col.name].map((item: any, index: number) => (
+        <span key={index} className="badge bg-light text-dark me-1">
+          {item}
+        </span>
+      ));
+    } else {
+      const data = row[col.name];
+      return data == '' || data == null ? '---' : data;
+    }
+  }
+};
 
   const mtd_showButton = (row: any, play: any) => {
     if (play) {

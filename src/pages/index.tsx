@@ -8,3 +8,4 @@ export { default as LeadPage } from './Lead/lead.page';
 export { default as MiEquipoPage } from './MiEquipo/mi-equipo.page';
 export { default as CalendarioPage } from './Calendario/calendario.page';
 export { default as CampanaPage } from './Campanas/campanas.page';
+export { default as ConfiguracionPage } from './Configuracion/configuracion.page';

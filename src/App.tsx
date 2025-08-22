@@ -17,7 +17,8 @@ import {
   LeadPage,
   MiEquipoPage,
   CalendarioPage,
-  CampanaPage
+  CampanaPage,
+  ConfiguracionPage
 } from './pages';
 
 function App() {
@@ -58,6 +59,10 @@ function App() {
                 {/*CampanaPage*/}
                 <Route element={<ProtectedRoute permission="campaigns-index" />}>
                   <Route path="campaigns" element={<CampanaPage />} />
+                </Route>
+                {/*ConfiguracionPage*/}
+                <Route element={<ProtectedRoute permission="settings-index" />}>
+                  <Route path="settings" element={<ConfiguracionPage />} />
                 </Route>
               </Route>
             </Route>

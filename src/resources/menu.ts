@@ -67,6 +67,13 @@ const Menu: MenuItem[] = [
     ],
   },
   {
+    name: 'Configuración',
+    path: '/settings',
+    icon: 'ri-settings-2-line',
+    permission: 'settings-index',
+    rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
+  },
+  {
     name: 'Cambiar contraseña',
     path: '/change-password',
     icon: 'ri-lock-line',
