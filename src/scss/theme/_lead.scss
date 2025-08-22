@@ -111,7 +111,7 @@
 
 /* Webkit scroll personalizado */
 .scroll-personalizado::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 .scroll-personalizado::-webkit-scrollbar-track {
@@ -120,9 +120,9 @@
 }
 
 .scroll-personalizado::-webkit-scrollbar-thumb {
-  background-color: #c4c4c4; /* color base */
+  background-color: #a5a5a5; /* gris más oscuro */
   border-radius: 10px;
-  border: 2px solid #f2f2f2;
+  border: 3px solid #f2f2f2;
   background-clip: padding-box;
   box-sizing: border-box;
   transition: background-color 0.2s ease;
@@ -130,7 +130,7 @@
 
 /* Efecto hover suave */
 .scroll-personalizado::-webkit-scrollbar-thumb:hover {
-  background-color: #a5a5a5; /* gris más oscuro al pasar el mouse */
+  background-color: #888; /* gris aún más oscuro al pasar el mouse */
 }
 
 .block-item {
