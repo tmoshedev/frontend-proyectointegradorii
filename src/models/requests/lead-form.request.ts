@@ -10,6 +10,7 @@ export interface LeadFormRequest {
   ciudad: string;
   precio: string;
   info: string;
+  asesor_estado: string;
   asignarme_lead: boolean;
   nivel_interes: string;
   campaign_codigo: string;

@@ -316,6 +316,29 @@ export const LeadDetailsComponent = (props: Props) => {
             uuid={lead.uuid}
             disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
+
+           <FieldLeadComponent
+            onUpdateRest={onUpdateLead}
+            label={'Hora de llamada'}
+            value={lead.info}
+            name="info"
+            uuid={lead.uuid}
+            disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
+          />
+
+          <FieldLeadComponent
+            onUpdateRest={onUpdateLead}
+            label={'Estado Lead'}
+            value={lead.asesor_estado}
+            name="asesor_estado"
+            uuid={lead.uuid}
+            disabled={!(rolActual === 'ADMINISTRATOR')}
+            options={[
+              { value: 'LIBERADO', label: 'LIBERADO' },
+              { value: 'ASESOR ASIGNADO', label: 'ASESOR ASIGNADO' },
+            ]}
+          />
+          
         </div>
       </div>
       <div className="block-item">

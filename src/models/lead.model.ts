@@ -25,6 +25,7 @@ export interface Lead {
   precio: string;
   info: string;
   email: string;
+  asesor_estado: string;
   supervisor_names: string;
   fecha_creacion?: string;
   actividad_estado: LeadActividadEstado;

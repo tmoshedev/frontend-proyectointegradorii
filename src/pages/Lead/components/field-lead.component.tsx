@@ -8,7 +8,7 @@ interface Props {
   label: string;
   value: string;
   onUpdateRest: (name: string, value: string) => void;
-  options?: string[]; // ✅ nueva prop opcional
+  options?: { value: string; label: string }[];
   disabled?: boolean; // Nueva prop para deshabilitar el campo
 }
 
@@ -58,10 +58,10 @@ export const FieldLeadComponent = (props: Props) => {
                 >
                   <option value="">Seleccione...</option>
                   {props.options.map((op, i) => (
-                    <option key={i} value={op}>
-                      {op}
-                    </option>
-                  ))}
+  <option key={i} value={op.value}>
+    {op.label}
+  </option>
+))}
                 </select>
               ) : (
                 <input
