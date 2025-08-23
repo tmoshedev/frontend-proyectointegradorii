@@ -28,7 +28,7 @@ export const LeadFormComponent = (props: Props) => {
     ciudad: '',
     precio: '',
     info: '',
-    asesor_estado: '0',
+    asesor_estado: 'LIBERADO',
     asignarme_lead: false,
     nivel_interes: 'FRIO',
     campaign_codigo: '',

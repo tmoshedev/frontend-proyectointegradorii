@@ -58,7 +58,7 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
               className={item.selected ? 'selected' : ''}
               style={{ userSelect: 'none' }}
             >
-              <div className="ssc-item-name">{item.codigo}-{item.nombre}</div>
+              <div className="ssc-item-name">{item.name}</div>
               <span
                 className="ssc-item-checkbox"
                 onClick={(e) => {

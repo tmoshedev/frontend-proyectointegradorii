@@ -159,6 +159,8 @@ export const LeadHeaderComponent = () => {
     ]);
   }, [lead]);
 
+  const rolActual = localStorage.getItem('rolActual') || '';
+
   return (
     <div className="lead-header__title">
       <div className="d-flex align-items-center">
@@ -238,22 +240,22 @@ export const LeadHeaderComponent = () => {
             </div>
           </div>
         )}
-        {/*lead.estado_final == null && (
+        {rolActual === 'ADMINISTRATOR' || lead.estado_final == null && (
           <div className="d-flex ms-2">
-            <button
+            {/*<button
               onClick={() => onLeadState('GANADO')}
               className="btn btn-primary btn-sm me-2 btn-ganado"
             >
               Ganado
-            </button>
+            </button>*/}
             <button
-              onClick={() => onLeadState('PERDIDO')}
+              onClick={() => onLeadState('SALIDA')}
               className="btn btn-primary btn-sm btn-perdido"
             >
-              Perdido
+              DAR DE BAJA
             </button>
           </div>
-        )*/}
+        )}
         {lead.estado_final == 'GANADO' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-ganado">
@@ -261,10 +263,10 @@ export const LeadHeaderComponent = () => {
             </button>
           </div>
         )}
-        {lead.estado_final == 'PERDIDO' && (
+        {lead.estado_final == 'SALIDA' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-perdido">
-              <i className="fa-solid fa-thumbs-down"></i> Lead perdido
+              <i className="fa-solid fa-thumbs-down"></i> Lead salida
             </button>
           </div>
         )}

@@ -13,6 +13,7 @@ import {
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
 import SelectSearchCrmCampaign from '../../../components/shared/SelectSearchCrmCampaign';
+import SelectSearchCrmUser from '../../../components/shared/SelectSearchCrmUser';
 import { useState } from 'react';
 
 interface LeadHeaderComponentProps {
@@ -28,6 +29,11 @@ interface LeadHeaderComponentProps {
   setCampaigns: React.Dispatch<React.SetStateAction<any[]>>;
   handleCampanasKanban: (campanas: any[]) => void;
 
+  users: any[];
+  setUsers: React.Dispatch<React.SetStateAction<any[]>>;
+  handleUsuariosKanban: (usuarios: any[]) => void;
+
+
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
@@ -38,7 +44,9 @@ interface LeadHeaderComponentProps {
 }
 
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
-  const [openDropdown, setOpenDropdown] = useState(false);
+  const [openUserDropdown, setOpenUserDropdown] = useState(false);
+  const [openCampaignDropdown, setOpenCampaignDropdown] = useState(false);
+  const [openLabelDropdown, setOpenLabelDropdown] = useState(false);
 console.log("Campañas recibidas:", props.campaigns);
 
   return (
@@ -116,30 +124,30 @@ console.log("Campañas recibidas:", props.campaigns);
       </div>
 
       <div className="header-controls-container">
-        {/* Grupo 1: Mis leads */}
+        {/* Grupo 1: Usuarios */}
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
               className="dropdown"
-              onClick={() => setOpenDropdown(true)}
-              onBlur={() => setOpenDropdown(false)}
+              onClick={() => setOpenUserDropdown(true)}
+              onBlur={() => setOpenUserDropdown(false)}
               tabIndex={0}
             >
-              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
-                {props.campaigns.filter((campaign) => campaign.selected).length > 0 ? (
+              <span data-bs-toggle="dropdown" aria-expanded={openUserDropdown} role="button">
+                {props.users.filter((user) => user.selected).length > 0 ? (
                   <i
                     style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
-                    className="ri-megaphone-line"
+                    className="ri-user-line"
                   ></i>
                 ) : (
                   <UserRoundSearch height={30} />
                 )}  
               </span>
-              <SelectSearchCrmCampaign
+              <SelectSearchCrmUser
                 maxHeight="250px"
                 minWidth="220px"
-                items={props.campaigns}
-                open={openDropdown}
-                onChange={props.handleCampanasKanban}
+                items={props.users}
+                open={openUserDropdown}
+                onChange={props.handleUsuariosKanban}
               />
             </div>
           </div>
@@ -148,11 +156,11 @@ console.log("Campañas recibidas:", props.campaigns);
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
               className="dropdown"
-              onClick={() => setOpenDropdown(true)}
-              onBlur={() => setOpenDropdown(false)}
+              onClick={() => setOpenCampaignDropdown(true)}
+              onBlur={() => setOpenCampaignDropdown(false)}
               tabIndex={0}
             >
-              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
+              <span data-bs-toggle="dropdown" aria-expanded={openCampaignDropdown} role="button">
                 {props.campaigns.filter((campaign) => campaign.selected).length > 0 ? (
                   <i
                     style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
@@ -166,7 +174,7 @@ console.log("Campañas recibidas:", props.campaigns);
                 maxHeight="250px"
                 minWidth="220px"
                 items={props.campaigns}
-                open={openDropdown}
+                open={openCampaignDropdown}
                 onChange={props.handleCampanasKanban}
               />
             </div>
@@ -177,11 +185,11 @@ console.log("Campañas recibidas:", props.campaigns);
           <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
             <div
               className="dropdown"
-              onClick={() => setOpenDropdown(true)}
-              onBlur={() => setOpenDropdown(false)}
+              onClick={() => setOpenLabelDropdown(true)}
+              onBlur={() => setOpenLabelDropdown(false)}
               tabIndex={0}
             >
-              <span data-bs-toggle="dropdown" aria-expanded={openDropdown} role="button">
+              <span data-bs-toggle="dropdown" aria-expanded={openLabelDropdown} role="button">
                 {props.labels.filter((label) => label.selected).length > 0 ? (
                   <i
                     style={{ color: 'var(--primary-color)', fontSize: '1.4rem' }}
@@ -196,7 +204,7 @@ console.log("Campañas recibidas:", props.campaigns);
                 minWidth="220px"
                 items={props.labels}
                 icon={`fa-solid fa-tag`}
-                open={openDropdown}
+                open={openLabelDropdown}
                 onChange={props.handleEtiquetasKanban}
                 store={props.handleCrearEtiqueta}
               />

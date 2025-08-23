@@ -64,7 +64,7 @@ export const LeadsPage = () => {
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
-    'Usuario asignado': {
+    /*'Usuario asignado': {
       value: 'user_ids',
       opciones: [
         {
@@ -81,7 +81,7 @@ export const LeadsPage = () => {
           .filter((u) => u.id !== authState.user.id)
           .map((u) => ({ label: u.name, value: u.id, avatar: true })),
       ],
-    },
+    },*/
     'Origen/Canal': {
       value: 'channel_ids',
       opciones: channels.map((c) => ({ label: c.name, value: c.id })),
@@ -218,7 +218,7 @@ export const LeadsPage = () => {
   };
 
   const onRefreshLeads = () => {
-    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns);
+    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users);
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -266,7 +266,7 @@ export const LeadsPage = () => {
 
   const onHandleDeleteFiltro = (id: number) => {
     const nuevosFiltros = filtros.filter((f) => f.id !== id);
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users);
   };
 
   const onHandleChangeTipoFiltro = (id: number, nuevoTipo: string) => {
@@ -284,7 +284,7 @@ export const LeadsPage = () => {
       f.id === id ? { ...f, valoresSeleccionados: nuevosValores } : f
     );
 
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users);
   };
 
   const refreshDataLeads = (
@@ -338,7 +338,7 @@ export const LeadsPage = () => {
       return filtro?.valoresSeleccionados.map((v: any) => v.value).join(',') || '';
     };
 
-    const user_ids = getValorFiltro('user_ids');
+    const user_ids = getValorFiltro('users_ids');
     const channel_ids = getValorFiltro('channel_ids');
     const lead_label_ids = getValorFiltro('lead_labels_ids');
     const stage_ids = getValorFiltro('stage_ids');
@@ -378,7 +378,7 @@ export const LeadsPage = () => {
         const tipoApi = TODOS_LOS_FILTROS[filtro.tipo as keyof typeof TODOS_LOS_FILTROS]?.value;
 
         switch (tipoApi) {
-          case 'user_ids':
+          case 'users_ids':
             user_ids = valores;
             break;
           case 'channel_ids':
@@ -420,14 +420,16 @@ export const LeadsPage = () => {
     nivelesAplicados: string[],
     etiquetasAplicadas: string[],
     campanasAplicadas: string[],
+    usuariosAplicados: string[],
   ) => {
     setFiltros(filtrosAplicados);
     setNivelesInteres(nivelesAplicados);
     setLabels(etiquetasAplicadas);
     setCampaigns(campanasAplicadas);
+    setUsers(usuariosAplicados);
 
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, campanasAplicadas, terminoBusqueda);
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, campanasAplicadas, usuariosAplicados, terminoBusqueda);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
@@ -437,7 +439,7 @@ export const LeadsPage = () => {
     const nuevosNiveles = nivelesInteres.includes(nivel)
       ? nivelesInteres.filter((n) => n !== nivel)
       : [...nivelesInteres, nivel];
-    onAplicarFiltros(filtros, nuevosNiveles, labels, campaigns);
+    onAplicarFiltros(filtros, nuevosNiveles, labels, campaigns, users);
   };
 
   const cargarMasLeads = (etapaId: number | string) => {
@@ -515,6 +517,7 @@ export const LeadsPage = () => {
       currentNiveles: string[],
       etiquetas: any[],
       campanas: any[],
+      usuarios: any[],
       termino: string,
       first: boolean = false
     ) => {
@@ -543,13 +546,19 @@ export const LeadsPage = () => {
             .map((campana) => campana.name)
             .join(',')
         : '';
+      const usuarios_ids = Array.isArray(usuarios)
+        ? usuarios
+            .filter((usuario) => usuario.selected)
+            .map((usuario) => usuario.id)
+            .join(',')
+        : '';
 
       // 2. Llama a la API para obtener la estructura y los conteos ya filtrados
       const response = await getLeadStatus(
         '1',
         '1',
         'get',
-        user_ids,
+        usuarios_ids,
         channel_ids,
         etiquetas_ids,
         stage_ids,
@@ -598,7 +607,7 @@ export const LeadsPage = () => {
           '1',
           '1',
           String(etapa.id),
-          user_ids,
+          usuarios_ids,
           channel_ids,
           etiquetas_ids,
           stage_ids,
@@ -666,13 +675,16 @@ export const LeadsPage = () => {
   );
 
 const handleEtiquetasKanban = (etiquetas: any[]) => {
-  onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns);
+  onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns, users);
 };
 
 const handleCampanasKanban = (campanas: any[]) => {
-  onAplicarFiltros(filtros, nivelesInteres, labels, campanas);
+  onAplicarFiltros(filtros, nivelesInteres, labels, campanas, users);
 };
 
+const handleUsuariosKanban = (usuarios: any[]) => {
+  onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, usuarios);
+};
 
   const handleCrearEtiqueta = () => {
     setDataModalEtiquetasResourceState({
@@ -689,7 +701,7 @@ const handleCampanasKanban = (campanas: any[]) => {
 
   const onBuscarKanban = (termino: string) => {
     setTerminoBusqueda(termino);
-    recargarDatosKanban(filtros, nivelesInteres, labels,campaigns , termino);
+    recargarDatosKanban(filtros, nivelesInteres, labels,campaigns , users , termino);
   };
 
   useEffect(() => {
@@ -713,7 +725,7 @@ const handleCampanasKanban = (campanas: any[]) => {
     const filtrosReseteados: any[] = [];
     const nivelesReseteados: string[] = [];
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtros, nivelesInteres, labels,campaigns, terminoBusqueda, true);
+      recargarDatosKanban(filtros, nivelesInteres, labels,campaigns,users, terminoBusqueda, true);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
     }
@@ -732,7 +744,7 @@ const handleCampanasKanban = (campanas: any[]) => {
           setEtapas={setEtapas}
           handleModalAsesor={handleModalAsesor}
           onFiltrosLeads={onFiltrosLeads}
-          users={users}
+          
           filtros={filtros}
           nivelesInteres={nivelesInteres}
           handleNivelInteresChange={handleNivelInteresChange}
@@ -741,6 +753,9 @@ const handleCampanasKanban = (campanas: any[]) => {
           campaigns={campaigns}
           setCampaigns={setCampaigns}
           handleCampanasKanban={handleCampanasKanban}
+          users={users}
+          setUsers={setUsers}
+          handleUsuariosKanban={handleUsuariosKanban}
           labels={labels}
           setLabels={setLabels}
           handleEtiquetasKanban={handleEtiquetasKanban}

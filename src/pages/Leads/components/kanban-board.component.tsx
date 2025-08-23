@@ -19,7 +19,6 @@ interface KanbanBoardComponentProps {
   setEtapas: React.Dispatch<React.SetStateAction<EtapaConPaginacion[]>>;
   handleModalAsesor: (lead: Lead, users: any[]) => void;
   onFiltrosLeads: (type: string) => void;
-  users: any[];
   filtros: any[];
   nivelesInteres: string[];
   handleNivelInteresChange: (nivel: string) => void;
@@ -28,6 +27,9 @@ interface KanbanBoardComponentProps {
   campaigns: any[];
   setCampaigns: React.Dispatch<React.SetStateAction<any[]>>;
   handleCampanasKanban: (campanas: any[]) => void;
+  handleUsuariosKanban: (usuarios: any[]) => void;
+  users: any[];
+  setUsers: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
@@ -121,6 +123,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             campaigns={props.campaigns}
             setCampaigns={props.setCampaigns}
             handleCampanasKanban={props.handleCampanasKanban}
+            users={props.users}
+            setUsers={props.setUsers}
+            handleUsuariosKanban={props.handleUsuariosKanban}
             labels={props.labels}
             setLabels={props.setLabels}
             handleEtiquetasKanban={props.handleEtiquetasKanban}

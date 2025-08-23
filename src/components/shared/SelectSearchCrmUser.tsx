@@ -1,7 +1,7 @@
 import '../../scss/theme/_select-search-crm.scss';
 import { useEffect, useRef, useState } from 'react';
 
-interface SelectSearchCrmCampaignProps {
+interface SelectSearchCrmUserProps {
   maxHeight: string;
   minWidth: string;
   items: any[];
@@ -9,18 +9,24 @@ interface SelectSearchCrmCampaignProps {
   onChange: (newItems: any[]) => void;
 }
 
-export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => {
+export const SelectSearchCrmUser = (props: SelectSearchCrmUserProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
 
-  const toggleSelect = (codigo: string) => {
+  const userlocal = localStorage.getItem('user');
+  const userid = userlocal ? JSON.parse(userlocal).id : null;
+
+  const currentUser = props.items.find((item) => item.id === userid);
+  const otherUsers = props.items.filter((item) => item.id !== userid);
+
+  const toggleSelect = (id: any) => {
     const newItems = props.items.map((item) =>
-      item.codigo === codigo ? { ...item, selected: !item.selected } : item
+      item.id === id ? { ...item, selected: !item.selected } : item
     );
     props.onChange(newItems);
   };
 
-  const filteredItems = props.items.filter((item) =>
+  const filteredItems = otherUsers.filter((item) =>
     item.name?.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -48,22 +54,49 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
         
         {/* Lista de campañas */}
         <ul className="ssc-items scroll-personalizado">
+          {currentUser && (
+            <li
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSelect(currentUser.id);
+              }}
+              className={currentUser.selected ? 'selected' : ''}
+              style={{ userSelect: 'none' }}
+            >
+              <div className="ssc-item-name">Mis Leads (YO)</div>
+              <span
+                className="ssc-item-checkbox"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleSelect(currentUser.id);
+                }}
+              >
+                <input
+                  readOnly
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={currentUser.selected}
+                />
+              </span>
+            </li>
+          )}
+          {currentUser && filteredItems.length > 0 && <hr className="my-1" />}
           {filteredItems.map((item, index) => (
             <li
               key={index}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleSelect(item.codigo);
+                toggleSelect(item.id);
               }}
               className={item.selected ? 'selected' : ''}
               style={{ userSelect: 'none' }}
             >
-              <div className="ssc-item-name">{item.codigo}-{item.nombre}</div>
+              <div className="ssc-item-name">{item.name}</div>
               <span
                 className="ssc-item-checkbox"
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleSelect(item.codigo);
+                  toggleSelect(item.id);
                 }}
               >
                 <input
@@ -82,4 +115,4 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
   );
 };
 
-export default SelectSearchCrmCampaign;
+export default SelectSearchCrmUser;
