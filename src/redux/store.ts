@@ -4,6 +4,7 @@ import { loadingSlice } from './states/loading.slice';
 import { authSlice } from './states/auth.slice';
 import { dataTableSlice } from './states/dataTable.slice';
 import { leadSlice } from './states/lead.slice';
+import leadFiltersSlice from './states/lead-filters.state';
 
 export interface AppStore {
   loading: any;
@@ -11,6 +12,7 @@ export interface AppStore {
   dataTable: any;
   lead: any;
   user: any;
+  leadFilters: any;
 }
 
 export default configureStore<AppStore>({
@@ -19,6 +21,7 @@ export default configureStore<AppStore>({
     auth: authSlice.reducer,
     dataTable: dataTableSlice.reducer,
     lead: leadSlice.reducer,
-    user: leadSlice.reducer, 
+    user: leadSlice.reducer,
+    leadFilters: leadFiltersSlice,
   },
 });
