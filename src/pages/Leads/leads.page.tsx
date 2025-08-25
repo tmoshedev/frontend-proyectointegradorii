@@ -344,7 +344,7 @@ export const LeadsPage = () => {
     const stage_ids = getValorFiltro('stage_ids');
     const project_ids = getValorFiltro('project_ids');
     const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
-    const lead_campaign_names = getValorFiltro('lead_campaign_names');
+    const lead_campaign_names = getValorFiltro('lead_campaigns_names');
 
     const addData = page == 1 ? false : true;
 
@@ -396,7 +396,7 @@ export const LeadsPage = () => {
           case 'activity_expiration_ids':
             activity_expiration_ids = valores;
             break;
-          case 'lead_campaign_names':
+          case 'lead_campaigns_names':
             lead_campaign_names = valores;
             break;
           default:
@@ -583,7 +583,6 @@ export const LeadsPage = () => {
       }));
 
       setEtapas(etapasIniciales);
-      setUsers(response.data.users);
       if (first) {
         const etiquetasInicializadas = response.data.labels.map((label: any) => ({
           ...label,
@@ -600,6 +599,13 @@ export const LeadsPage = () => {
           selected: false,
         }));
         setCampaigns(campanasInicializadas);
+      }
+      if (first) {
+        const usuariosInicializadas = response.data.users.map((user: any) => ({
+          ...user,
+          selected: false,
+        }));
+        setUsers(usuariosInicializadas);
       }
       // 4. Llama a la API para obtener la primera página de leads de CADA etapa
       const promesasDeCarga = etapasIniciales.map((etapa) =>

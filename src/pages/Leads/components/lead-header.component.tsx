@@ -47,7 +47,6 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
   const [openUserDropdown, setOpenUserDropdown] = useState(false);
   const [openCampaignDropdown, setOpenCampaignDropdown] = useState(false);
   const [openLabelDropdown, setOpenLabelDropdown] = useState(false);
-console.log("Campañas recibidas:", props.campaigns);
 
   return (
     <div className="d-flex justify-content-between align-items-center mt-1 mb-1">

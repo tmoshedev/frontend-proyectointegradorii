@@ -27,7 +27,7 @@ export const SelectSearchCrmUser = (props: SelectSearchCrmUserProps) => {
   };
 
   const filteredItems = otherUsers.filter((item) =>
-    item.name?.toLowerCase().includes(search.toLowerCase())
+    item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const SelectSearchCrmUser = (props: SelectSearchCrmUserProps) => {
           />
         </div>
         
-        {/* Lista de campañas */}
+        {/* Lista de usuarios */}
         <ul className="ssc-items scroll-personalizado">
           {currentUser && (
             <li
@@ -80,7 +80,7 @@ export const SelectSearchCrmUser = (props: SelectSearchCrmUserProps) => {
               </span>
             </li>
           )}
-          {currentUser && filteredItems.length > 0 && <hr className="my-1" />}
+          
           {filteredItems.map((item, index) => (
             <li
               key={index}
