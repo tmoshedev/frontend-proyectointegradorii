@@ -381,8 +381,8 @@ export const LeadDetailsComponent = (props: Props) => {
                   </ul>
                 </div>
                 <div className="list-fields-edit">
-                  {lead.user_id ? (
-                    (rolActual == 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
+                  {rolActual == 'ADMINISTRATOR' || lead.user_id ? (
+                    ( rolActual == 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                       <button onClick={onActivarEditProjects} className="btn btn-outline-cancel btn-xs" >
                         <i className="fa-solid fa-pen-to-square"></i>
                       </button>
@@ -438,8 +438,8 @@ export const LeadDetailsComponent = (props: Props) => {
                     )}
                   </ul>
                 </div>
-                {lead.user_id ? (
-                    rolActual === 'ADMINISTRATOR' ||(userid && lead.user_id == userid) ? (
+                {rolActual == 'ADMINISTRATOR' || lead.user_id ? (
+                    (rolActual === 'ADMINISTRATOR' ||(userid && lead.user_id == userid)) ? (
                 <div className="list-fields-edit">
                   <button onClick={onActivarEditLabel} className="btn btn-outline-cancel btn-xs">
                     <i className="fa-solid fa-pen-to-square"></i>

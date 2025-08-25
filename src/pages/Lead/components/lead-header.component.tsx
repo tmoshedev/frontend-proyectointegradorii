@@ -240,7 +240,7 @@ export const LeadHeaderComponent = () => {
             </div>
           </div>
         )}
-        {rolActual === 'ADMINISTRATOR' || lead.estado_final == null && (
+        {rolActual === 'ADMINISTRATOR' && lead.estado_final == null && (
           <div className="d-flex ms-2">
             {/*<button
               onClick={() => onLeadState('GANADO')}
