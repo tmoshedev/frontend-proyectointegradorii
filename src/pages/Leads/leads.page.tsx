@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLeads, useLeadStatus, useSidebarResponsive } from '../../hooks';
 import KanbanBoardComponent from './components/kanban-board.component';
 import ImportarLeadComponent from './components/importar-lead.component';
@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setTitleSidebar } from '../../redux/states/auth.slice';
 import LeadFiltrosComponent from './components/lead-filtros.component';
 import { AppStore } from '../../redux/store';
-import { et } from 'date-fns/locale';
 import AddEtiquetasComponent from './components/add-etiquetas.component';
+import { setLeadFilters } from '../../redux/states/lead-filters.state';
 
 interface DataModalState {
   type: string;
@@ -28,6 +28,7 @@ interface DataModalState {
 export const LeadsPage = () => {
   useSidebarResponsive(true);
   const authState = useSelector((state: AppStore) => state.auth);
+  const leadFilters = useSelector((state: AppStore) => state.leadFilters.uiFilters);
   const rolActual = localStorage.getItem('rolActual') || '';
   const dispatch = useDispatch();
 
@@ -45,18 +46,19 @@ export const LeadsPage = () => {
   const [stateView, setStateView] = useState<string>('KANBAN');
   const [isTableLoading, setIsTableLoading] = useState(false);
 
-  // Estados de datos estáticos (usuarios, etiquetas, etc.)
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
-  const [users, setUsers] = useState<any[]>([]);
-  const [labels, setLabels] = useState<any[]>([]);
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  // Estados de datos estáticos (canales, etapas, etc. que vienen de la API)
   const [channels, setChannels] = useState<any[]>([]);
   const [stages, setStages] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
 
-  // Estados de filtros
-  const [filtros, setFiltros] = useState<any[]>([]);
-  const [nivelesInteres, setNivelesInteres] = useState<string[]>(['CALIENTE', 'TIBIO', 'FRIO']);
+  // Estados de filtros (ahora desde Redux o locales que dependen de Redux)
+  const [filtros, setFiltros] = useState<any[]>(leadFilters.filtros || []);
+  const [nivelesInteres, setNivelesInteres] = useState<string[]>(leadFilters.nivelesInteres || ['CALIENTE', 'TIBIO', 'FRIO']);
+  const [labels, setLabels] = useState<any[]>(leadFilters.labels || []);
+  const [campaigns, setCampaigns] = useState<any[]>(leadFilters.campaigns || []);
+  const [users, setUsers] = useState<any[]>(leadFilters.users || []);
+  const [terminoBusqueda, setTerminoBusqueda] = useState(leadFilters.terminoBusqueda || '');
+
 
   // Hooks de API
   const { getLeads } = useLeads();
@@ -64,36 +66,10 @@ export const LeadsPage = () => {
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
-    /*'Usuario asignado': {
-      value: 'user_ids',
-      opciones: [
-        {
-          label: `${authState.user.names} ${authState.user.father_last_name} (Tú)`,
-          value: authState.user.id,
-          avatar: true,
-        },
-        {
-          label: `Sin asignar`,
-          value: '0',
-          avatar: true,
-        },
-        ...users
-          .filter((u) => u.id !== authState.user.id)
-          .map((u) => ({ label: u.name, value: u.id, avatar: true })),
-      ],
-    },*/
     'Origen/Canal': {
       value: 'channel_ids',
       opciones: channels.map((c) => ({ label: c.name, value: c.id })),
     },
-    /* Etapas: {
-      value: 'stage_ids',
-      opciones: stages.map((c) => ({ label: c.name, value: c.id })),
-    }, */
-    /* Etiquetas: {
-      value: 'lead_labels_ids',
-      opciones: labels.map((c) => ({ label: c.name, value: c.id })),
-    }, */
     Proyectos: {
       value: 'project_ids',
       opciones: [
@@ -168,8 +144,7 @@ export const LeadsPage = () => {
     });
 
   const handleStateView = (view: string) => {
-    setFiltros([]);
-    setNivelesInteres(['CALIENTE', 'TIBIO', 'FRIO']);
+    // No reseteamos los filtros aquí para que persistan entre vistas
     setStateView(view);
   };
 
@@ -218,7 +193,7 @@ export const LeadsPage = () => {
   };
 
   const onRefreshLeads = () => {
-    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users);
+    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users, terminoBusqueda);
   };
 
   const handleModalAsesor = (lead: any, users: any[]) => {
@@ -266,7 +241,7 @@ export const LeadsPage = () => {
 
   const onHandleDeleteFiltro = (id: number) => {
     const nuevosFiltros = filtros.filter((f) => f.id !== id);
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users);
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users, terminoBusqueda);
   };
 
   const onHandleChangeTipoFiltro = (id: number, nuevoTipo: string) => {
@@ -277,90 +252,12 @@ export const LeadsPage = () => {
     setFiltros(nuevosFiltros);
   };
 
-  // En LeadsPage.tsx (ESTA FUNCIÓN ESTÁ BIEN, NO LA CAMBIES)
-
   const onHandleChangeValoresFiltro = (id: number, nuevosValores: any[]) => {
     const nuevosFiltros = filtros.map((f) =>
       f.id === id ? { ...f, valoresSeleccionados: nuevosValores } : f
     );
 
-    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users);
-  };
-
-  const refreshDataLeads = (
-    user_ids: string,
-    channel_ids: string,
-    lead_label_ids: string,
-    stage_ids: string,
-    project_ids: string,
-    activity_expiration_ids: string,
-    lead_campaign_names: string,
-    per_page: number,
-    current_page: number,
-    add_data: boolean = false,
-    loanding: boolean
-  ) => {
-    return getLeads(
-      user_ids,
-      channel_ids,
-      lead_label_ids,
-      stage_ids,
-      project_ids,
-      activity_expiration_ids,
-      lead_campaign_names,
-      '',
-      per_page,
-      current_page,
-      loanding
-    ).then((response: TableCrmResponse) => {
-      if (add_data) {
-        setLeads((prevLeads) => [...prevLeads, ...response.data]);
-      } else {
-        setLeads(response.data);
-      }
-      setMetaData({
-        current_page: response.meta.current_page,
-        last_page: response.meta.last_page,
-        per_page: response.meta.per_page,
-        total: response.meta.total,
-        showing: response.meta.showing,
-      });
-      setTableHeader(response.table_header || []);
-    });
-  };
-
-  const cargarDataLeads = (page: number) => {
-    const getValorFiltro = (tipoApi: string) => {
-      const filtro = filtros.find(
-        (f) =>
-          f.tipo && TODOS_LOS_FILTROS[f.tipo as keyof typeof TODOS_LOS_FILTROS]?.value === tipoApi
-      );
-      return filtro?.valoresSeleccionados.map((v: any) => v.value).join(',') || '';
-    };
-
-    const user_ids = getValorFiltro('users_ids');
-    const channel_ids = getValorFiltro('channel_ids');
-    const lead_label_ids = getValorFiltro('lead_labels_ids');
-    const stage_ids = getValorFiltro('stage_ids');
-    const project_ids = getValorFiltro('project_ids');
-    const activity_expiration_ids = getValorFiltro('activity_expiration_ids');
-    const lead_campaign_names = getValorFiltro('lead_campaigns_names');
-
-    const addData = page == 1 ? false : true;
-
-    return refreshDataLeads(
-      user_ids,
-      channel_ids,
-      lead_label_ids,
-      stage_ids,
-      project_ids,
-      activity_expiration_ids,
-      lead_campaign_names,
-      metaData.per_page,
-      page,
-      addData,
-      true
-    );
+    onAplicarFiltros(nuevosFiltros, nivelesInteres, labels, campaigns, users, terminoBusqueda);
   };
 
   const filtrosActuales = (filtrosAplicados: any[]) => {
@@ -418,18 +315,32 @@ export const LeadsPage = () => {
   const onAplicarFiltros = (
     filtrosAplicados: any[],
     nivelesAplicados: string[],
-    etiquetasAplicadas: string[],
-    campanasAplicadas: string[],
-    usuariosAplicados: string[],
+    etiquetasAplicadas: any[],
+    campanasAplicadas: any[],
+    usuariosAplicados: any[],
+    termino: string
   ) => {
+    // Actualiza los estados locales para reflejar los cambios inmediatamente en la UI
     setFiltros(filtrosAplicados);
     setNivelesInteres(nivelesAplicados);
     setLabels(etiquetasAplicadas);
     setCampaigns(campanasAplicadas);
     setUsers(usuariosAplicados);
+    setTerminoBusqueda(termino);
+
+    // Guarda los filtros en Redux
+    dispatch(setLeadFilters({
+      filtros: filtrosAplicados,
+      nivelesInteres: nivelesAplicados,
+      labels: etiquetasAplicadas,
+      campaigns: campanasAplicadas,
+      users: usuariosAplicados,
+      terminoBusqueda: termino
+    }));
+
 
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, campanasAplicadas, usuariosAplicados, terminoBusqueda);
+      recargarDatosKanban(filtrosAplicados, nivelesAplicados, etiquetasAplicadas, campanasAplicadas, usuariosAplicados, termino);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
@@ -439,7 +350,7 @@ export const LeadsPage = () => {
     const nuevosNiveles = nivelesInteres.includes(nivel)
       ? nivelesInteres.filter((n) => n !== nivel)
       : [...nivelesInteres, nivel];
-    onAplicarFiltros(filtros, nuevosNiveles, labels, campaigns, users);
+    onAplicarFiltros(filtros, nuevosNiveles, labels, campaigns, users, terminoBusqueda);
   };
 
   const cargarMasLeads = (etapaId: number | string) => {
@@ -584,9 +495,11 @@ export const LeadsPage = () => {
 
       setEtapas(etapasIniciales);
       if (first) {
+        // Compara con los filtros de Redux para inicializar el estado 'selected'
+        const etiquetasGuardadas = new Set(leadFilters.labels?.filter((l: any) => l.selected).map((l: any) => l.id) || []);
         const etiquetasInicializadas = response.data.labels.map((label: any) => ({
           ...label,
-          selected: false,
+          selected: etiquetasGuardadas.has(label.id),
         }));
         setLabels(etiquetasInicializadas);
       }
@@ -594,16 +507,18 @@ export const LeadsPage = () => {
       setStages(response.data.stages);
       setProjects(response.data.projects);
       if (first) {
+        const campanasGuardadas = new Set(leadFilters.campaigns?.filter((c: any) => c.selected).map((c: any) => c.id) || []);
         const campanasInicializadas = response.data.campaigns.map((campaign: any) => ({
           ...campaign,
-          selected: false,
+          selected: campanasGuardadas.has(campaign.id),
         }));
         setCampaigns(campanasInicializadas);
       }
       if (first) {
+        const usuariosGuardados = new Set(leadFilters.users?.filter((u: any) => u.selected).map((u: any) => u.id) || []);
         const usuariosInicializadas = response.data.users.map((user: any) => ({
           ...user,
-          selected: false,
+          selected: usuariosGuardados.has(user.id),
         }));
         setUsers(usuariosInicializadas);
       }
@@ -641,7 +556,7 @@ export const LeadsPage = () => {
         })
       );
     },
-    [getLeadStatus, getLeadByEtapa, labels, users]
+    [getLeadStatus, getLeadByEtapa]
   );
 
   const recargarDatosTabla = useCallback(
@@ -680,16 +595,20 @@ export const LeadsPage = () => {
     [getLeads]
   );
 
+  const cargarDataLeads = (page: number) => {
+    recargarDatosTabla(filtros, nivelesInteres, page);
+  };
+
 const handleEtiquetasKanban = (etiquetas: any[]) => {
-  onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns, users);
+  onAplicarFiltros(filtros, nivelesInteres, etiquetas, campaigns, users, terminoBusqueda);
 };
 
 const handleCampanasKanban = (campanas: any[]) => {
-  onAplicarFiltros(filtros, nivelesInteres, labels, campanas, users);
+  onAplicarFiltros(filtros, nivelesInteres, labels, campanas, users, terminoBusqueda);
 };
 
 const handleUsuariosKanban = (usuarios: any[]) => {
-  onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, usuarios);
+  onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, usuarios, terminoBusqueda);
 };
 
   const handleCrearEtiqueta = () => {
@@ -706,8 +625,7 @@ const handleUsuariosKanban = (usuarios: any[]) => {
   };
 
   const onBuscarKanban = (termino: string) => {
-    setTerminoBusqueda(termino);
-    recargarDatosKanban(filtros, nivelesInteres, labels,campaigns , users , termino);
+    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users, termino);
   };
 
   useEffect(() => {
@@ -718,26 +636,13 @@ const handleUsuariosKanban = (usuarios: any[]) => {
   }, [dispatch]);
 
   useEffect(() => {
-    setEtapas([]);
-    setMetaData({
-      current_page: 1,
-      last_page: 0,
-      per_page: 50,
-      total: 0,
-      showing: 0,
-    }); // Para Tabla
-    setLeads([]); // Para Tabla
-    setTableHeader([]); // Para Tabla
-    const filtrosReseteados: any[] = [];
-    const nivelesReseteados: string[] = [];
+    // Cuando la vista cambia, recargamos los datos con los filtros actuales (de Redux)
     if (stateView === 'KANBAN') {
-      recargarDatosKanban(filtros, nivelesInteres, labels,campaigns,users, terminoBusqueda, true);
+      recargarDatosKanban(filtros, nivelesInteres, labels, campaigns, users, terminoBusqueda, true);
     } else if (stateView === 'LEADS_TABLE') {
-      recargarDatosTabla(filtrosReseteados, nivelesReseteados, 1);
+      recargarDatosTabla(filtros, nivelesInteres, 1);
     }
   }, [stateView]);
-
-  
 
   return (
     <>

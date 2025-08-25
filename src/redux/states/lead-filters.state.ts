@@ -1,39 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Filtro {
-  id: number;
-  tipo: string;
-  valoresSeleccionados: any[];
+// Esta interfaz contendrá la estructura de nuestros filtros tal como se utilizan en la UI
+export interface LeadUIFilters {
+  filtros?: any[];
+  nivelesInteres?: string[];
+  labels?: any[];
+  campaigns?: any[];
+  users?: any[];
+  terminoBusqueda?: string;
 }
 
 interface LeadFiltersState {
-  filtros: Filtro[];
-  nivelesInteres: string[];
+  uiFilters: LeadUIFilters;
 }
 
 const initialState: LeadFiltersState = {
-  filtros: [],
-  nivelesInteres: ['CALIENTE', 'TIBIO', 'FRIO'],
+  uiFilters: {
+    filtros: [],
+    nivelesInteres: ['CALIENTE', 'TIBIO', 'FRIO'],
+    labels: [],
+    campaigns: [],
+    users: [],
+    terminoBusqueda: '',
+  },
 };
 
 const leadFiltersSlice = createSlice({
   name: 'leadFilters',
   initialState,
   reducers: {
-    setLeadFilters(state, action: PayloadAction<Partial<LeadFiltersState>>) {
-      if (action.payload.filtros !== undefined) {
-        state.filtros = action.payload.filtros;
-      }
-      if (action.payload.nivelesInteres !== undefined) {
-        state.nivelesInteres = action.payload.nivelesInteres;
-      }
+    setLeadFilters(state, action: PayloadAction<Partial<LeadUIFilters>>) {
+      state.uiFilters = { ...state.uiFilters, ...action.payload };
     },
-    resetLeadFilters(state) {
-      state.filtros = initialState.filtros;
-      state.nivelesInteres = initialState.nivelesInteres;
+    clearLeadFilters(state) {
+      state.uiFilters = initialState.uiFilters;
     },
   },
 });
 
-export const { setLeadFilters, resetLeadFilters } = leadFiltersSlice.actions;
+export const { setLeadFilters, clearLeadFilters } = leadFiltersSlice.actions;
 export default leadFiltersSlice.reducer;
