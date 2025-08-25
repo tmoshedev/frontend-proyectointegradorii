@@ -34,15 +34,16 @@ export const stateLabel = async (id: number) => {
   return response;
 };
 
-export const getLabels = async (text: string, page: number, limit: string, orderBy: string, order: string) => {
-  const response = await apiInstance.get(`/labels`, {
-    params: {
-      text,
-      page,
-      limit,
-      orderBy,
-      order,
-    },
-  });
+export const getLabels = async (
+  text: string,
+  type: string,
+  page: number,
+  limit: string,
+  orderBy: string,
+  order: string
+) => {
+  const response = await apiInstance.get(
+    `/labels?text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
+  );
   return response;
 };

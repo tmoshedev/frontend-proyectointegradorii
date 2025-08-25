@@ -20,10 +20,11 @@ interface DataModalState {
 export const LabelsPage = () => {
   const [filterState, setFilterState] = useState({
     text: '',
+    type: '',
     page: 1,
     limit: '',
-    orderBy: 'id',
-    order: 'desc',
+    orderBy: '',
+    order: '',
   });
   const { getLabels, storeLabel, updateLabel, deleteLabel, stateLabel } =
     useLabels();
@@ -166,10 +167,12 @@ const renderColor = (row: any) => (
 
     getLabels(
       filterState.text,
+      filterState.type,
       newPage,
       filterState.limit,
       filterState.orderBy,
       filterState.order,
+      true,
       true
     );
   };
@@ -178,20 +181,26 @@ const renderColor = (row: any) => (
     setFilterState({
       ...filterState,
       text: '',
+      type: '',
       page: 1,
+      limit: '',
+      orderBy: '',
+      order: '',
     });
-    getLabels('', 1, filterState.limit, filterState.orderBy, filterState.order, true);
+    getLabels( '', '', 1, '', '', '', true, true);
   };
 
   const handleFilterSearch = (newFilters: any, state: boolean) => {
     setFilterState(newFilters);
     getLabels(
       newFilters.text,
+      newFilters.type,
       1,
       newFilters.limit,
       newFilters.orderBy,
       newFilters.order,
-      state
+      state,
+      true
     );
   };
 
@@ -231,10 +240,12 @@ const renderColor = (row: any) => (
     const dataInicial = () => {
       getLabels(
         filterState.text,
+        filterState.type,
         filterState.page,
         filterState.limit,
         filterState.orderBy,
         filterState.order,
+        true,
         true
       );
     };

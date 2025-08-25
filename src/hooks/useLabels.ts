@@ -18,16 +18,19 @@ export function useLabels() {
 
   const getLabels = async (
     text: string,
+    type: string,
     page: number,
     limit: string,
     orderBy: string,
     order: string,
+    loading: boolean,
     updateTable: boolean = false
   ) => {
     dispatch(setLoading(true));
     try {
       const response = await labelsService.getLabels(
         text,
+        type,
         page,
         limit,
         orderBy,
