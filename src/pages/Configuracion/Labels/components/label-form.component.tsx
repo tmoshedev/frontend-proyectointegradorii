@@ -58,7 +58,7 @@ export const LabelFormComponent = (props: Props) => {
 
   return (
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
-      <div className="modal-body" style={{ height: '30vh' }}>
+      <div className="modal-body" style={{ height: '100vh' }}>
         <div className="row">
           {/* Nombre */}
           <div className="col-md-12 mb-3">
