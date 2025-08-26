@@ -19,6 +19,15 @@ export default function CalendarioDisponibilidad({
 }: CalendarioDisponibilidadProps) {
   const [ahora, setAhora] = useState(() => moment.tz('America/Lima'));
   const eventoTemporalRef = useRef<HTMLDivElement>(null);
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    content: AgendaDiaria | null;
+    position: { x: number; y: number };
+  }>({
+    visible: false,
+    content: null,
+    position: { x: 0, y: 0 },
+  });
 
   const contenedorScrollRef = useRef<HTMLDivElement>(null);
   const lineaAhoraRef = useRef<HTMLDivElement>(null);
@@ -117,6 +126,28 @@ export default function CalendarioDisponibilidad({
     }
   }, [eventosFiltrados]);
 
+  const handleMouseEnter = (evento: AgendaDiaria, e: React.MouseEvent) => {
+    setTooltip({
+      visible: true,
+      content: evento,
+      position: { x: e.clientX, y: e.clientY },
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip({
+      visible: false,
+      content: null,
+      position: { x: 0, y: 0 },
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (tooltip.visible) {
+      setTooltip((t) => ({ ...t, position: { x: e.clientX, y: e.clientY } }));
+    }
+  };
+
   return (
     <div className="calendario-container">
       <div className="calendario-header">
@@ -156,6 +187,33 @@ export default function CalendarioDisponibilidad({
             <div className="linea-roja"></div>
           </div>
 
+          {/* Tooltip */}
+          {tooltip.visible && tooltip.content && (
+            <div
+              className="event-tooltip"
+              style={{
+                left: `${tooltip.position.x}px`,
+                top: `${tooltip.position.y + 10}px`,
+                transform: 'translateX(-50%)',
+                position: 'fixed',
+                zIndex: 9999,
+                pointerEvents: 'none', // Para que el tooltip no interfiera con el ratón
+              }}
+            >
+              <div className="tooltip-color-border" />
+              <div className="tooltip-time-column">
+                <span>{moment.tz(tooltip.content.start, 'America/Lima').format('hh:mm A')}</span>
+                <span>{moment.tz(tooltip.content.end, 'America/Lima').format('hh:mm A')}</span>
+              </div>
+              <div className="tooltip-info-column">
+                <div className="tooltip-title">{tooltip.content.title}</div>
+                <div className="tooltip-date">
+                  {moment.tz(tooltip.content.start, 'America/Lima').format('DD.MM.YY')}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Eventos */}
           {eventosFiltrados.map((evento, index) => {
             const inicio = moment.tz(evento.start, 'America/Lima');
@@ -169,6 +227,9 @@ export default function CalendarioDisponibilidad({
                 key={index}
                 className={`evento ${esTemporal ? ' evento-temporal' : ''}`}
                 ref={esTemporal ? eventoTemporalRef : undefined}
+                onMouseEnter={(e) => handleMouseEnter(evento, e)}
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleMouseMove}
                 style={{
                   top: `${(top * alturaTotal) / 100 + 20}px`,
                   height: `${(height * alturaTotal) / 100}px`,
@@ -177,6 +238,7 @@ export default function CalendarioDisponibilidad({
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span className="evento-titulo">
                     {iconsActividades(14)[evento.activity_name]} {evento.title}
+
                   </span>
                   <span style={{ fontSize: '0.75em' }}>
                     {formatearHora(inicio)} → {formatearHora(fin)}
