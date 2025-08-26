@@ -10,6 +10,7 @@ import { useLeads } from '../../../hooks';
 interface Props {
   data: any;
   updateLeadLocal: (lead: any) => void;
+  onRefreshLeads: () => void;
 }
 export const LeadAsesorEditComponent = (props: Props) => {
   const { updateLeadAsesor } = useLeads();
@@ -28,10 +29,10 @@ export const LeadAsesorEditComponent = (props: Props) => {
         (response: any) => {
           SweetAlert.success('Mensaje', 'Asesor actualizado correctamente');
           props.data.onCloseModalForm();
-          props.updateLeadLocal(response.lead);
+          // props.updateLeadLocal(response.lead);
+          props.onRefreshLeads();
         }
       );
-      //props.onRefreshLeads();
     },
   });
 

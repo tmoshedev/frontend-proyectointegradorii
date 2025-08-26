@@ -37,6 +37,7 @@ interface LeadCardProps {
   onEditarAsesor: (lead: Lead) => void;
   onAsignarmeLead: (lead_uuid: string) => void;
   onChangeStateLead: (lead_uuid: string, nivel_interes: string) => void;
+  onRefresh: () => void;
   disabled?: boolean;
 }
 
@@ -49,6 +50,7 @@ export const LeadCardComponent = ({
   onEditarAsesor,
   onAsignarmeLead,
   onChangeStateLead,
+  onRefresh,
   disabled = false, // Valor por defecto
 
   
@@ -373,7 +375,9 @@ export const LeadCardComponent = ({
                 rolActual === 'COMMERCIAL_LEADER' ? 'Editar Supervisor' : 'Editar asesor'
               }
               className="btn btn-outline-cancel btn-xs"
-              onClick={() => onEditarAsesor(lead)}
+              onClick={() => {
+                onEditarAsesor(lead);
+              }}
             >
               <i className="fa-solid fa-pen-to-square"></i>
             </button>

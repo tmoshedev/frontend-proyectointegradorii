@@ -23,6 +23,7 @@ interface DataModalState {
   title: string | null;
   requirements: any;
   onCloseModalForm: any;
+  onRefreshLeads?: () => void;
 }
 
 export const LeadsPage = () => {
@@ -209,6 +210,7 @@ export const LeadsPage = () => {
         users: users,
       },
       onCloseModalForm: onCloseModalAsesorForm,
+      onRefreshLeads: onRefreshLeads,
     });
     setIsOpenModalAsesor(true);
     setIsStateModalAsesor(true);
@@ -717,6 +719,7 @@ const handleUsuariosKanban = (usuarios: any[]) => {
             <LeadAsesorEditComponent
               data={dataModalAsesorResourceState}
               updateLeadLocal={updateLeadLocal}
+              onRefreshLeads={onRefreshLeads}
             />
           }
         />
