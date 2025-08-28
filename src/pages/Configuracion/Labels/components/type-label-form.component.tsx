@@ -7,22 +7,20 @@ import { ColorPicker } from '../../../../components/shared/ColorPicker';
 
 interface Props {
   data: any;
-  storeLabel: any;
-  updateLabel: any;
+  storeTypeLabel: any;
+  updateTypeLabel: any;
+  onRefresh: () => void;
 }
 
-export const LabelFormComponent = (props: Props) => {
+export const TypeLabelFormComponent = (props: Props) => {
   const formData = props.data.row || {
     name: '',
-    color: '#06B6D4',
-    type_label_id: '',
   };
 
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('El nombre de la etiqueta es obligatorio'),
-    color: Yup.string().required('El color es obligatorio'),
+    name: Yup.string().required('El nombre del Tipo de etiqueta es obligatorio'),
   });
 
   const formik = useFormik({
@@ -31,9 +29,9 @@ export const LabelFormComponent = (props: Props) => {
     onSubmit: () => {
       if (props.data.type === 'store') {
         props
-          .storeLabel(formik.values.name, formik.values.color)
+          .storeTypeLabel(formik.values.name)
           .then(() => {
-            SweetAlert.success('Mensaje', 'Etiqueta creada correctamente.');
+            SweetAlert.success('Mensaje', 'Tipo de Etiqueta creada correctamente.');
             props.data.onCloseModalForm();
           })
           .catch((error: any) => {
@@ -41,9 +39,9 @@ export const LabelFormComponent = (props: Props) => {
           });
       } else if (props.data.type == 'edit') {
         props
-          .updateLabel(props.data.row.id, formik.values.name, formik.values.color)
+          .updateTypeLabel(props.data.row.id, formik.values.name)
           .then(() => {
-            SweetAlert.success('Mensaje', 'Etiqueta actualizada correctamente.');
+            SweetAlert.success('Mensaje', 'Tipo de Etiqueta actualizada correctamente.');
             props.data.onCloseModalForm();
           })
           .catch((error: any) => {
@@ -59,7 +57,7 @@ export const LabelFormComponent = (props: Props) => {
 
   return (
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
-      <div className="modal-body" style={{ height: '100vh' }}>
+      <div className="modal-body" style={{ height: '20vh' }}>
         <div className="row">
           {/* Nombre */}
           <div className="col-md-12 mb-3">
@@ -79,20 +77,6 @@ export const LabelFormComponent = (props: Props) => {
             />
             <ErrorValidate state={formik.errors.name} />
             <ErrorBackend errorsBackend={errors} name="label" />
-          </div>
-
-          {/* Selector de Color */}
-          <div className="col-md-12 mb-3">
-            <label className="form-label">
-              Color <span className="text-danger">*</span>
-            </label>
-            <ColorPicker
-              color={formik.values.color}
-              onChange={(color: string) => formik.setFieldValue('color', color)}
-            />
-            {formik.touched.color && typeof formik.errors.color === 'string' && (
-              <div className="text-danger small mt-1">{formik.errors.color}</div>
-            )}
           </div>
 
           <div className="col-md-12 mt-2" style={{ fontSize: '10px' }}>
@@ -118,4 +102,4 @@ export const LabelFormComponent = (props: Props) => {
   );
 };
 
-export default LabelFormComponent;
+export default TypeLabelFormComponent;

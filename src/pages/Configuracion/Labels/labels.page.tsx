@@ -6,8 +6,10 @@ import { useLabels } from '../../../hooks/useLabels';
 import FilterLabelsComponent from './components/filter-labels.component';
 import ModalComponent from '../../../components/shared/modal.component';
 import LabelFormComponent from './components/label-form.component';
+import TypeLabelFormComponent from './components/type-label-form.component';
 import { SweetAlert } from '../../../utilities';
 import { Label } from '../../../models';
+import { storeTypeLabel, updateTypeLabel } from '../../../services/type-labels.service';
 
 interface DataModalState {
   type: string;
@@ -18,6 +20,16 @@ interface DataModalState {
 }
 
 export const LabelsPage = () => {
+  // Refresca la lista de typeLabels sin recargar la página
+  const onRefresh = () => {
+    import('../../../services/type-labels.service').then(({ getTypeLabels }) => {
+      getTypeLabels('', '', 1, '', '', '').then((res: any) => {
+        setTypeLabels(res?.data || []);
+      });
+    });
+    setIsOpenTypeLabelModal(false);
+    setIsStateModal(false);
+  };
   const [filterState, setFilterState] = useState({
     text: '',
     type: '',
@@ -26,19 +38,27 @@ export const LabelsPage = () => {
     orderBy: '',
     order: '',
   });
-  const { getLabels, storeLabel, updateLabel, deleteLabel, stateLabel } =
-    useLabels();
+  const { getLabels, storeLabel, updateLabel, deleteLabel, stateLabel } = useLabels();
+  const [typeLabels, setTypeLabels] = useState([]);
+  const [selectedTypeLabel, setSelectedTypeLabel] = useState<string>('');
+  const [isOpenTypeLabelModal, setIsOpenTypeLabelModal] = useState(false);
+  const [dataModalResourceStateTypeLabel, setDataModalResourceStateTypeLabel] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    onCloseModalForm: () => {},
+  });
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
-  const [dataModalResourceState, setDataModalResourceState] =
-    useState<DataModalState>({
-      type: '',
-      buttonSubmit: null,
-      row: null,
-      title: null,
-      onCloseModalForm: () => {},
-    });
+  const [dataModalResourceState, setDataModalResourceState] = useState<DataModalState>({
+    type: '',
+    buttonSubmit: null,
+    row: null,
+    title: null,
+    onCloseModalForm: () => {},
+  });
 const renderColor = (row: any) => (
   <div
     style={{
@@ -68,7 +88,7 @@ const renderColor = (row: any) => (
           {
          name: 'color', 
     alias: 'COLOR', 
-    play: { type: 'color' }   // 👈 aquí le dices que use el case 'color'
+    play: { type: 'color' }
         },
           
         ],
@@ -166,6 +186,7 @@ const renderColor = (row: any) => (
     setFilterState({ ...filterState, page: newPage });
 
     getLabels(
+      '',
       filterState.text,
       filterState.type,
       newPage,
@@ -187,12 +208,13 @@ const renderColor = (row: any) => (
       orderBy: '',
       order: '',
     });
-    getLabels( '', '', 1, '', '', '', true, true);
+    getLabels( '', '', '', 1, '', '', '', true, true);
   };
 
   const handleFilterSearch = (newFilters: any, state: boolean) => {
     setFilterState(newFilters);
     getLabels(
+      '',
       newFilters.text,
       newFilters.type,
       1,
@@ -210,6 +232,18 @@ const renderColor = (row: any) => (
 
   const handleCloseModal = () => {
     setIsOpenModal(false);
+  };
+
+  const onClickAddResourceTypeLabel = (type: string) => {
+    setDataModalResourceStateTypeLabel({
+      type: type,
+      buttonSubmit: 'Registrar',
+      row: null,
+      title: 'Nuevo tipo de Etiqueta',
+      onCloseModalForm: onCloseModalForm,
+    });
+    setIsOpenTypeLabelModal(true);
+    setIsStateModal(true);
   };
 
   const onClickAddResource = (type: string) => {
@@ -237,10 +271,18 @@ const renderColor = (row: any) => (
   };
 
   useEffect(() => {
-    const dataInicial = () => {
+    // Obtener TypeLabels al montar
+  import('../../../services/type-labels.service').then(({ getTypeLabels }) => {
+  getTypeLabels('', '', 1, '', '', '').then((res: any) => {
+        setTypeLabels(res?.data || []);
+      });
+    });
+    // Cargar etiquetas si hay tipo seleccionado
+    if (selectedTypeLabel) {
       getLabels(
+        selectedTypeLabel,
         filterState.text,
-        filterState.type,
+        '',
         filterState.page,
         filterState.limit,
         filterState.orderBy,
@@ -248,35 +290,52 @@ const renderColor = (row: any) => (
         true,
         true
       );
-    };
-
-    dataInicial();
-  }, []);
+    }
+  }, [selectedTypeLabel]);
 
   return (
-    
-      <div className="container-fluid">
-        <div className="row">
-            <div className="card">
-              <PageHeaderComponent
-                state={state}
-                onModalResource={() => onClickAddResource('store')}
-              />
-              <div className="card-body pt-1">
-                {/* <FilterLabelsComponent
-                  filterState={filterState}
-                  handleFilterSearch={handleFilterSearch}
-                  onClearFilters={onClearFilters}
-                /> */}
-                <PageBodyComponent
-                  tableCss="table-resource"
-                  state={state}
-                  onClickButtonPersonalizado={onClickButtonPersonalizado}
-                  onChangeEdit={onClickEditResource}
-                  onChangeDelete={onDelete}
-                  onChangePage={onChangePage}
-                />
+    <div className="container-fluid">
+      <div className="row">
+        <div className="card">
+          <PageHeaderComponent
+            state={state}
+            onModalResource={() => onClickAddResource('store')}
+          />
+          {/* Renderizar TypeLabels como recuadros/chips arriba del botón Nuevo */}
+          <div style={{ display: 'flex', gap: '8px', margin: '10px 25px' }}>
+            {/* Recuadro para crear nuevo type label */}
+            <div onClick={() => onClickAddResourceTypeLabel('store')} >
+              <span className="btn btn-primary">+ Nuevo</span>
+            </div>
+            
+            {/* Recuadros de typeLabels */}
+            {typeLabels.map((tl: any) => (
+              <div
+                key={tl.id || tl.id}
+                onClick={() => {
+                  setSelectedTypeLabel(tl.id || tl.id);
+                }}
+                className="btn btn-secondary ms-2"
+              >
+                {tl.name}
               </div>
+            ))}
+          </div>
+          <div className="card-body pt-1">
+            {/* Solo muestra la tabla si hay tipo seleccionado */}
+            {selectedTypeLabel ? (
+              <PageBodyComponent
+                tableCss="table-resource"
+                state={state}
+                onClickButtonPersonalizado={onClickButtonPersonalizado}
+                onChangeEdit={onClickEditResource}
+                onChangeDelete={onDelete}
+                onChangePage={onChangePage}
+              />
+            ) : (
+              <div>Selecciona un tipo de etiqueta para ver la lista.</div>
+            )}
+          </div>
         </div>
       </div>
       {isOpenModal && (
@@ -288,9 +347,27 @@ const renderColor = (row: any) => (
           size="modal-md"
           content={
             <LabelFormComponent
-              data={dataModalResourceState}
-              storeLabel={storeLabel}
+              data={{ ...dataModalResourceState, type_label_id: selectedTypeLabel }}
+              storeLabel={(name: string, color: string) => storeLabel(selectedTypeLabel, name, color)}
               updateLabel={updateLabel}
+            />
+          }
+        />
+      )}
+      {/* Modal para crear nuevo type label */}
+      {isOpenTypeLabelModal && (
+        <ModalComponent
+          stateModal={isStateModal}
+          typeModal={'static'}
+          onClose={handleCloseModal}
+          title={dataModalResourceStateTypeLabel.title || ''}
+          size="modal-md"
+          content={
+            <TypeLabelFormComponent
+              data={dataModalResourceStateTypeLabel}
+              storeTypeLabel={storeTypeLabel}
+              updateTypeLabel={updateTypeLabel}
+              onRefresh={onRefresh}
             />
           }
         />

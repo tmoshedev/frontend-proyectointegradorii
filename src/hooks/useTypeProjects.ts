@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 /** Services */
-import * as labelsService from '../services/labels.service';
+import * as typeProjectsService from '../services/type-projects.service';
 /** Redux */
 import { setLoading } from '../redux/states/loading.slice';
 import {
@@ -11,13 +11,12 @@ import {
   dataTable_deleteResource,
 } from '../redux/states/dataTable.slice';
 import { useEffect } from 'react';
-import { Label } from '../models';
+import { TypeProject } from '../models';
 
-export function useLabels() {
+export function useTypeProjects() {
   const dispatch = useDispatch();
 
-  const getLabels = async (
-    type_label_id: string,
+  const getTypeProjects = async (
     text: string,
     type: string,
     page: number,
@@ -29,14 +28,13 @@ export function useLabels() {
   ) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.getLabels(
-        type_label_id,
+      const response = await typeProjectsService.getTypeProjects(
         text,
         type,
         page,
         limit,
         orderBy,
-        order,
+        order
       );
 
       if (updateTable) {
@@ -50,16 +48,14 @@ export function useLabels() {
   };
 
   //STORE
-  const storeLabel = async (type_label_id: string, name: string, color: string) => {
+  const storeTypeProject = async (name: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.storeLabel(
-        type_label_id || '',
+      const response = await typeProjectsService.storeTypeProject(
         name || '',
-        color || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_addResource(typedResponse.label));
+      const typedResponse = response as { type_project: TypeProject };
+      dispatch(dataTable_addResource(typedResponse.type_project));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -67,16 +63,15 @@ export function useLabels() {
   };
 
   //UPDATE
-  const updateLabel = async (id: number, name: string, color: string) => {
+  const updateTypeProject = async (id: number, name: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.updateLabel(
+      const response = await typeProjectsService.updateTypeProject(
         id,
         name || '',
-        color || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const typedResponse = response as { type_project: TypeProject };
+      dispatch(dataTable_updateResource(typedResponse.type_project));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -84,10 +79,10 @@ export function useLabels() {
   };
 
   //DELETE
-  const deleteLabel = async (id: number) => {
+  const deleteTypeProject = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      await labelsService.deleteLabel(id);
+      await typeProjectsService.deleteTypeProject(id);
       dispatch(dataTable_deleteResource(id));
     } finally {
       dispatch(setLoading(false));
@@ -95,12 +90,12 @@ export function useLabels() {
   };
 
   //STATE
-  const stateLabel = async (id: number) => {
+  const stateTypeProject = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.stateLabel(id);
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const response = await typeProjectsService.stateTypeProject(id);
+      const typedResponse = response as { type_project: TypeProject };
+      dispatch(dataTable_updateResource(typedResponse.type_project));
     } finally {
       dispatch(setLoading(false));
     }
@@ -117,10 +112,10 @@ export function useLabels() {
   }, [dispatch]);
 
   return {
-    getLabels,
-    storeLabel,
-    updateLabel,
-    deleteLabel,
-    stateLabel,
+    getTypeProjects,
+    storeTypeProject,
+    updateTypeProject,
+    deleteTypeProject,
+    stateTypeProject,
   };
 }

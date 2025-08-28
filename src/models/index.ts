@@ -21,3 +21,6 @@ export * from './user-label.model';
 export * from './etapa-meta.model';
 export * from './campaign.model';
 export * from './label.model';
+export * from './type-label.model';
+export * from './project.model';
+export * from './type-project.model';

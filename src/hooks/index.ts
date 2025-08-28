@@ -10,3 +10,4 @@ export * from './useCalendarioActividades';
 export * from './useUsers';
 export * from './useLabels';
 export * from './useCampaign';
+export * from './useTypeLabels';

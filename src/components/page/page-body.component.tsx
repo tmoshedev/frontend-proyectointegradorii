@@ -61,6 +61,15 @@ export const PageBodyComponent = (props: Props) => {
         break;
 
       default:
+          case 'image':
+            html = (
+              <img
+                src={row[col.name] ? `/images/${row[col.name]}` : '/images/user-default.png'}
+                alt="Imagen"
+                style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: '4px' }}
+              />
+            );
+            break;
         break;
     }
     return html;

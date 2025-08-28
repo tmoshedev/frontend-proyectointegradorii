@@ -1,7 +1,8 @@
 import apiInstance from './api';
 
-export const storeLabel = async (name: string, color: string) => {
+export const storeLabel = async (type_label_id: string, name: string, color: string) => {
   const form = {
+    type_label_id,
     name,
     color,
   };
@@ -35,6 +36,7 @@ export const stateLabel = async (id: number) => {
 };
 
 export const getLabels = async (
+  type_label_id: string,
   text: string,
   type: string,
   page: number,
@@ -43,7 +45,7 @@ export const getLabels = async (
   order: string
 ) => {
   const response = await apiInstance.get(
-    `/labels?text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
+    `/labels?type_label_id=${type_label_id}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
   );
   return response;
 };

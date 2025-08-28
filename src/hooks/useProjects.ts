@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 /** Services */
-import * as labelsService from '../services/labels.service';
+import * as projectsService from '../services/projects.service';
 /** Redux */
 import { setLoading } from '../redux/states/loading.slice';
 import {
@@ -11,13 +11,13 @@ import {
   dataTable_deleteResource,
 } from '../redux/states/dataTable.slice';
 import { useEffect } from 'react';
-import { Label } from '../models';
+import { Project } from '../models';
 
-export function useLabels() {
+export function useProjects() {
   const dispatch = useDispatch();
 
-  const getLabels = async (
-    type_label_id: string,
+  const getProjects = async (
+    type_project_id: string,
     text: string,
     type: string,
     page: number,
@@ -29,8 +29,8 @@ export function useLabels() {
   ) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.getLabels(
-        type_label_id,
+      const response = await projectsService.getProjects(
+        type_project_id,
         text,
         type,
         page,
@@ -50,16 +50,16 @@ export function useLabels() {
   };
 
   //STORE
-  const storeLabel = async (type_label_id: string, name: string, color: string) => {
+  const storeProject = async (type_project_id: string, name: string, image: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.storeLabel(
-        type_label_id || '',
+      const response = await projectsService.storeProject(
+        type_project_id || '',
         name || '',
-        color || ''
+        image || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_addResource(typedResponse.label));
+      const typedResponse = response as { project: Project };
+      dispatch(dataTable_addResource(typedResponse.project));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -67,16 +67,16 @@ export function useLabels() {
   };
 
   //UPDATE
-  const updateLabel = async (id: number, name: string, color: string) => {
+  const updateProject = async (id: number, name: string, image: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.updateLabel(
+      const response = await projectsService.updateProject(
         id,
         name || '',
-        color || ''
+        image || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const typedResponse = response as { project: Project };
+      dispatch(dataTable_updateResource(typedResponse.project));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -84,10 +84,10 @@ export function useLabels() {
   };
 
   //DELETE
-  const deleteLabel = async (id: number) => {
+  const deleteProject = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      await labelsService.deleteLabel(id);
+      await projectsService.deleteProject(id);
       dispatch(dataTable_deleteResource(id));
     } finally {
       dispatch(setLoading(false));
@@ -95,12 +95,12 @@ export function useLabels() {
   };
 
   //STATE
-  const stateLabel = async (id: number) => {
+  const stateProject = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.stateLabel(id);
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const response = await projectsService.stateProject(id);
+      const typedResponse = response as { project: Project };
+      dispatch(dataTable_updateResource(typedResponse.project));
     } finally {
       dispatch(setLoading(false));
     }
@@ -117,10 +117,10 @@ export function useLabels() {
   }, [dispatch]);
 
   return {
-    getLabels,
-    storeLabel,
-    updateLabel,
-    deleteLabel,
-    stateLabel,
+    getProjects,
+    storeProject,
+    updateProject,
+    deleteProject,
+    stateProject,
   };
 }

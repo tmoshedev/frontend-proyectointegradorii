@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 /** Services */
-import * as labelsService from '../services/labels.service';
+import * as typelabelsService from '../services/type-labels.service';
 /** Redux */
 import { setLoading } from '../redux/states/loading.slice';
 import {
@@ -11,13 +11,12 @@ import {
   dataTable_deleteResource,
 } from '../redux/states/dataTable.slice';
 import { useEffect } from 'react';
-import { Label } from '../models';
+import { TypeLabel } from '../models';
 
-export function useLabels() {
+export function useTypeLabels() {
   const dispatch = useDispatch();
 
-  const getLabels = async (
-    type_label_id: string,
+  const getTypeLabels = async (
     text: string,
     type: string,
     page: number,
@@ -29,14 +28,13 @@ export function useLabels() {
   ) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.getLabels(
-        type_label_id,
+      const response = await typelabelsService.getTypeLabels(
         text,
         type,
         page,
         limit,
         orderBy,
-        order,
+        order
       );
 
       if (updateTable) {
@@ -50,16 +48,14 @@ export function useLabels() {
   };
 
   //STORE
-  const storeLabel = async (type_label_id: string, name: string, color: string) => {
+  const storeTypeLabel = async (name: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.storeLabel(
-        type_label_id || '',
+      const response = await typelabelsService.storeTypeLabel(
         name || '',
-        color || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_addResource(typedResponse.label));
+      const typedResponse = response as { type_label: TypeLabel };
+      dispatch(dataTable_addResource(typedResponse.type_label));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -67,16 +63,15 @@ export function useLabels() {
   };
 
   //UPDATE
-  const updateLabel = async (id: number, name: string, color: string) => {
+  const updateTypeLabel = async (id: number, name: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.updateLabel(
+      const response = await typelabelsService.updateTypeLabel(
         id,
         name || '',
-        color || ''
       );
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const typedResponse = response as { typelabel: TypeLabel };
+      dispatch(dataTable_updateResource(typedResponse.typelabel));
       return typedResponse;
     } finally {
       dispatch(setLoading(false));
@@ -84,10 +79,10 @@ export function useLabels() {
   };
 
   //DELETE
-  const deleteLabel = async (id: number) => {
+  const deleteTypeLabel = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      await labelsService.deleteLabel(id);
+      await typelabelsService.deleteTypeLabel(id);
       dispatch(dataTable_deleteResource(id));
     } finally {
       dispatch(setLoading(false));
@@ -95,12 +90,12 @@ export function useLabels() {
   };
 
   //STATE
-  const stateLabel = async (id: number) => {
+  const stateTypeLabel = async (id: number) => {
     dispatch(setLoading(true));
     try {
-      const response = await labelsService.stateLabel(id);
-      const typedResponse = response as { label: Label };
-      dispatch(dataTable_updateResource(typedResponse.label));
+      const response = await typelabelsService.stateTypeLabel(id);
+      const typedResponse = response as { typelabel: TypeLabel };
+      dispatch(dataTable_updateResource(typedResponse.typelabel));
     } finally {
       dispatch(setLoading(false));
     }
@@ -117,10 +112,10 @@ export function useLabels() {
   }, [dispatch]);
 
   return {
-    getLabels,
-    storeLabel,
-    updateLabel,
-    deleteLabel,
-    stateLabel,
+    getTypeLabels,
+    storeTypeLabel,
+    updateTypeLabel,
+    deleteTypeLabel,
+    stateTypeLabel,
   };
 }
