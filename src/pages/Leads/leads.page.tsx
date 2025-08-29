@@ -39,7 +39,7 @@ export const LeadsPage = () => {
   const [metaData, setMetaData] = useState({
     current_page: 1,
     last_page: 0,
-    per_page: 50,
+    per_page: 10,
     total: 0,
     showing: 0,
   }); // Para Tabla
@@ -398,7 +398,7 @@ export const LeadsPage = () => {
       lead_campaign_names,
       nivel_interes,
       terminoBusqueda,
-      50, // per_page
+      10, // per_page
       nextPage,
       false
     ).then((response) => {
@@ -490,7 +490,7 @@ export const LeadsPage = () => {
           total: etapa.leads_count,
           current_page: 0,
           last_page: 1,
-          per_page: 50,
+          per_page: 10,
           is_loading: true,
         },
       }));
@@ -539,7 +539,7 @@ export const LeadsPage = () => {
           campanas_names,
           nivel_interes,
           termino,
-          50,
+          10,
           1,
           false
         )
@@ -584,7 +584,7 @@ export const LeadsPage = () => {
         activity_expiration_ids,
         lead_campaign_names,
         '',
-        50,
+        10,
         page,
         false
       );
