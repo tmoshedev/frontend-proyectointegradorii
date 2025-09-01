@@ -1,4 +1,4 @@
-import { Lead } from '../../../models';
+import { Lead, LeadLabel } from '../../../models';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppStore } from '../../../redux/store';
 import CanCheck from '../../../resources/can';
@@ -13,7 +13,13 @@ import { LeadResponse } from '../../../models/responses';
 import { Bounce, toast } from 'react-toastify';
 import { setLeadAndHistorial } from '../../../redux/states/lead.slice';
 import { useNavigate } from 'react-router-dom';
-
+import EditarSelectSearchCrm from '../../../components/EditarSelectSearchCrm'; // Importa el componente
+interface Props {
+  onCrearNuevaEtiqueta: () => void;
+}
+import {
+  updateLeadLabels,
+} from '../../../redux/states/lead.slice';
 const getInitials = (user_names: string, user_father_names: string) => {
   if (user_names && user_father_names) {
     return `${user_names.charAt(0)}${user_father_names.charAt(0)}`;
@@ -21,12 +27,15 @@ const getInitials = (user_names: string, user_father_names: string) => {
   return '-'; // Si no hay datos, usa 'U' por defecto
 };
 
-export const LeadHeaderComponent = () => {
+export const LeadHeaderComponent = (props: Props) => {
   const navigate = useNavigate();
-  const { updateLeadAsesor, changeEstadoFinal } = useLeads();
+  const { updateLeadAsesor, changeEstadoFinal, updateLabels } = useLeads();
   const dispatch = useDispatch();
-  const lead: Lead = useSelector((store: AppStore) => store.lead.lead);
+  //const lead: Lead = useSelector((store: AppStore) => store.lead.lead);
   const usuarios: any[] = useSelector((store: AppStore) => store.lead.users);
+  const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector(
+    (store: AppStore) => store.lead
+  );
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState<any[]>([]);
   const [stateSearchUsuarios, setStateSearchUsuarios] = useState<Boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -35,6 +44,53 @@ export const LeadHeaderComponent = () => {
   const [showModal, setShowModal] = useState(false);
   const [estadoFinalModal, setEstadoFinalModal] = useState<string>('');
   const [notaModal, setNotaModal] = useState<string>('');
+
+  // Estados para etiquetas en el modal
+  const [editLabels, setEditLabels] = useState(false);
+  const [selectedLabels, setSelectedLabels] = useState<any[]>(lead.lead_labels || []);
+
+  useEffect(() => {
+    setSelectedLabels(lead.lead_labels || []);
+  }, [lead]);
+
+    const onActivarEditLabel = () => {
+    setEditLabels(true);
+  };
+  const onCancelLabels = () => {
+    setSelectedLabels(lead.lead_labels || []);
+    setEditLabels(false);
+  };
+  const onGuardarLabels = (items: any[]) => {
+      updateLabels(lead.uuid, items, false)
+        .then((response) => {
+          toast.success(response.message, {
+            position: 'top-center',
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Bounce,
+          });
+          dispatch(updateLeadLabels(items));
+          setEditLabels(false);
+        })
+        .catch((error) => {
+          toast.error('Error al actualizar las etiquetas.', {
+            position: 'top-center',
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Bounce,
+          });
+        });
+    };
 
   const openModal = (estado_final: string) => {
     setEstadoFinalModal(estado_final);
@@ -328,6 +384,58 @@ export const LeadHeaderComponent = () => {
               />
             </div>
             
+            {/* Bloque visual de etiquetas */}
+      <div className="block-item">
+        <div className="bock-item__title">
+          <h4>Etiquetas</h4>
+        </div>
+        <div className="bock-item__datos">
+          <div className="fields-list-row">
+            {editLabels ? (
+              <EditarSelectSearchCrm
+                options={labelsAvailable}
+                selected={selectedLabels}
+                onChange={setSelectedLabels}
+                placeholder="Seleccionar etiquetas"
+                onCancel={onCancelLabels}
+                onGuardar={onGuardarLabels}
+                onCrearNuevaEtiqueta={props.onCrearNuevaEtiqueta}
+              />
+            ) : (
+              <div className="fields-list__components">
+                <div className="list-fields-items">
+                  <ul className="fields-list__items">
+                    {selectedLabels?.map((label: LeadLabel, index: number) => (
+                      <li key={index} className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">
+                            <i style={{ color: label.color }} className="fa-solid fa-tag"></i>{' '}
+                            {label.name}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                    {lead.lead_labels?.length === 0 && (
+                      <li className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">Sin etiquetas</span>
+                        </div>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div className="list-fields-edit">
+                  <button onClick={onActivarEditLabel} className="btn btn-outline-cancel btn-xs">
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Fin bloque etiquetas */}
+      
             {/* Puedes agregar más campos aquí si lo necesitas */}
             <div className="d-flex justify-content-end">
               <button className="btn btn-outline-secondary me-2" onClick={handleModalCancel}>
