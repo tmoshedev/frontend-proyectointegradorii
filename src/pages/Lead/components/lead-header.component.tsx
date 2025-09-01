@@ -31,6 +31,31 @@ export const LeadHeaderComponent = () => {
   const [stateSearchUsuarios, setStateSearchUsuarios] = useState<Boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // MODAL PARA CAMBIO DE ESTADO
+  const [showModal, setShowModal] = useState(false);
+  const [estadoFinalModal, setEstadoFinalModal] = useState<string>('');
+  const [notaModal, setNotaModal] = useState<string>('');
+
+  const openModal = (estado_final: string) => {
+    setEstadoFinalModal(estado_final);
+    setNotaModal('');
+    setShowModal(true);
+  };
+
+  const handleModalConfirm = () => {
+    SweetAlert.onConfirmation(
+      () => handleLeadState(lead.id, estadoFinalModal, notaModal),
+      handleCancelDelete,
+      `¿Estás seguro de que deseas marcar este lead como ${estadoFinalModal.toLowerCase()}?`,
+      'Sí, marcar como ' + estadoFinalModal.toLowerCase()
+    );
+    setShowModal(false);
+  };
+
+  const handleModalCancel = () => {
+    setShowModal(false);
+  };
+
   const onUsuariosSeleccionados = (usuarios: any[]) => {
     setUsuariosSeleccionados(usuarios);
     setStateSearchUsuarios(false);
@@ -90,19 +115,15 @@ export const LeadHeaderComponent = () => {
       });
   };
 
+  // MODIFICADO: ahora abre el modal
   const onLeadState = (estado_final: string) => {
-    SweetAlert.onConfirmation(
-      () => handleLeadState(lead.id, estado_final),
-      handleCancelDelete,
-      `¿Estás seguro de que deseas marcar este lead como ${estado_final.toLowerCase()}?`,
-      'Sí, marcar como ' + estado_final.toLowerCase()
-    );
+    openModal(estado_final);
   };
 
   const handleCancelDelete = () => {};
 
-  const handleLeadState = (id: any, estado_final: string) => {
-    changeEstadoFinal(id, estado_final, true)
+  const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
+    changeEstadoFinal(id, estado_final, true, nota)
       .then((response: LeadResponse) => {
         dispatch(
           setLeadAndHistorial({
@@ -271,6 +292,54 @@ export const LeadHeaderComponent = () => {
           </div>
         )}
       </div>
+      {/* MODAL CAMBIO DE ESTADO */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '2rem',
+              borderRadius: '8px',
+              minWidth: '320px',
+              maxWidth: '90vw',
+            }}
+          >
+            <h5>¿POR QUE EL LEAD SE ESTÁ DANDO DE BAJA?</h5>
+            <div className="mb-3">
+              <label>Describe:</label>
+              <textarea
+                className="form-control"
+                value={notaModal}
+                onChange={e => setNotaModal(e.target.value)}
+                rows={3}
+              />
+            </div>
+            
+            {/* Puedes agregar más campos aquí si lo necesitas */}
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-outline-secondary me-2" onClick={handleModalCancel}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={handleModalConfirm}>
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

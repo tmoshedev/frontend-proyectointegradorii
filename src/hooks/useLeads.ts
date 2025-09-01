@@ -175,10 +175,10 @@ export function useLeads() {
   };
 
   //PATCH - CHANGE FINAL STATE
-  const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean) => {
+  const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean, nota: string) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.changeEstadoFinal(id, estado_final);
+      const response = await leadsService.changeEstadoFinal(id, estado_final, nota);
       return response;
     } finally {
       dispatch(setLoading(false));
