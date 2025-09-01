@@ -3,5 +3,5 @@ export interface Label {
   name: string;          // Nombre de la etiqueta
   color?: string;       // Color de la etiqueta
   state?: string;         // Estado (ej. "Activo", "Inactivo")
-  type_label_id?: string; // ID del tipo de etiqueta
+  type_label_id?: number; // ID del tipo de etiqueta
 }
