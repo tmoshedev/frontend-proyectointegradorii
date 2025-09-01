@@ -387,7 +387,7 @@ export const LeadHeaderComponent = (props: Props) => {
             {/* Bloque visual de etiquetas */}
       <div className="block-item">
         <div className="bock-item__title">
-          <h4>Etiquetas de SALIDA</h4>
+          <h4>Etiquetas</h4>
         </div>
         <div className="bock-item__datos">
           <div className="fields-list-row">
