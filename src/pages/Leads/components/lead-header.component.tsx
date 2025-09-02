@@ -8,7 +8,8 @@ import {
   Tag,
   Search,
   Megaphone,
-  UserRoundSearch
+  UserRoundSearch,
+  SquareUserRound
 } from 'lucide-react';
 import CanCheck from '../../../resources/can';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
@@ -43,10 +44,13 @@ interface LeadHeaderComponentProps {
   
 }
 
+
 export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
   const [openUserDropdown, setOpenUserDropdown] = useState(false);
   const [openCampaignDropdown, setOpenCampaignDropdown] = useState(false);
   const [openLabelDropdown, setOpenLabelDropdown] = useState(false);
+
+  const rolActual = localStorage.getItem('rolActual') || '';
 
   return (
     <div className="d-flex justify-content-between align-items-center mt-1 mb-1">
@@ -60,6 +64,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           >
             <KanbanSquare height={20} />
           </button>
+
           <button
             data-tooltip-id="tooltip-component"
             data-tooltip-content={'Vista tabla'}
@@ -69,6 +74,19 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           >
             <AlignJustify height={20} />
           </button>
+          
+          {rolActual === 'ADMINISTRATOR' && (
+            <button
+              data-tooltip-id="tooltip-component"
+              data-tooltip-content={'Base de datos leads'}
+              type="button"
+              className="btn btn-outline-primary btn-xs"
+            onClick={() => props.handleStateView('LEADS_DATA')}
+          >
+            <SquareUserRound height={20} />
+          </button>
+          )}
+
           <button
             onClick={props.onRefreshLeads}
             data-tooltip-id="tooltip-component"
@@ -95,7 +113,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             <Share2 height={20} /> Distribuir Leads
           </button>
         )}
-        {CanCheck('leads-importar') && (
+        {rolActual === 'ADMINISTRATOR' && (
         <button
           onClick={() => props.handleStateView('IMPORTAR')}
           className="btn btn-success btn-sm ms-2"

@@ -9,12 +9,16 @@ import { LeadStatus } from '../../models';
 import DistribuirLeadComponent from './components/distrubir-leads.component';
 import LeadAsesorEditComponent from './components/lead-asesor-edit.component';
 import LeadsTableComponent from './components/leads-table.component';
+import LeadsDataComponent from './components/leads-data.component';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTitleSidebar } from '../../redux/states/auth.slice';
 import LeadFiltrosComponent from './components/lead-filtros.component';
 import { AppStore } from '../../redux/store';
 import AddEtiquetasComponent from './components/add-etiquetas.component';
 import { setLeadFilters } from '../../redux/states/lead-filters.state';
+import { Share2 } from 'lucide-react';
+import { Lead } from '../../models';
+import { useNavigate } from 'react-router-dom';
 
 interface DataModalState {
   type: string;
@@ -39,13 +43,17 @@ export const LeadsPage = () => {
   const [metaData, setMetaData] = useState({
     current_page: 1,
     last_page: 0,
-    per_page: 10,
+    per_page: 50,
     total: 0,
     showing: 0,
   }); // Para Tabla
   const [tableHeader, setTableHeader] = useState<TableHeaderResponse[]>([]);
   const [stateView, setStateView] = useState<string>('KANBAN');
   const [isTableLoading, setIsTableLoading] = useState(false);
+  const [leadsBaja, setLeadsBaja] = useState<Lead[]>([]);
+  const [metaDataBaja, setMetaDataBaja] = useState({ current_page: 1, total: 0 });
+  const [isLeadsBajaLoading, setIsLeadsBajaLoading] = useState(false);
+  const [filtroEtiqueta, setFiltroEtiqueta] = useState('');
 
   // Estados de datos estáticos (canales, etapas, etc. que vienen de la API)
   const [channels, setChannels] = useState<any[]>([]);
@@ -64,6 +72,7 @@ export const LeadsPage = () => {
   // Hooks de API
   const { getLeads } = useLeads();
   const { getLeadStatus, getLeadByEtapa } = useLeadStatus();
+  const navigate = useNavigate();
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
@@ -398,7 +407,7 @@ export const LeadsPage = () => {
       lead_campaign_names,
       nivel_interes,
       terminoBusqueda,
-      10, // per_page
+      50, // per_page
       nextPage,
       false
     ).then((response) => {
@@ -490,7 +499,7 @@ export const LeadsPage = () => {
           total: etapa.leads_count,
           current_page: 0,
           last_page: 1,
-          per_page: 10,
+          per_page: 50,
           is_loading: true,
         },
       }));
@@ -539,7 +548,7 @@ export const LeadsPage = () => {
           campanas_names,
           nivel_interes,
           termino,
-          10,
+          50,
           1,
           false
         )
@@ -584,9 +593,10 @@ export const LeadsPage = () => {
         activity_expiration_ids,
         lead_campaign_names,
         '',
-        10,
+        50,
         page,
-        false
+        false,
+        '',
       );
 
       setLeads(response.data);
@@ -643,8 +653,30 @@ const handleUsuariosKanban = (usuarios: any[]) => {
       recargarDatosKanban(filtros, nivelesInteres, labels, campaigns, users, terminoBusqueda, true);
     } else if (stateView === 'LEADS_TABLE') {
       recargarDatosTabla(filtros, nivelesInteres, 1);
+    } else if (stateView === 'LEADS_DATA') {
+      cargarLeadsBaja(1, filtroEtiqueta);
     }
-  }, [stateView]);
+  }, [stateView, filtroEtiqueta]);
+
+  const cargarLeadsBaja = async (page: number, search: string = '') => {
+    setIsLeadsBajaLoading(true);
+    try {
+      const response = await getLeads('', '', '', '', '', '', '', search, 50, page, false, 'BAJA');
+      setLeadsBaja(response.data);
+      setMetaDataBaja({
+        current_page: response.meta.current_page,
+        total: response.meta.total,
+      });
+    } catch (error) {
+      console.error("Error al cargar leads dados de baja:", error);
+    } finally {
+      setIsLeadsBajaLoading(false);
+    }
+  };
+
+  const onClickLead = (lead_uuid: string) => {
+    navigate(`/leads/${lead_uuid}`);
+  };
 
   return (
     <>
@@ -694,6 +726,18 @@ const handleUsuariosKanban = (usuarios: any[]) => {
         />
       )}
 
+      {stateView == 'LEADS_DATA' && (
+        <LeadsDataComponent
+          leads={leadsBaja}
+          cargarDataLeads={cargarLeadsBaja}
+          metaData={metaDataBaja}
+          isTableLoading={isLeadsBajaLoading}
+          filtroEtiqueta={filtroEtiqueta}
+          setFiltroEtiqueta={setFiltroEtiqueta}
+          onClickLead={onClickLead}
+        />
+      )}
+      
       {/* MODAL NUEVO LEAD*/}
       {isOpenModal && (
         <ModalComponent

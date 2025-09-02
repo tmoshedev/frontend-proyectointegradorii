@@ -1,6 +1,8 @@
 import { LeadActividadEstado, LeadHistory, LeadLabel, LeadProject } from '.';
 
 export interface Lead {
+  reason: string;
+  
   id: number;
   lead_state_id: string;
   document_number: string;

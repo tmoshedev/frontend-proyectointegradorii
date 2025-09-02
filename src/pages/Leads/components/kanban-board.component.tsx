@@ -76,7 +76,7 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
       }))
     );
 
-    changeEstadoFinal(String(leadId), action, false).then(() => {
+    changeEstadoFinal(String(leadId), action, false, '').then(() => {
       // Aquí podrías manejar la respuesta de la API si es necesario
     });
   };
@@ -180,7 +180,9 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
                         disabled={!(userid && lead.user_id == userid)} // Deshabilitar la tarjeta
                         onAsignarmeLead={function (lead_uuid: string): void {
                           throw new Error('Function not implemented.');
-                        }}
+                        } } onRefresh={function (): void {
+                          throw new Error('Function not implemented.');
+                        } }                        
 
                       />
                     ))}
