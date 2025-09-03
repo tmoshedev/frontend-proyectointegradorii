@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { useLeads, useLeadStatus, useSidebarResponsive } from '../../hooks';
 import KanbanBoardComponent from './components/kanban-board.component';
 import ImportarLeadComponent from './components/importar-lead.component';
@@ -735,8 +735,12 @@ const handleUsuariosKanban = (usuarios: any[]) => {
           isTableLoading={isLeadsBajaLoading}
           filtroEtiqueta={filtroEtiqueta}
           setFiltroEtiqueta={setFiltroEtiqueta}
-          onClickLead={onClickLead}
-        />
+          onClickLead={onClickLead} 
+          labels={labels}
+          setLabels={setLabels}
+          handleEtiquetasKanban={handleEtiquetasKanban}
+          handleCrearEtiqueta={handleCrearEtiqueta}
+          />
       )}
       
       {/* MODAL NUEVO LEAD*/}

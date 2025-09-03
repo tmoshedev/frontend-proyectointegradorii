@@ -159,7 +159,9 @@ export const LeadPage = () => {
         style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 3.4rem)' }}
       >
         <div className="lead-header">
-          <LeadHeaderComponent />
+          <LeadHeaderComponent onCrearNuevaEtiqueta={function (): void {
+            throw new Error('Function not implemented.');
+          } } />
           <div className="lead-header__etapas mt-4 mb-2">
             <LeadEtapasComponent />
           </div>
