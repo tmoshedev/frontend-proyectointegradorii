@@ -187,7 +187,7 @@ export function useLeads() {
 
   //GET - LIST LEADS
   const getLeads = async (
-user_ids: string, channel_ids: string, lead_label_ids: string, stage_ids: string, project_ids: string, activity_expiration_ids: string, lead_campaign_names: string, text: string, limit: number, page: number, loading: boolean, p0: string  ) => {
+  user_ids: string, channel_ids: string, lead_label_ids: string, stage_ids: string, project_ids: string, activity_expiration_ids: string, lead_campaign_names: string, estado_final: string, text: string, limit: number, page: number, loading: boolean  ) => {
     dispatch(setLoading(loading));
     try {
       const response = await leadsService.getLeads(
@@ -198,6 +198,7 @@ user_ids: string, channel_ids: string, lead_label_ids: string, stage_ids: string
         project_ids,
         activity_expiration_ids,
         lead_campaign_names,
+        estado_final,
         text,
         limit,
         page

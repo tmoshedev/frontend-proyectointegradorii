@@ -53,94 +53,90 @@ export const LeadsDataComponent = (props: Props) => {
   return (
     <div className="main-content app-content">
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-12">
             <div className="card">
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h3 className="mb-0">Leads dados de Baja</h3>
+              <div className="card-header justify-content-between d-sm-flex d-block">
+                <div className="card-title">Leads dados de Baja</div>
+                <div className="header-actions">
                   <div className="d-flex align-items-center">
                     <form onSubmit={handleSearchSubmit} className="me-2">
                       <div className="input-group">
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Buscar por etiqueta..."
+                          placeholder="Buscar por nombre/telefono..."
                           value={searchTerm}
                           onChange={handleSearchChange}
                         />
                         <button className="btn btn-outline-primary" type="submit">
-                          <Search size={16} />
+                          <UserRoundSearch />
                         </button>
                       </div>
                     </form>
-                    <button className="btn btn-light" onClick={onRefresh} disabled={isTableLoading}>
+                    {/* <button className="btn btn-light" onClick={onRefresh} disabled={isTableLoading}>
                       <UserRoundSearch className={isTableLoading ? 'fa-spin' : ''} />
                       <span className="ms-2">Actualizar</span>
-                    </button>
+                    </button> */}
                   </div>
-                </div>
-
-                <div className="card">
-                  <div className="card-body">
-                    {isTableLoading ? (
-                      <TableCRMSkeleton columnCount={5} />
-                    ) : (
-                      <div className="table-responsive">
-                        <table className="table table-hover table-bordered">
-                          <thead className="table-primary">
-                            <tr>
-                              <th>Nombre</th>
-                              <th>Teléfono</th>
-                              <th>Estado</th>
-                              <th>Etiqueta de Salida</th>
-                              <th>Motivo de Baja</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {leads.length > 0 ? (
-                              leads.map((lead) => (
-                                <tr
-                                  key={lead.id}
-                                  onClick={() => onClickLead(lead.uuid)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  <td>{`${lead.names} ${lead.last_names}`}</td>
-                                  <td>{lead.cellphone}</td>
-                                  <td>
-                                    <span className="badge bg-danger-transparent">{lead.estado_final}</span>
-                                  </td>
-                                  <td>
-                                    {lead.lead_labels?.map((label: LeadLabel, index: number) => (
-                                      <span key={label.id} style={{ color: label.color, fontWeight: 'bold' }}>
-                                        {label.name}
-                                        {index < (lead.lead_labels.length - 1) ? ', ' : ''}
-                                      </span>
-                                    ))}
-                                  </td>
-                                  <td>{lead.reason || 'N/A'}</td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan={5} className="text-center p-5">
-                                  No se encontraron leads dados de baja.
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                  {/* Paginación si es necesaria */}
                 </div>
               </div>
+              <div className="card-body">
+                <div>  </div>
+                {isTableLoading ? (
+                  <TableCRMSkeleton columnCount={5} />
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-hover table-bordered">
+                      <thead className="table-primary">
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Teléfono</th>
+                          <th>Estado</th>
+                          <th>Etiqueta de Salida</th>
+                          <th>Motivo de Baja</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {leads.length > 0 ? (
+                          leads.map((lead) => (
+                            <tr
+                              key={lead.id}
+                              onClick={() => onClickLead(lead.uuid)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <td>{`${lead.names} ${lead.last_names}`}</td>
+                              <td>{lead.cellphone}</td>
+                              <td>
+                                <span className="badge bg-danger-transparent">{lead.estado_final}</span>
+                              </td>
+                              <td>
+                                {lead.lead_labels?.map((label: LeadLabel, index: number) => (
+                                  <span key={label.id} style={{ color: label.color, fontWeight: 'bold' }}>
+                                    {label.name}
+                                    {index < (lead.lead_labels.length - 1) ? ', ' : ''}
+                                  </span>
+                                ))}
+                              </td>
+                              <td>{lead.reason || 'N/A'}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={5} className="text-center p-5">
+                              No se encontraron leads dados de baja.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+              {/* Paginación si es necesaria */}
             </div>
           </div>
         </div>
-      </div>
-    </div>
+
+
   );
 };
 

@@ -593,10 +593,11 @@ export const LeadsPage = () => {
         activity_expiration_ids,
         lead_campaign_names,
         '',
+        '',
         50,
         page,
         false,
-        '',
+        
       );
 
       setLeads(response.data);
@@ -661,7 +662,7 @@ const handleUsuariosKanban = (usuarios: any[]) => {
   const cargarLeadsBaja = async (page: number, search: string = '') => {
     setIsLeadsBajaLoading(true);
     try {
-      const response = await getLeads('', '', '', '', '', '', '', search, 50, page, false, 'BAJA');
+      const response = await getLeads('', '', '', '', '', '', '','BAJA', search, 50, page, false);
       setLeadsBaja(response.data);
       setMetaDataBaja({
         current_page: response.meta.current_page,

@@ -105,7 +105,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           <Plus height={20} /> Lead
         </button>}
         
-        {CanCheck('leads-distrubir') && (
+        {rolActual === 'ADMINISTRATOR' && (
           <button
             onClick={() => props.handleStateView('DISTRIBUIR')}
             className="btn btn-info btn-sm ms-2"

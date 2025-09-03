@@ -150,13 +150,14 @@ export const getLeads = async (
   project_ids: string,
   activity_expiration_ids: string,
   lead_campaign_names: string,
+  estado_final: string,
   text: string,
   limit: number,
   page: number
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<TableCrmResponse>(
-    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}`
+    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&estado_final=${estado_final}`
   );
   return response;
 };
