@@ -13,6 +13,7 @@ import { Bounce, toast } from 'react-toastify';
 import { setLeadAndHistorial, updateLeadLabels } from '../../../redux/states/lead.slice';
 import { SweetAlert } from '../../../utilities';
 import { LeadResponse } from '../../../models/responses';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   leads: Lead[];
@@ -49,6 +50,7 @@ export const LeadsDataComponent = (props: Props) => {
   const [estadoFinalModal, setEstadoFinalModal] = useState<string>('');
   const [notaModal, setNotaModal] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const onRefresh = () => {
     setSearchTerm('');
@@ -109,37 +111,37 @@ export const LeadsDataComponent = (props: Props) => {
     setEditLabels(false);
   };
   const onGuardarLabels = (items: any[]) => {
-      updateLabels(lead.uuid, items, false)
-        .then((response) => {
-          toast.success(response.message, {
-            position: 'top-center',
-            autoClose: 4000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-            transition: Bounce,
-          });
-          dispatch(updateLeadLabels(items));
-          setEditLabels(false);
-        })
-        .catch((error) => {
-          toast.error('Error al actualizar las etiquetas.', {
-            position: 'top-center',
-            autoClose: 4000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-            transition: Bounce,
-          });
+    updateLabels(lead.uuid, items, false)
+      .then((response) => {
+        toast.success(response.message, {
+          position: 'top-center',
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
         });
-    };
-    
+        dispatch(updateLeadLabels(items));
+        setEditLabels(false);
+      })
+      .catch((error) => {
+        toast.error('Error al actualizar las etiquetas.', {
+          position: 'top-center',
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
+        });
+      });
+  };
+
   const handleLeadSelection = (isChecked: boolean, lead: Lead) => {
     if (isChecked) {
       // Agregar el lead seleccionado
@@ -191,47 +193,53 @@ export const LeadsDataComponent = (props: Props) => {
     );
     setShowModal(false);
   };
-  
-    const handleModalCancel = () => {
-      setShowModal(false);
-    };
 
-      const handleCancelDelete = () => {};
+  const handleModalCancel = () => {
+    setShowModal(false);
+  };
+
+  const handleCancelDelete = () => { };
 
 
-    const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
-        return changeEstadoFinal(id, estado_final, true, nota)
-          .then((response: LeadResponse) => {
-            // No actualizamos el lead individual en Redux aquí para evitar sobreescrituras en el bucle.
-            // La actualización de la lista se encargará de reflejar los cambios.
-            toast.success(`Lead marcado como ${estado_final.toLowerCase()}.`, {
-              position: 'top-center',
-              autoClose: 4000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-              transition: Bounce,
-            });
-          })
-          .catch((error) => {
-            SweetAlert.error(
-              `Error al marcar el lead como ${estado_final.toLowerCase()}.`,
-              error.message
-            );
-            // Rechazamos la promesa para que Promise.all pueda detectar el error si es necesario
-            return Promise.reject(error);
-          });
-      };
-    
+  const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
+    return changeEstadoFinal(id, estado_final, true, nota)
+      .then((response: LeadResponse) => {
+        // No actualizamos el lead individual en Redux aquí para evitar sobreescrituras en el bucle.
+        // La actualización de la lista se encargará de reflejar los cambios.
+        toast.success(`Lead marcado como ${estado_final.toLowerCase()}.`, {
+          position: 'top-center',
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
+        });
+      })
+      .catch((error) => {
+        SweetAlert.error(
+          `Error al marcar el lead como ${estado_final.toLowerCase()}.`,
+          error.message
+        );
+        // Rechazamos la promesa para que Promise.all pueda detectar el error si es necesario
+        return Promise.reject(error);
+      });
+  };
+
+  const onRegresarLeads = () => {
+    navigate('/leads', { state: { view: 'KANBAN' } });
+  };
+
   return (
     <div className="main-content app-content">
       <div className="container-fluid">
         <div className="card">
           <div className="card-header justify-content-between d-sm-flex d-block">
-            <div className="card-title">Leads dados de Baja</div>
+            <div className="card-title">  <button onClick={onRegresarLeads} className="btn btn-outline-primary btn-xs">
+              <i className="fa-solid fa-arrow-left"></i> Regresar
+            </button> Leads dados de Baja</div>
             <div className="header-actions">
               <div className="d-flex align-items-center">
                 <div className="control-group" style={{ marginRight: '10px' }}>
@@ -282,7 +290,7 @@ export const LeadsDataComponent = (props: Props) => {
                   <button
                     className="btn btn-primary btn-sm btn-ganado"
                     disabled={leadsSeleccionados.length === 0}
-                     onClick={() => onLeadState(' ')}
+                    onClick={() => onLeadState(' ')}
                   >
                     <i className="fa-solid fa-thumbs-up"></i> Activar
                   </button>
@@ -450,7 +458,7 @@ export const LeadsDataComponent = (props: Props) => {
                 rows={3}
               />
             </div>
-            
+
             {/* Bloque visual de etiquetas 
       <div className="block-item">
         <div className="bock-item__title">
@@ -501,8 +509,8 @@ export const LeadsDataComponent = (props: Props) => {
           </div>
         </div>
       </div>*/}
-      {/* Fin bloque etiquetas */}
-      
+            {/* Fin bloque etiquetas */}
+
             {/* Puedes agregar más campos aquí si lo necesitas */}
             <div className="d-flex justify-content-end">
               <button className="btn btn-outline-secondary me-2" onClick={handleModalCancel}>

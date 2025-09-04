@@ -18,7 +18,7 @@ import AddEtiquetasComponent from './components/add-etiquetas.component';
 import { setLeadFilters } from '../../redux/states/lead-filters.state';
 import { Share2 } from 'lucide-react';
 import { Lead } from '../../models';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface DataModalState {
   type: string;
@@ -31,6 +31,7 @@ interface DataModalState {
 }
 
 export const LeadsPage = () => {
+  const location = useLocation();
   useSidebarResponsive(true);
   const authState = useSelector((state: AppStore) => state.auth);
   const leadFilters = useSelector((state: AppStore) => state.leadFilters.uiFilters);
@@ -640,6 +641,12 @@ const handleUsuariosKanban = (usuarios: any[]) => {
   const onBuscarKanban = (termino: string) => {
     onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users, termino);
   };
+
+  useEffect(() => {
+    if (location.state?.view) {
+      setStateView(location.state.view);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     dispatch(setTitleSidebar('Leads'));

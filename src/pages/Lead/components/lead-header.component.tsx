@@ -209,7 +209,11 @@ export const LeadHeaderComponent = (props: Props) => {
   };
 
   const onRegresarLeads = () => {
-    navigate('/leads');
+    if (lead.estado_final === 'BAJA') {
+      navigate('/leads', { state: { view: 'LEADS_DATA', estado_final: 'BAJA' } });
+    } else {
+      navigate('/leads', { state: { view: 'KANBAN' } });
+    }
   };
 
   useEffect(() => {
