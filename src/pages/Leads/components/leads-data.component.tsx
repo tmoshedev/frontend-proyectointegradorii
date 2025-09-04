@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSidebarResponsive } from '../../../hooks';
 import TableCRMSkeleton from '../../../components/shared/TableCRMSkeleton';
 import { AlignCenter, Search, Tag, UserRoundSearch } from 'lucide-react';
 import { Lead, LeadLabel } from '../../../models';
 import PageBodyComponent from '../../../components/page/page-body.component';
 import SelectSearchCrm from '../../../components/shared/SelectSearchCrm';
+import EditarSelectSearchCrm from '../../../components/EditarSelectSearchCrm';
+import { AppStore } from '../../../redux/store';
+import { useSelector } from 'react-redux';
+import { changeEstadoFinal, updateLabels } from '../../../services/leads.service';
+import { Bounce, toast } from 'react-toastify';
+import { setLeadAndHistorial, updateLeadLabels } from '../../../redux/states/lead.slice';
+import { SweetAlert } from '../../../utilities';
+import { LeadResponse } from '../../../models/responses';
 
 interface Props {
   leads: Lead[];
@@ -38,6 +46,9 @@ export const LeadsDataComponent = (props: Props) => {
   } = props;
 
   const [searchTerm, setSearchTerm] = useState(filtroEtiqueta);
+  const [estadoFinalModal, setEstadoFinalModal] = useState<string>('');
+  const [notaModal, setNotaModal] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const onRefresh = () => {
     setSearchTerm('');
@@ -57,6 +68,20 @@ export const LeadsDataComponent = (props: Props) => {
   };
 
   const [openLabelDropdown, setOpenLabelDropdown] = useState(false);
+
+
+  //const lead: Lead = useSelector((store: AppStore) => store.lead.lead);
+  const { lead, projectsAvailable, labelsAvailable, channelsAvailable } = useSelector(
+    (store: AppStore) => store.lead
+  );
+  const [usuariosSeleccionados, setUsuariosSeleccionados] = useState<any[]>([]);
+  const [stateSearchUsuarios, setStateSearchUsuarios] = useState<Boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Estados para etiquetas en el modal
+  const [editLabels, setEditLabels] = useState(false);
+  const [selectedLabels, setSelectedLabels] = useState<any[]>(lead.lead_labels || []);
+
 
   /**
  * Generates initials from user names.
@@ -79,6 +104,42 @@ export const LeadsDataComponent = (props: Props) => {
     }
   };
 
+  const onCancelLabels = () => {
+    setSelectedLabels(lead.lead_labels || []);
+    setEditLabels(false);
+  };
+  const onGuardarLabels = (items: any[]) => {
+      updateLabels(lead.uuid, items, false)
+        .then((response) => {
+          toast.success(response.message, {
+            position: 'top-center',
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Bounce,
+          });
+          dispatch(updateLeadLabels(items));
+          setEditLabels(false);
+        })
+        .catch((error) => {
+          toast.error('Error al actualizar las etiquetas.', {
+            position: 'top-center',
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Bounce,
+          });
+        });
+    };
+    
   const handleLeadSelection = (isChecked: boolean, lead: Lead) => {
     if (isChecked) {
       // Agregar el lead seleccionado
@@ -91,7 +152,80 @@ export const LeadsDataComponent = (props: Props) => {
 
   const rolActual = localStorage.getItem('rolActual') || '';
 
+  const onLeadState = (estado_final: string) => {
+    openModal(estado_final);
+  };
 
+  const openModal = (estado_final: string) => {
+    setEstadoFinalModal(estado_final);
+    setNotaModal('');
+    setShowModal(true);
+  };
+
+  const onActivarEditLabel = () => {
+    setEditLabels(true);
+  };
+
+  const handleModalConfirm = () => {
+    const totalLeads = leadsSeleccionados.length;
+    const confirmationText =
+      totalLeads > 1
+        ? `¿Estás seguro que quieres reactivar ${totalLeads} leads?`
+        : '¿Estás seguro que quieres reactivar el lead?';
+    const successButtonText = totalLeads > 1 ? 'Sí, reactivar leads' : 'Sí, reactivar lead';
+
+    SweetAlert.onConfirmation(
+      () => {
+        const promises = leadsSeleccionados.map(lead =>
+          handleLeadState(lead.id, estadoFinalModal, notaModal)
+        );
+
+        Promise.all(promises).then(() => {
+          setLeadsSeleccionados([]);
+          cargarDataLeads(1, searchTerm);
+        });
+      },
+      handleCancelDelete,
+      confirmationText,
+      successButtonText
+    );
+    setShowModal(false);
+  };
+  
+    const handleModalCancel = () => {
+      setShowModal(false);
+    };
+
+      const handleCancelDelete = () => {};
+
+
+    const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
+        return changeEstadoFinal(id, estado_final, true, nota)
+          .then((response: LeadResponse) => {
+            // No actualizamos el lead individual en Redux aquí para evitar sobreescrituras en el bucle.
+            // La actualización de la lista se encargará de reflejar los cambios.
+            toast.success(`Lead marcado como ${estado_final.toLowerCase()}.`, {
+              position: 'top-center',
+              autoClose: 4000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+              theme: 'light',
+              transition: Bounce,
+            });
+          })
+          .catch((error) => {
+            SweetAlert.error(
+              `Error al marcar el lead como ${estado_final.toLowerCase()}.`,
+              error.message
+            );
+            // Rechazamos la promesa para que Promise.all pueda detectar el error si es necesario
+            return Promise.reject(error);
+          });
+      };
+    
   return (
     <div className="main-content app-content">
       <div className="container-fluid">
@@ -148,6 +282,7 @@ export const LeadsDataComponent = (props: Props) => {
                   <button
                     className="btn btn-primary btn-sm btn-ganado"
                     disabled={leadsSeleccionados.length === 0}
+                     onClick={() => onLeadState(' ')}
                   >
                     <i className="fa-solid fa-thumbs-up"></i> Activar
                   </button>
@@ -280,6 +415,106 @@ export const LeadsDataComponent = (props: Props) => {
           {/* Paginación si es necesaria */}
         </div>
       </div>
+      {/* MODAL CAMBIO DE ESTADO */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '2rem',
+              borderRadius: '8px',
+              minWidth: '320px',
+              maxWidth: '90vw',
+            }}
+          >
+            <h5>¿POR QUE EL LEAD SE ESTÁ REACTIVANDO?</h5>
+            <div className="mb-3">
+              <label>Describe:</label>
+              <textarea
+                className="form-control"
+                value={notaModal}
+                onChange={e => setNotaModal(e.target.value)}
+                rows={3}
+              />
+            </div>
+            
+            {/* Bloque visual de etiquetas */}
+      <div className="block-item">
+        <div className="bock-item__title">
+          <h4>Etiquetas</h4>
+        </div>
+        <div className="bock-item__datos">
+          <div className="fields-list-row">
+            {editLabels ? (
+              <EditarSelectSearchCrm
+                options={labelsAvailable}
+                selected={selectedLabels}
+                onChange={setSelectedLabels}
+                placeholder="Seleccionar etiquetas"
+                onCancel={onCancelLabels}
+                onGuardar={onGuardarLabels}
+                onCrearNuevaEtiqueta={() => {}}
+              />
+            ) : (
+              <div className="fields-list__components">
+                <div className="list-fields-items">
+                  <ul className="fields-list__items">
+                    {selectedLabels?.map((label: LeadLabel, index: number) => (
+                      <li key={index} className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">
+                            <i style={{ color: label.color }} className="fa-solid fa-tag"></i>{' '}
+                            {label.name}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                    {lead.lead_labels?.length === 0 && (
+                      <li className="fields-list__item">
+                        <div className="fields-list__item__block">
+                          <span className="fields-list__item_content">Sin etiquetas</span>
+                        </div>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div className="list-fields-edit">
+                  <button onClick={onActivarEditLabel} className="btn btn-outline-cancel btn-xs">
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Fin bloque etiquetas */}
+      
+            {/* Puedes agregar más campos aquí si lo necesitas */}
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-outline-secondary me-2" onClick={handleModalCancel}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={handleModalConfirm}>
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
 
 
@@ -287,3 +522,7 @@ export const LeadsDataComponent = (props: Props) => {
 };
 
 export default LeadsDataComponent;
+
+function dispatch(arg0: any) {
+  throw new Error('Function not implemented.');
+}

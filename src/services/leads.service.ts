@@ -76,7 +76,7 @@ export const updateChannels = async (lead_uuid: string, channels: string) => {
   return response;
 };
 
-export const updateLabels = async (lead_uuid: string, labels: any[]) => {
+export const updateLabels = async (lead_uuid: string, labels: any[], p0: boolean) => {
   const response = await apiInstance.post<SuccessResponse>(`/leads/${lead_uuid}/update-labels`, {
     labels,
   });
@@ -132,7 +132,7 @@ export const updateLeadAsesor = async (lead_uuid: string, assigned_to: string) =
   return response;
 };
 
-export const changeEstadoFinal = async (id: string, estado_final: string, nota: string) => {
+export const changeEstadoFinal = async (id: string, estado_final: string, p0: boolean, nota: string) => {
   const response = await apiInstance.patch<LeadResponse>(`/leads/${id}/change-estado-final`, {
     lead: {
       estado_final,
