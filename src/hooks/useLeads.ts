@@ -178,7 +178,7 @@ export function useLeads() {
   const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean, nota: string) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.changeEstadoFinal(id, estado_final, nota);
+      const response = await leadsService.changeEstadoFinal(id, estado_final, loading, nota);
       return response;
     } finally {
       dispatch(setLoading(false));

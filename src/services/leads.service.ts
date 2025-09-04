@@ -132,11 +132,16 @@ export const updateLeadAsesor = async (lead_uuid: string, assigned_to: string) =
   return response;
 };
 
-export const changeEstadoFinal = async (id: string, estado_final: string, p0: boolean, nota: string) => {
+export const changeEstadoFinal = async (
+  id: string,
+  estado_final: string,
+  p0: boolean,
+  nota: string
+) => {
   const response = await apiInstance.patch<LeadResponse>(`/leads/${id}/change-estado-final`, {
     lead: {
       estado_final,
-      nota,
+      nota: nota || '',
     },
   });
   return response;
