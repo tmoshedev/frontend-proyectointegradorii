@@ -451,7 +451,7 @@ export const LeadsDataComponent = (props: Props) => {
               />
             </div>
             
-            {/* Bloque visual de etiquetas */}
+            {/* Bloque visual de etiquetas 
       <div className="block-item">
         <div className="bock-item__title">
           <h4>Etiquetas</h4>
@@ -500,7 +500,7 @@ export const LeadsDataComponent = (props: Props) => {
             )}
           </div>
         </div>
-      </div>
+      </div>*/}
       {/* Fin bloque etiquetas */}
       
             {/* Puedes agregar más campos aquí si lo necesitas */}
