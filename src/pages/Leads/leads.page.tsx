@@ -679,6 +679,10 @@ const handleUsuariosKanban = (usuarios: any[]) => {
     navigate(`/leads/${lead_uuid}`);
   };
 
+  const onEditarAsesor = (lead: Lead) => {
+    handleModalAsesor(lead, users);
+  };
+
   return (
     <>
       {stateView == 'KANBAN' && (
@@ -740,6 +744,7 @@ const handleUsuariosKanban = (usuarios: any[]) => {
           setLabels={setLabels}
           handleEtiquetasKanban={handleEtiquetasKanban}
           handleCrearEtiqueta={handleCrearEtiqueta}
+          onEditarAsesor={onEditarAsesor}
           />
       )}
       

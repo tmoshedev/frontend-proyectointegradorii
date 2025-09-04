@@ -17,12 +17,11 @@ interface Props {
   filtroEtiqueta: string;
   setFiltroEtiqueta: (value: string) => void;
   onClickLead: (lead_uuid: string) => void;
-
   labels: any[];
   setLabels: React.Dispatch<React.SetStateAction<any[]>>;
   handleEtiquetasKanban: (etiquetas: any[]) => void;
   handleCrearEtiqueta: () => void;
-
+  onEditarAsesor: (lead: Lead) => void;
 }
 
 export const LeadsDataComponent = (props: Props) => {
@@ -35,6 +34,7 @@ export const LeadsDataComponent = (props: Props) => {
     filtroEtiqueta,
     setFiltroEtiqueta,
     onClickLead,
+    onEditarAsesor
   } = props;
 
   const [searchTerm, setSearchTerm] = useState(filtroEtiqueta);
@@ -89,6 +89,8 @@ export const LeadsDataComponent = (props: Props) => {
     }
   };
 
+  const rolActual = localStorage.getItem('rolActual') || '';
+
 
   return (
     <div className="main-content app-content">
@@ -96,11 +98,8 @@ export const LeadsDataComponent = (props: Props) => {
         <div className="card">
           <div className="card-header justify-content-between d-sm-flex d-block">
             <div className="card-title">Leads dados de Baja</div>
-
             <div className="header-actions">
-
               <div className="d-flex align-items-center">
-                
                 <div className="control-group" style={{ marginRight: '10px' }}>
                   <div className="d-flex align-items-center gap-1 justify-content-center align-items-center">
                     <div
@@ -127,7 +126,6 @@ export const LeadsDataComponent = (props: Props) => {
                         open={openLabelDropdown}
                         onChange={props.handleEtiquetasKanban}
                         store={props.handleCrearEtiqueta}
-
                       />
                     </div>
                   </div>
@@ -146,18 +144,16 @@ export const LeadsDataComponent = (props: Props) => {
                     </button>
                   </div>
                 </form>
-                {/* <button className="btn btn-light" onClick={onRefresh} disabled={isTableLoading}>
-                      <UserRoundSearch className={isTableLoading ? 'fa-spin' : ''} />
-                      <span className="ms-2">Actualizar</span>
-                    </button> */}
-                    <div className="d-flex ms-2">
-            <button className="btn btn-primary btn-sm btn-ganado">
-              <i className="fa-solid fa-thumbs-up"></i> Activar
-            </button>
-          </div>
+                <div className="d-flex ms-2">
+                  <button
+                    className="btn btn-primary btn-sm btn-ganado"
+                    disabled={leadsSeleccionados.length === 0}
+                  >
+                    <i className="fa-solid fa-thumbs-up"></i> Activar
+                  </button>
+                </div>
               </div>
             </div>
-
           </div>
           <div className="card-body">
             <div>  </div>
@@ -165,43 +161,58 @@ export const LeadsDataComponent = (props: Props) => {
               <TableCRMSkeleton columnCount={5} />
             ) : (
               <div className="table-responsive">
-                <table className="table table-hover table-bordered">
+                <table className="table table-hover table-bordered ">
                   <thead className="table-primary">
                     <tr style={{ textAlign: 'center' }}>
+                      <th>Activar lead?
+                        <div className="zh-tabla-checkbox">
+
+                          <input
+                            id="leads"
+                            className="form-check-input"
+                            name="leads"
+                            type="checkbox"
+                            onChange={(e) => handleSelectAllLeads(e.target.checked)}
+                            style={{ borderColor: 'black' }}
+                          />
+                        </div>
+                      </th>
                       <th>Nombre</th>
                       <th>Teléfono</th>
                       <th>Estado</th>
                       <th>Etiqueta de Salida</th>
                       <th>Motivo de Baja</th>
                       <th>Asesor</th>
-                      <th>Activar lead?
-                                        <div className="zh-tabla-checkbox"> 
 
-                        <input
-                          id="leads"
-                          className="form-check-input"
-                          name="leads"
-                          type="checkbox"
-                          onChange={(e) => handleSelectAllLeads(e.target.checked)}
-                        />
-                        </div>
-                      </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="font-size-11" >
                     {leads.length > 0 ? (
                       leads.map((lead, index) => (
                         <tr
                           key={lead.id}
-                          onClick={() => onClickLead(lead.uuid)}
-                          style={{ cursor: 'pointer' }}
                         >
-                          <td>{`${lead.names} ${lead.last_names}`}</td>
-                          <td>{lead.cellphone}</td>
-                          <td>
+                          <td>  <div className="zh-tabla-checkbox"><input
+                            id={`lead_${index}`}
+                            name={`lead_${index}`}
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={leadsSeleccionados.includes(leads[index])}
+                            onChange={(e) => handleLeadSelection(e.target.checked, leads[index])}
+                            style={{ borderColor: 'black' }}
+                          /></div></td>
+                          <td
+                            onClick={() => onClickLead(lead.uuid)}
+                            style={{ cursor: 'pointer' }}
+                          >{`${lead.names} ${lead.last_names}`}</td>
+                          <td onClick={() => onClickLead(lead.uuid)}
+                            style={{ cursor: 'pointer' }}>{lead.cellphone}</td>
+                          <td onClick={() => onClickLead(lead.uuid)}
+                            style={{ cursor: 'pointer' }}>
                             <span className="badge bg-danger-transparent">{lead.estado_final}</span>
                           </td>
-                          <td>
+                          <td onClick={() => onClickLead(lead.uuid)}
+                            style={{ cursor: 'pointer' }}>
                             {lead.lead_labels?.map((label: LeadLabel, labelIndex: number) => (
                               <span key={label.id} style={{ color: label.color, fontWeight: 'bold' }}>
                                 {label.name}
@@ -209,33 +220,49 @@ export const LeadsDataComponent = (props: Props) => {
                               </span>
                             ))}
                           </td>
-                          <td>{lead.reason || 'N/A'}</td>
-                          <td>{lead.user_id ? (
-                            <>
-                    
-                              <div className="ms-2">
-                                <div className="d-flex flex-column">
-                                  <p>
-                                    {lead.user_names} {lead.user_father_last_name} {lead.user_mother_last_name}
-                                  </p>
-                                </div>
+                          <td onClick={() => onClickLead(lead.uuid)}
+                            style={{ cursor: 'pointer' }}>{lead.reason || 'N/A'}</td>
+                          <td>
+                            <div
+                              className="d-flex kanban-card-footer justify-content-between mt-2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <div className="d-flex align-items-center kanban-card-footer-user">
+                                {lead.user_id ? (
+                                  <>
+                                    <div className="ms-2">
+                                      <div className="d-flex flex-column">
+                                        <p>
+                                          {lead.user_names} {lead.user_father_last_name} {lead.user_mother_last_name}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="ms-2">
+                                    <div className="d-flex flex-column">
+                                      <p>---</p>
+                                      <small>Sin asesor asignado</small>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            </>
-                          ) : (
-                            <div className="ms-2">
-                              <div className="d-flex flex-column">
-                                <small>Sin asesor asignado</small>
+                              <div className="d-flex align-items-center">
+                                <button
+                                  data-tooltip-id="tooltip-component"
+                                  data-tooltip-content={
+                                    rolActual === 'ADMINISTRATOR' ? 'Editar asesor' : 'Editar asesor'
+                                  }
+                                  className="btn btn-outline-cancel btn-xs"
+                                  onClick={() => {
+                                    onEditarAsesor(lead);
+                                  }}
+                                >
+                                  <i className="fa-solid fa-pen-to-square"></i>
+                                </button>
                               </div>
                             </div>
-                          )}</td>
-                          <td>  <div className="zh-tabla-checkbox"><input
-                        id={`lead_${index}`}
-                        name={`lead_${index}`}
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={leadsSeleccionados.includes(leads[index])}
-                        onChange={(e) => handleLeadSelection(e.target.checked, leads[index])}
-                      /></div></td>
+                          </td>
                         </tr>
                       ))
                     ) : (
