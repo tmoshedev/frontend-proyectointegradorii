@@ -166,7 +166,7 @@ export const LeadCardComponent = ({
   }, [lead.lead_labels]);
 
   const isDisabled = disabled && rolActual !== 'ADMINISTRATOR';
-  const cardClassName = `lead-card ${isDisabled ? 'disabled not-draggable' : ''}`;
+  const cardClassName = `lead-card ${isDisabled ? 'disabled not-draggable' : ''} _blank`;
 
   const labelTooltipContent = useMemo(() => {
     if (!lead.lead_labels || lead.lead_labels.length === 0) {

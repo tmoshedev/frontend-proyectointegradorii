@@ -10,6 +10,7 @@ import { Lead } from '../../../models';
 import { EtapaConPaginacion } from '../../../models/responses';
 import { useNavigate } from 'react-router-dom';
 import SkeletonCardComponent from './SkeletonCardComponent';
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
 
 interface KanbanBoardComponentProps {
   handleStateView: (view: string) => void;
@@ -38,16 +39,31 @@ interface KanbanBoardComponentProps {
   setTerminoBusqueda: any;
 }
 
-export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
-  const { postChangeEtapa, changeEstadoFinal, changeNivelInteres } = useLeads();
+
+  const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
+    const { postChangeEtapa, changeEstadoFinal, changeNivelInteres } = useLeads();
 
   const navigate = useNavigate();
 
   const [isDragging, setIsDragging] = useState(false);
+  // Estado para el orden de los leads por etapa
+  const [ordenLeads, setOrdenLeads] = useState<Record<string, 'asc' | 'desc'>>({});
 
   const handleLeadsChange = useCallback((etapaId: string, newLeads: Lead[]) => {
     props.setEtapas((prev) => prev.map((e) => (e.id === etapaId ? { ...e, leads: newLeads } : e)));
-  }, []);
+  }, [props.setEtapas]);
+
+  // Cambiar el orden de los leads de una etapa
+  const handleOrdenLeads = (etapaId: string, orden: 'asc' | 'desc') => {
+    setOrdenLeads((prev) => ({ ...prev, [etapaId]: orden }));
+    props.setEtapas((prev) =>
+      prev.map((e) =>
+        e.id === etapaId
+          ? { ...e, leads: [...e.leads].reverse() }
+          : e
+      )
+    );
+  };
 
   const handleDragEnd = useCallback((evt: SortableEvent) => {
     const { to, from, oldIndex, newIndex, item } = evt;
@@ -134,11 +150,22 @@ export const KanbanBoardComponent = (props: KanbanBoardComponentProps) => {
             setTerminoBusqueda={props.setTerminoBusqueda}
           />
           <div className="kanban-columns">
+
             {props.etapas.map((etapa) => (
               <div key={etapa.id} className="kanban-column" data-etapa-id={etapa.id}>
-                <div className="kanban-column-header">
-                  <div className="kanban-column-header-stage">
-                    <h4 className="kanban-column-title p-0 m-0">{etapa.name}</h4>
+                <div className="kanban-column-header d-flex align-items-center justify-content-between">
+                  <div className="kanban-column-header-stage d-flex align-items-center gap-2">
+                    <h4 className="kanban-column-title p-0 m-0 d-flex align-items-center gap-2">
+                      {etapa.name}
+                      <button
+                        className="btn btn-light btn-sm p-1 ms-2"
+                        style={{ lineHeight: 1, borderRadius: '50%' }}
+                        title={ordenLeads[etapa.id] === 'desc' ? 'Más recientes primero' : 'Más antiguos primero'}
+                        onClick={() => handleOrdenLeads(etapa.id, ordenLeads[etapa.id] === 'desc' ? 'asc' : 'desc')}
+                      >
+                        {ordenLeads[etapa.id] === 'desc' ? <ArrowDownWideNarrow size={18} /> : <ArrowUpNarrowWide size={18} />}
+                      </button>
+                    </h4>
                     <small className="p-0 m-0">
                       {!etapa.meta.is_loading
                         ? `Mostrando ${etapa.leads.length} de ${etapa.meta.total}`

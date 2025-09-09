@@ -210,7 +210,7 @@ export const LeadHeaderComponent = (props: Props) => {
 
   const onRegresarLeads = () => {
     if (lead.estado_final === 'BAJA') {
-      navigate('/leads', { state: { view: 'LEADS_DATA', estado_final: 'BAJA' } });
+      navigate('/leads', { state: { view: 'KANBAN'/*, estado_final: 'BAJA'*/ } });
     } else {
       navigate('/leads', { state: { view: 'KANBAN' } });
     }
