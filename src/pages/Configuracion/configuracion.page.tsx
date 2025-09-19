@@ -1,23 +1,33 @@
 import { FC, Fragment, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
-import Pageheader from "../../components/page/pageheader";
 import ProjectsPage from "./Projects/projects.page";
 import LabelsPage from "./Labels/labels.page";
+import BuyerPage from "./Buyer/buyer.page";
 
 interface ConfiguracionProps { }
 
 const Configuracion: FC<ConfiguracionProps> = () => {
     const [showProjects, setShowProjects] = useState(false);
     const [showLabels, setShowLabels] = useState(false);
+    const [showBuyer, setShowBuyer] = useState(false);
+
 
     const handleToggleProjects = () => {
         setShowProjects(!showProjects);
         setShowLabels(false); // Oculta el otro componente
+        setShowBuyer(false);
     }
 
     const handleToggleLabels = () => {
         setShowLabels(!showLabels);
         setShowProjects(false); // Oculta el otro componente
+        setShowBuyer(false);
+    }
+
+    const handleToggleBuyer = () => {
+        setShowBuyer(!showBuyer);
+        setShowProjects(false);
+        setShowLabels(false);
     }
 
 return (
@@ -42,6 +52,10 @@ return (
                                         <Button variant="secondary" onClick={handleToggleLabels}>
                                             Etiquetas
                                         </Button>
+
+                                        <Button variant="info" onClick={handleToggleBuyer}>
+                                            Buyer
+                                        </Button>
                                     </div>
                                 </Card.Body>
                             </Card>
@@ -60,6 +74,14 @@ return (
                         <Row className="mt-4">
                             <Col xl={12}>
                                 <LabelsPage />
+                            </Col>
+                        </Row>
+                    )}
+
+                    {showBuyer && (
+                        <Row className="mt-4">
+                            <Col xl={12}>
+                                <BuyerPage />
                             </Col>
                         </Row>
                     )}

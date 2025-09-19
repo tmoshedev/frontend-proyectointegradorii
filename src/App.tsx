@@ -18,7 +18,8 @@ import {
   MiEquipoPage,
   CalendarioPage,
   CampanaPage,
-  ConfiguracionPage
+  ConfiguracionPage,
+  BuyerConfigPage
 } from './pages';
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
                 {/*ConfiguracionPage*/}
                 <Route element={<ProtectedRoute permission="settings-index" />}>
                   <Route path="settings" element={<ConfiguracionPage />} />
+                </Route>
+                {/*BuyerConfigPage*/}
+                <Route element={<ProtectedRoute permission="settings-index" />}>
+                  <Route path="settings/buyer" element={<BuyerConfigPage />} />
                 </Route>
               </Route>
             </Route>

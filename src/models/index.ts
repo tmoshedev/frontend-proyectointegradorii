@@ -24,3 +24,9 @@ export * from './label.model';
 export * from './type-label.model';
 export * from './project.model';
 export * from './type-project.model';
+
+export * from './question-category.model';
+export * from './type-question.model';
+export * from './question.model';
+export * from './answer.model';
+

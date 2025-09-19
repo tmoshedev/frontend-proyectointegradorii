@@ -8,6 +8,7 @@ export * from './useUserHierarchy';
 export * from './useLeadNotes';
 export * from './useCalendarioActividades';
 export * from './useUsers';
+export * from './useBuyer';
 export * from './useLabels';
 export * from './useCampaign';
 export * from './useTypeLabels';

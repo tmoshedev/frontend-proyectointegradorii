@@ -23,6 +23,7 @@ import LeadActividadComponent from './components/lead-actividad.component';
 import ModalComponent from '../../components/shared/modal.component';
 import CancelarActividadComponent from './actividades-componentes/cancelar-actividad.component';
 import AddEtiquetasComponent from './components/add-etiquetas.component';
+import LeadBuyerComponent from './components/lead-buyer.component';
 
 interface DataModalState {
   type: string;
@@ -181,7 +182,7 @@ export const LeadPage = () => {
                           {stateMenu == 'Notas' &&
                           (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                             <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
-                          ) : (
+                          ) : ( 
                             <div className="content-tabs-app">
                               <div>Solo el asesor asignado o un administrador puede gestionar notas.</div>
                             </div>
@@ -195,6 +196,16 @@ export const LeadPage = () => {
                           ) : (
                             <div className="content-tabs-app">
                               <div>Solo el asesor asignado o un administrador puede gestionar actividades.</div>
+                            </div>
+                          )}
+                          {stateMenu == 'Buyer' &&
+                          (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
+                            <LeadBuyerComponent
+                              changeHistorialView={changeHistorialView} 
+                            />
+                          ) : (
+                            <div className="content-tabs-app">
+                              <div>Solo el asesor asignado o un administrador puede gestionar el buyer.</div>
                             </div>
                           )}
                         </div>

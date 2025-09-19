@@ -9,3 +9,4 @@ export { default as MiEquipoPage } from './MiEquipo/mi-equipo.page';
 export { default as CalendarioPage } from './Calendario/calendario.page';
 export { default as CampanaPage } from './Campanas/campanas.page';
 export { default as ConfiguracionPage } from './Configuracion/configuracion.page';
+export { default as BuyerConfigPage } from './Configuracion/Buyer/buyer.page';
