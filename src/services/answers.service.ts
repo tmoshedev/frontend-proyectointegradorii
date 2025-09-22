@@ -1,6 +1,7 @@
+import { Answer } from '../models';
 import apiInstance from './api';
 
-export const storeAnswer = async (question_id: number, lead_id: number, user_id: number, respuesta: string) => {
+export const storeAnswer = async (question_id: string, lead_id: string, user_id: string, respuesta: string) => {
   const form = {
   question_id,
   lead_id,
@@ -13,11 +14,8 @@ export const storeAnswer = async (question_id: number, lead_id: number, user_id:
   return response;
 };
 
-export const updateAnswer = async (id: number, question_id: number, lead_id: number, user_id: number, respuesta: string) => {
+export const updateAnswer = async (id: number, respuesta: string) => {
   const form = {
-    question_id,
-    lead_id,
-    user_id,
     respuesta
   };
   const response = await apiInstance.patch(`/answers/${id}`, {

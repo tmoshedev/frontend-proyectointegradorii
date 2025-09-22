@@ -51,7 +51,7 @@ export function useAnswers() {
   };
 
   //STORE
-  const storeAnswer = async (question_id: number, lead_id: number, user_id: number, respuesta: string) => {
+  const storeAnswer = async (question_id: string, lead_id: string, user_id: string, respuesta: string) => {
     dispatch(setLoading(true));
     try {
       const response = await AnswerService.storeAnswer(
@@ -68,14 +68,13 @@ export function useAnswers() {
     }
   };
 
-  /*/UPDATE
-  const updateAnswer = async (id: number, name: string, orden: number) => {
+  //UPDATE
+  const updateAnswer = async (id: number, respuesta: string) => {
     dispatch(setLoading(true));
     try {
       const response = await AnswerService.updateAnswer(
         id,
-        name || '',
-        orden || 0
+        respuesta
       );
       const typedResponse = response as { answer: Answer };
       dispatch(dataTable_updateResource(typedResponse.answer));
@@ -83,7 +82,7 @@ export function useAnswers() {
     } finally {
       dispatch(setLoading(false));
     }
-  };*/
+  };
 
   //DELETE
   const deleteAnswer = async (id: number) => {
@@ -121,7 +120,7 @@ export function useAnswers() {
   return {
     getAnswer,
     storeAnswer,
-    //updateAnswer,
+    updateAnswer,
     deleteAnswer,
     stateAnswer,
   };

@@ -182,32 +182,30 @@ export const LeadPage = () => {
                           {stateMenu == 'Notas' &&
                           (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                             <LeadAddNoteComponent changeHistorialView={changeHistorialView} />
-                          ) : ( 
+                          ) : (rolActual === 'SALES_AGENT' ) ? ( 
                             <div className="content-tabs-app">
                               <div>Solo el asesor asignado o un administrador puede gestionar notas.</div>
                             </div>
-                          )}
+                          ): null}
                           {stateMenu == 'Actividad' &&
                           (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                             <LeadActividadComponent
                               changeHistorialView={changeHistorialView}
                               setStateMenu={setStateMenu}
                             />
-                          ) : (
+                          ) :  (rolActual === 'SALES_AGENT' ) ? ( 
                             <div className="content-tabs-app">
                               <div>Solo el asesor asignado o un administrador puede gestionar actividades.</div>
                             </div>
-                          )}
+                          ): null}
                           {stateMenu == 'Buyer' &&
                           (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
-                            <LeadBuyerComponent
-                               
-                            />
-                          ) : (
+                            <LeadBuyerComponent changeHistorialView={changeHistorialView} />
+                          )  :  (rolActual === 'SALES_AGENT' ) ? ( 
                             <div className="content-tabs-app">
                               <div>Solo el asesor asignado o un administrador puede gestionar el buyer.</div>
                             </div>
-                          )}
+                          ): null}
                         </div>
                       </div>
                     </div>

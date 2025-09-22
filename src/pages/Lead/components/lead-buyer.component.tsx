@@ -1,86 +1,460 @@
-import { useBuyerForm } from '../../../hooks/useBuyerForm';
-import { Question } from '../../../models';
-import { Accordion, Form, Button, Alert, Card, Spinner } from 'react-bootstrap';
+import { useState, useEffect, ChangeEvent } from 'react';
+import { Form, Button, Alert, Card, Spinner, ListGroup, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { Save } from 'lucide-react';
+import { useQuestionCategories } from '../../../hooks/useQuestionCategory';
+import { useQuestions } from '../../../hooks/useQuestion';
+import { Answer, Question, QuestionCategory } from '../../../models';
 import { AppStore } from '../../../redux/store';
-import { Edit, Save } from 'lucide-react';
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react';
+import { PaginatedResponse } from '../../../models/responses/paginated.response';
+import { useAnswers } from '../../../hooks/useAnswer';
+import { SweetAlert } from '../../../utilities';
 
-export const LeadBuyerComponent = () => {
+
+interface Props {
+  changeHistorialView: (view: string) => void;
+}
+
+// Nueva estructura para el estado de las respuestas
+interface AnswerState {
+  value: any;
+  answer_id: number | null; // ID de la respuesta si ya existe
+}
+
+export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   const { lead } = useSelector((store: AppStore) => store.lead);
-  
-  const {
-    loading,
-    error,
-    categories,
-    questions,
-    answers,
-    canEdit,
-    isSupervisor,
-    isEditing,
-    handleAnswerChange,
-    submitAnswers,
-    toggleEditMode,
-  } = useBuyerForm(lead.id);
+  const { user } = useSelector((store: AppStore) => store.auth);
+  const { getQuestionCategory } = useQuestionCategories();
+  const { getQuestion } = useQuestions();
+  const { getAnswer, storeAnswer, updateAnswer } = useAnswers();
 
-  const renderQuestionInput = (question: Question) => {
-    const answerValue = answers[question.id]?.respuesta ?? '';
-    // El formulario está deshabilitado si no se puede editar, o si no se está en modo edición.
-    // La primera vez (canEdit=true, isEditing=false) debe estar habilitado.
-    const isDisabled = !canEdit || (!!answers[question.id] && !isEditing);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<QuestionCategory[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | null>(null);
+  const [answers, setAnswers] = useState<{ [key: string]: AnswerState }>({});
 
-    switch (question.type_question?.codigo) {
-      case 'TEXT':
-        return (
-          <Form.Control
-            type="text"
-            value={answerValue}
-            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-            disabled={isDisabled}
-            placeholder={isDisabled ? 'Respuesta guardada' : 'Escribe tu respuesta...'}
-          />
-        );
-      case 'TEXTAREA':
-        return (
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={answerValue}
-            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-            disabled={isDisabled}
-            placeholder={isDisabled ? 'Respuesta guardada' : 'Escribe tu respuesta...'}
-          />
-        );
-      case 'BOOLEAN':
-        return (
-          <Form.Check
-            type="switch"
-            id={`question-${question.id}`}
-            label={question.texto}
-            checked={!!answerValue}
-            onChange={(e) => handleAnswerChange(question.id, e.target.checked)}
-            disabled={isDisabled}
-          />
-        );
-      case 'SELECT':
-        return (
-          <Form.Select
-            value={answerValue}
-            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-            disabled={isDisabled}
-          >
-            <option value="">Seleccione una opción</option>
-            {question.opciones?.split(',').map((opt, index) => (
-              <option key={index} value={opt.trim()}>{opt.trim()}</option>
-            ))}
-          </Form.Select>
-        );
-      default:
-        return <p className="text-danger">Tipo de pregunta no soportado: {question.type_question?.name}</p>;
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+        // 1. Cargar categorías
+        const categoryResponse = await getQuestionCategory('', '', 1, '100', 'orden', 'asc', false) as PaginatedResponse<QuestionCategory>;
+        let sortedCategories: QuestionCategory[] = [];
+        if (categoryResponse && categoryResponse.data) {
+          sortedCategories = categoryResponse.data.sort((a, b) => a.orden - b.orden);
+          setCategories(sortedCategories);
+        }
+        // 2. Cargar preguntas de la primera categoría
+        let loadedQuestions: Question[] = [];
+        if (sortedCategories.length > 0) {
+          setSelectedCategory(sortedCategories[0]);
+          const response = await getQuestion(String(sortedCategories[0].id), '', '', 1, '100', 'orden', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
+          if (response && response.data) {
+            loadedQuestions = response.data.sort((a, b) => a.orden - b.orden);
+            setQuestions(loadedQuestions);
+          } else {
+            setQuestions([]);
+          }
+        }
+        // 3. Cargar respuestas y normalizar usando las preguntas
+        const answerResponse = await getAnswer(String(lead.id), '', '', 1, '500', 'id', 'asc', false) as PaginatedResponse<Answer>;
+        if (answerResponse && answerResponse.data) {
+          const initialAnswers = answerResponse.data.reduce((acc, ans) => {
+            let value: any = ans.respuesta;
+            try {
+              value = JSON.parse(value);
+            } catch (e) {
+              if (value === 'true') value = true;
+              else if (value === 'false') value = false;
+            }
+            // Buscar la pregunta correspondiente para saber el tipo
+            const question = loadedQuestions.find(q => String(q.id) === String(ans.question_id));
+            let normalizedValue = value;
+            if (question) {
+              switch (question.codigo_type) {
+                case 'SELECT':
+                  // Solo guardar el valor seleccionado como string
+                  if (typeof value === 'object' && value !== null && 'selected' in value) {
+                    normalizedValue = value.selected ?? '';
+                  } else {
+                    normalizedValue = typeof value === 'string' ? value : '';
+                  }
+                  break;
+                case 'CHECKBOX':
+                  if (Array.isArray(value)) {
+                    normalizedValue = { selected: value, otherValue: '' };
+                  } else if (typeof value === 'object' && value !== null) {
+                    // Normalizar claves en mayúsculas si vienen del backend
+                    const selected = value.selected ?? value.SELECTED ?? [];
+                    const otherValue = value.otherValue ?? value.OTHERVALUE ?? '';
+                    normalizedValue = {
+                      selected,
+                      otherValue
+                    };
+                  } else if (typeof value === 'string') {
+                    normalizedValue = { selected: [value], otherValue: '' };
+                  }
+                  break;
+                case 'BOOLEAN':
+                  if (typeof value === 'string') {
+                    normalizedValue = value === 'true';
+                  }
+                  break;
+                default:
+                  // Para otros tipos, dejar el valor tal cual
+                  break;
+              }
+            }
+            if (ans.question_id !== null && ans.question_id !== undefined) {
+              acc[ans.question_id] = { value: normalizedValue, answer_id: ans.id };
+            }
+            return acc;
+          }, {} as { [key: string]: AnswerState });
+          setAnswers(initialAnswers);
+        }
+      } catch (err) {
+        setError('Error al cargar los datos iniciales.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (lead?.id) {
+      fetchInitialData();
+    }
+  }, [lead]);
+
+  const handleCategoryClick = async (category: QuestionCategory) => {
+    if (selectedCategory?.id === category.id) return;
+    try {
+      setLoading(true);
+      setSelectedCategory(category);
+      const response = await getQuestion(String(category.id), '', '', 1, '100', 'orden', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
+      let loadedQuestions: Question[] = [];
+      if (response && response.data) {
+        loadedQuestions = response.data.sort((a, b) => a.orden - b.orden);
+        setQuestions(loadedQuestions);
+      } else {
+        setQuestions([]);
+      }
+      // Cargar y normalizar respuestas para las preguntas de la categoría seleccionada
+      const answerResponse = await getAnswer(String(lead.id), '', '', 1, '500', 'id', 'asc', false) as PaginatedResponse<Answer>;
+      if (answerResponse && answerResponse.data) {
+        const initialAnswers = answerResponse.data.reduce((acc, ans) => {
+          let value: any = ans.respuesta;
+          try {
+            value = JSON.parse(value);
+          } catch (e) {
+            if (value === 'true') value = true;
+            else if (value === 'false') value = false;
+          }
+          // Buscar la pregunta correspondiente para saber el tipo
+          const question = loadedQuestions.find(q => String(q.id) === String(ans.question_id));
+          let normalizedValue = value;
+          if (question) {
+            switch (question.codigo_type) {
+              case 'SELECT':
+                if (typeof value === 'string') {
+                  normalizedValue = { selected: value, otherValue: '' };
+                } else if (typeof value === 'object' && value !== null) {
+                  normalizedValue = {
+                    selected: value.selected ?? '',
+                    otherValue: value.otherValue ?? ''
+                  };
+                }
+                break;
+              case 'CHECKBOX':
+                if (Array.isArray(value)) {
+                  normalizedValue = { selected: value, otherValue: '' };
+                } else if (typeof value === 'object' && value !== null) {
+                  normalizedValue = {
+                    selected: value.selected ?? [],
+                    otherValue: value.otherValue ?? ''
+                  };
+                } else if (typeof value === 'string') {
+                  normalizedValue = { selected: [value], otherValue: '' };
+                }
+                break;
+              case 'BOOLEAN':
+                if (typeof value === 'string') {
+                  normalizedValue = value === 'true';
+                }
+                break;
+              default:
+                // Para otros tipos, dejar el valor tal cual
+                break;
+            }
+          }
+          if (ans.question_id !== null && ans.question_id !== undefined) {
+            acc[ans.question_id] = { value: normalizedValue, answer_id: ans.id };
+          }
+          return acc;
+        }, {} as { [key: string]: AnswerState });
+        setAnswers(initialAnswers);
+      } else {
+        setAnswers({});
+      }
+    } catch (err) {
+      setError(`Error al cargar las preguntas para ${category.name}.`);
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
+  const handleAnswerChange = (questionId: string, value: any, type?: string) => {
+    setAnswers(prev => {
+      const newAnswers = { ...prev };
+      const existingAnswer = newAnswers[questionId] || { value: undefined, answer_id: null };
+
+      let finalValue;
+
+      switch (type) {
+        case 'CHECKBOX': {
+          // Lógica corregida y más robusta
+          const currentSelected = existingAnswer.value?.selected || [];
+          const otherValue = existingAnswer.value?.otherValue || '';
+          const newSelected = currentSelected.includes(value)
+            ? currentSelected.filter((item: any) => item !== value)
+            : [...currentSelected, value];
+          finalValue = { selected: newSelected, otherValue: otherValue };
+          break;
+        }
+
+        case 'CHECKBOX_OTHER': {
+          // Aseguramos que 'selected' se mantenga
+          const currentSelected = existingAnswer.value?.selected || [];
+          finalValue = { selected: currentSelected, otherValue: value };
+          break;
+        }
+
+        case 'SELECT': {
+          // Solo guardar el valor seleccionado
+          finalValue = value;
+          break;
+        }
+
+        default:
+          finalValue = value;
+          break;
+      }
+
+      newAnswers[questionId] = { ...existingAnswer, value: finalValue };
+      return newAnswers;
+    });
+  };
+
+  const submitAnswers = async () => {
+    if (!user) {
+      SweetAlert.error('Error de Autenticación', 'No se pudo identificar al usuario. Por favor, inicie sesión de nuevo.');
+      return;
+    }
+
+    setLoading(true);
+    const promises: Promise<any>[] = [];
+
+    Object.entries(answers).forEach(([questionId, answerState]) => {
+      if (answerState.value === undefined || answerState.value === null) return;
+
+      let respuesta: string;
+      // Si es un objeto (para SELECT o CHECKBOX con "Otro"), lo convertimos a JSON
+      if (typeof answerState.value === 'object' && answerState.value !== null && !(answerState.value instanceof File)) {
+        respuesta = JSON.stringify(answerState.value);
+      } else if (answerState.value instanceof File) {
+        respuesta = answerState.value.name;
+      } else if (typeof answerState.value === 'boolean') {
+        respuesta = answerState.value ? 'true' : 'false';
+      } else {
+        respuesta = String(answerState.value);
+      }
+
+      if (answerState.answer_id) {
+        promises.push(updateAnswer(answerState.answer_id, respuesta));
+      } else {
+        promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
+      }
+    });
+
+    if (promises.length === 0) {
+      SweetAlert.info('Sin Cambios', 'No hay nuevas respuestas o cambios para guardar.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await Promise.all(promises);
+      SweetAlert.success('Éxito', 'Respuestas guardadas correctamente.');
+    } catch (err) {
+      console.error('Error al guardar las respuestas:', err);
+      SweetAlert.error('Error', 'Ocurrió un error al guardar las respuestas. Inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... (código anterior del componente)
+
+  const renderQuestionInput = (question: Question) => {
+    const answerState = answers[question.id];
+    const answerValue = answerState?.value;
+    const questionIdStr = String(question.id);
+
+
+
+    // --- LÓGICA MEJORADA PARA OBTENER LAS OPCIONES ---
+    const getOptions = (opciones: string | string[] | null): string[] => {
+      if (!opciones) {
+        return [];
+      }
+      // Si ya es un array (el backend lo envía como JSON), lo usamos directamente.
+      if (Array.isArray(opciones)) {
+        return opciones;
+      }
+      // Si es una cadena, lo dividimos.
+      if (typeof opciones === 'string') {
+        return opciones.split(',').map(opt => opt.trim());
+      }
+      return [];
+    };
+
+    switch (question.codigo_type) {
+      case 'TEXT':
+        return <Form.Control type="text" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Respuesta corta..." />;
+
+      case 'TEXTAREA':
+        return <Form.Control as="textarea" rows={3} value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Párrafo..." />;
+
+      case 'BOOLEAN':
+        return (
+          <div>
+            <Form.Check inline type="radio" label="Sí" name={`question-${question.id}`} id={`question-${question.id}-yes`} checked={answerValue === true} onChange={() => handleAnswerChange(questionIdStr, true)} />
+            <Form.Check inline type="radio" label="No" name={`question-${question.id}`} id={`question-${question.id}-no`} checked={answerValue === false} onChange={() => handleAnswerChange(questionIdStr, false)} />
+          </div>
+        );
+
+      case 'SELECT': {
+        const options = getOptions(question.opciones);
+        // Normalizar el valor guardado para comparar correctamente
+        const normalize = (str: string) => (str ?? '').trim().toLowerCase();
+        // Buscar la opción que coincide con el valor guardado
+        let selectedValue = answerValue ?? '';
+        let matchedOption = options.find(opt => normalize(opt) === normalize(selectedValue));
+        // Si hay coincidencia, usar el valor exacto de la opción, si no, usar el valor guardado
+        selectedValue = matchedOption ?? selectedValue;
+        return (
+          <Form.Select value={selectedValue} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value, 'SELECT')}>
+            <option value="">Seleccione una opción</option>
+            {options.map((opt, index) => (
+              <option key={index} value={opt}>{opt}</option>
+            ))}
+          </Form.Select>
+        );
+      }
+
+      case 'CHECKBOX': {
+        // Lógica de opciones con 'Otro' por defecto
+        let checkOptions = Array.isArray(question.opciones)
+          ? question.opciones
+          : (typeof question.opciones === 'string' ? question.opciones.split(',').map(opt => opt.trim()) : []);
+        // Agregar 'Otro' si no existe
+        if (!checkOptions.includes('Otro')) {
+          checkOptions = [...checkOptions, 'Otro'];
+        }
+
+        // Normalizar los valores seleccionados para que coincidan con las opciones
+        const selectedValuesRaw = answerValue?.selected || [];
+        // Convertir todo a minúsculas y sin espacios para comparar
+        const normalize = (str: string) => str.trim().toLowerCase();
+        const selectedValues = selectedValuesRaw.map(normalize);
+        const otherValue = answerValue?.otherValue ?? '';
+        // Renderizar los checkboxes normales, incluyendo 'Otro' como opción seleccionable
+        return (
+          <div>
+            {checkOptions.map((optionText) => (
+              <Form.Check
+                key={`${question.id}-${optionText}`}
+                type="checkbox"
+                id={`question-${question.id}-${optionText.replace(/\s+/g, '-')}`}
+                label={optionText}
+                checked={selectedValues.includes(normalize(optionText))}
+                onChange={() => handleAnswerChange(questionIdStr, optionText, 'CHECKBOX')}
+              />
+            ))}
+            {/* Si 'Otro' está seleccionado, mostrar el input de texto */}
+            {selectedValues.includes(normalize('Otro')) && (
+              <Form.Control
+                type="text"
+                className="mt-2"
+                placeholder="Por favor, especifique"
+                value={otherValue}
+                onChange={(e) => handleAnswerChange(questionIdStr, e.target.value, 'CHECKBOX_OTHER')}
+              />
+            )}
+          </div>
+        );
+      }
+
+      case 'NUMBER':
+        return <Form.Control type="number" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Escriba un número..." />;
+
+      case 'DATE':
+        return <Form.Control type="date" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} />;
+
+      case 'IMAGE': {
+        // Lógica para subir la imagen y guardar la ruta
+        const imageUrl = typeof answerValue === 'string' && answerValue ? answerValue : null;
+
+        // Función para manejar el cambio de archivo y subirlo al storage
+        const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files ? e.target.files[0] : null;
+          if (!file) return;
+          // Simulación de subida a storage (reemplaza por tu lógica real de subida)
+          try {
+            // Aquí deberías subir el archivo a tu storage y obtener la URL/UUID
+            // Por ejemplo:
+            // const url = await uploadImageToStorage(file);
+            // handleAnswerChange(questionIdStr, url, 'IMAGE');
+            // Simulación:
+            const fakeStorageUrl = `/storage/${file.name}`;
+            handleAnswerChange(questionIdStr, fakeStorageUrl, 'IMAGE');
+          } catch (err) {
+            SweetAlert.error('Error', 'No se pudo subir la imagen.');
+          }
+        };
+
+        return (
+          <div className="form-group col-md-12">
+            <label htmlFor={`image-${question.id}`} className="form-label">
+              {"Actualizar imagen"}
+            </label>
+            <input
+              id={`image-${question.id}`}
+              name={`image-${question.id}`}
+              type="file"
+              accept="image/*"
+              className="form-control form-control-sm"
+              onChange={handleImageUpload}
+            />
+            {imageUrl && (
+              <div className="mt-2">
+                <img src={imageUrl} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      default:
+        return <p className="text-danger small">Tipo de pregunta no soportado: {question.name_type || 'desconocido'}</p>;
+    }
+  };
+
+  // ... (resto del componente)
+
+  if (loading && categories.length === 0) {
     return (
       <div className="d-flex justify-content-center align-items-center p-5">
         <Spinner animation="border" />
@@ -90,59 +464,58 @@ export const LeadBuyerComponent = () => {
   }
 
   if (error) {
-    return <Alert variant="danger" className="m-3">Error al cargar: {error}</Alert>;
+    return <Alert variant="danger" className="m-3">{error}</Alert>;
   }
 
   if (categories.length === 0) {
-      return <Alert variant="info" className="m-3">No hay preguntas configuradas para el formulario Buyer.</Alert>
+    return <Alert variant="info" className="m-3">No hay preguntas configuradas para el formulario Buyer.</Alert>
   }
 
   return (
     <Card className="border-0">
       <Card.Body>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="mb-0">Formulario Buyer</h4>
-          {isSupervisor && Object.keys(answers).length > 0 && (
-            <Button variant={isEditing ? "secondary" : "primary"} onClick={toggleEditMode}>
-              <Edit size={16} className="me-2" />
-              {isEditing ? 'Cancelar Edición' : 'Habilitar Edición'}
-            </Button>
-          )}
+        <Row>
+          <Col md={4}>
+            <h5 className="fw-bold">CATEGORIAS</h5>
+            <hr />
+            <ListGroup>
+              {categories.map(category => (
+                <ListGroup.Item key={category.id} action active={selectedCategory?.id === category.id} onClick={() => handleCategoryClick(category)} className="d-flex justify-content-between align-items-start">
+                  <span style={{ textTransform: 'uppercase' }}>{category.name}</span>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Col>
+          <Col md={8}>
+            {loading && questions.length === 0 ? (
+              <div className="d-flex justify-content-center align-items-center p-5">
+                <Spinner animation="border" size="sm" />
+                <span className="ms-3">Cargando preguntas...</span>
+              </div>
+            ) : (
+              <>
+                {questions.length > 0 ? (
+                  <Form>
+                    {questions.map(question => (
+                      <Form.Group key={question.id} className="mb-4">
+                        <Form.Label className="fw-bold">{question.texto}</Form.Label>
+                        {renderQuestionInput(question)}
+                      </Form.Group>
+                    ))}
+                  </Form>
+                ) : (
+                  <Alert variant="light">No hay preguntas en esta categoría.</Alert>
+                )}
+              </>
+            )}
+          </Col>
+        </Row>
+        <div className="mt-4 text-end">
+          <Button variant="success" onClick={submitAnswers} disabled={loading}>
+            <Save size={16} className="me-2" />
+            {loading ? 'Guardando...' : 'Guardar Respuestas'}
+          </Button>
         </div>
-
-        <Accordion defaultActiveKey="0">
-          {categories
-            .sort((a: { orden: number }, b: { orden: number }) => a.orden - b.orden)
-            .map((category: { id: Key | null | undefined; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: any) => {
-              const categoryQuestions = questions.filter((q: { question_category_id: Key | null | undefined; }) => q.question_category_id === category.id);
-              if (categoryQuestions.length === 0) return null;
-
-              return (
-                <Accordion.Item eventKey={String(index)} key={category.id}>
-                  <Accordion.Header>{category.name}</Accordion.Header>
-                  <Accordion.Body>
-                    {categoryQuestions
-                      .sort((a: { orden: number; }, b: { orden: number; }) => a.orden - b.orden)
-                      .map((question: Question) => (
-                        <Form.Group key={question.id} className="mb-4">
-                          {question.type_question?.codigo !== 'BOOLEAN' && <Form.Label className="fw-bold">{question.texto}</Form.Label>}
-                          {renderQuestionInput(question)}
-                        </Form.Group>
-                      ))}
-                  </Accordion.Body>
-                </Accordion.Item>
-              );
-            })}
-        </Accordion>
-
-        {(canEdit || isEditing) && (
-          <div className="mt-4 text-end">
-            <Button variant="success" onClick={submitAnswers} disabled={loading}>
-              <Save size={16} className="me-2" />
-              {loading ? 'Guardando...' : 'Guardar Respuestas'}
-            </Button>
-          </div>
-        )}
       </Card.Body>
     </Card>
   );

@@ -12,3 +12,4 @@ export * from './agenda-diaria.response';
 export * from './mi-calendario.response';
 export * from './etapa-paginacion.response';
 export * from './campaign.response';
+export * from './paginated.response';

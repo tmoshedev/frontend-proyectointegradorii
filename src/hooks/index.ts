@@ -15,4 +15,3 @@ export * from './useQuestionCategory';
 export * from './useTypeQuestion';
 export * from './useQuestion';
 export * from './useAnswer';
-export * from './useBuyerForm';

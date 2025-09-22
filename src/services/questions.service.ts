@@ -44,10 +44,13 @@ export const getQuestion = async (
   page: number,
   limit: string,
   orderBy: string,
-  order: string
+  order: string,
+  include: string = ''
 ) => {
-  const response = await apiInstance.get(
-    `/questions?question_category_id=${question_category_id}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
-  );
+  let url = `/questions?question_category_id=${question_category_id}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`;
+  if (include) {
+    url += `&include=${include}`;
+  }
+  const response = await apiInstance.get(url);
   return response;
 };

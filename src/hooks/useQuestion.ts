@@ -25,7 +25,8 @@ export function useQuestions() {
     orderBy: string,
     order: string,
     loading: boolean,
-    updateTable: boolean = false
+    updateTable: boolean = false,
+    include: string = ''
   ) => {
     dispatch(setLoading(true));
     try {
@@ -36,7 +37,8 @@ export function useQuestions() {
         page,
         limit,
         orderBy,
-        order
+        order,
+        include
       );
 
       if (updateTable) {

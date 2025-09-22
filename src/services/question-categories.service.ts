@@ -40,7 +40,7 @@ export const getQuestionCategory = async (
   page: number,
   limit: string,
   orderBy: string,
-  order: string
+  order: string,
 ) => {
   const response = await apiInstance.get(
     `/question-categories?text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
