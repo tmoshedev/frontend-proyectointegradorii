@@ -201,7 +201,7 @@ export const LeadPage = () => {
                           {stateMenu == 'Buyer' &&
                           (rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid)) ? (
                             <LeadBuyerComponent
-                              changeHistorialView={changeHistorialView} 
+                               
                             />
                           ) : (
                             <div className="content-tabs-app">

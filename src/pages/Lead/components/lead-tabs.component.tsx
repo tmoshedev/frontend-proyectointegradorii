@@ -3,12 +3,13 @@ import { NotebookPen } from 'lucide-react';
 import { CalendarDays } from 'lucide-react';
 import { PhoneOutgoing } from 'lucide-react';
 import { Paperclip } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
 
 const menus = [
   { name: 'Notas', icon: <NotebookPen size={18} /> },
   { name: 'Actividad', icon: <CalendarDays size={18} /> },
-  /* { name: 'Llamada', icon: <PhoneOutgoing size={18} /> },
-  { name: 'Archivos', icon: <Paperclip size={18} /> }, */
+  { name: 'Buyer', icon: <ClipboardList size={18} /> },
+  /*{ name: 'Archivos', icon: <Paperclip size={18} /> },*/
 ];
 
 interface Props {

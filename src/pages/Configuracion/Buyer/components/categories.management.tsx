@@ -1,114 +1,291 @@
 import React, { useEffect, useState } from 'react';
-import { useBuyer } from '../../../../hooks/useBuyer';
-import { QuestionCategory } from '../../../../models';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { useSelector } from 'react-redux';
+import { useQuestionCategories } from '../../../../hooks/useQuestionCategory';
+import { useQuestions } from '../../../../hooks/useQuestion';
+import { Question, QuestionCategory, TypeQuestion } from '../../../../models';
+import { AppStore } from '../../../../redux/store';
+import { SweetAlert } from '../../../../utilities';
+
+// Componentes de UI
+import { Button, Card, Form, Modal, Accordion, Alert, Table } from 'react-bootstrap';
+import { Pencil, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { useTypeQuestions } from '../../../../hooks';
 
 const CategoriesManagement = () => {
-  const { questionCategories, fetchQuestionCategories, addQuestionCategory, editQuestionCategory, removeQuestionCategory, loading } = useBuyer();
-  const [showModal, setShowModal] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<Partial<QuestionCategory> | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  // --- HOOKS ---
+  const { 
+    getQuestionCategory, 
+    storeQuestionCategory, 
+    updateQuestionCategory, 
+    deleteQuestionCategory 
+  } = useQuestionCategories();
+  
+  const { 
+    getQuestion, 
+    storeQuestion, 
+    updateQuestion, 
+    deleteQuestion,
+  } = useQuestions();
+  
+  const { 
+    getTypeQuestion
+  } = useTypeQuestions();
 
+  // --- REDUX STATE ---
+  const { loading } = useSelector((store: AppStore) => store.loading);
+
+  // --- COMPONENT STATE ---
+  const [categories, setCategories] = useState<QuestionCategory[]>([]);
+  const [isCategoriesLoading, setCategoriesLoading] = useState(true);
+  const [questionsByCat, setQuestionsByCat] = useState<Record<number, Question[]>>({});
+  const [typeQuestions, setTypeQuestions] = useState<TypeQuestion[]>([]);
+  const [activeAccordionKey, setActiveAccordionKey] = useState<string | null>(null);
+  const [isQuestionsLoading, setQuestionsLoading] = useState<Record<number, boolean>>({});
+
+  // Modals State
+  const [modalState, setModalState] = useState<{
+    show: boolean;
+    mode: 'create' | 'edit';
+    type: 'category' | 'question';
+    data: any;
+  }>({ show: false, mode: 'create', type: 'category', data: null });
+
+  // --- DATA FETCHING ---
   useEffect(() => {
-    fetchQuestionCategories();
+    setCategoriesLoading(true);
+    getQuestionCategory('', '', 1, '100', 'orden', 'asc', true, true)
+      .then(response => {
+        const res = response as { data: QuestionCategory[] };
+        setCategories(res.data || []);
+      })
+      .catch(() => setCategories([]))
+      .finally(() => setCategoriesLoading(false));
+    
+    getTypeQuestion('', '', 1, '100', 'id', 'asc', true).then(response => {
+        const res = response as { data: TypeQuestion[] };
+        setTypeQuestions(res.data);
+    });
   }, []);
 
-  const handleShowModal = (category?: QuestionCategory) => {
-    if (category) {
-      setCurrentCategory(category);
-      setIsEditing(true);
-    } else {
-      setCurrentCategory({ name: '', orden: 0, state: 1 });
-      setIsEditing(false);
+  const handleAccordionToggle = async (categoryId: number, eventKey: string) => {
+    const newActiveKey = activeAccordionKey === eventKey ? null : eventKey;
+    setActiveAccordionKey(newActiveKey);
+
+    if (newActiveKey && !questionsByCat[categoryId]) {
+      setQuestionsLoading(prev => ({ ...prev, [categoryId]: true }));
+      try {
+        const response = await getQuestion(String(categoryId), '', '', 1, '100', 'orden', 'asc', true, true);
+        const res = response as { data: Question[] };
+        setQuestionsByCat(prev => ({ ...prev, [categoryId]: res.data }));
+      } finally {
+        setQuestionsLoading(prev => ({ ...prev, [categoryId]: false }));
+      }
     }
-    setShowModal(true);
+  };
+
+  // --- MODAL HANDLERS ---
+  const handleShowModal = (type: 'category' | 'question', mode: 'create' | 'edit', data: any = null) => {
+    let initialData = {};
+    if (mode === 'create') {
+      if (type === 'category') {
+        const nextOrder = categories.length > 0 ? Math.max(...categories.map((c: QuestionCategory) => c.orden)) + 10 : 10;
+        initialData = { name: '', orden: nextOrder };
+      } else { // question
+        initialData = { question_category_id: data.categoryId, texto: '', type_question_id: '', opciones: '', orden: 10 };
+      }
+    } else {
+      initialData = { ...data };
+    }
+    setModalState({ show: true, type, mode, data: initialData });
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
-    setCurrentCategory(null);
+    setModalState({ show: false, mode: 'create', type: 'category', data: null });
   };
 
+  const handleModalChange = (field: string, value: any) => {
+    setModalState(prev => ({ ...prev, data: { ...prev.data, [field]: value } }));
+  };
+
+  // --- CRUD OPERATIONS ---
   const handleSave = async () => {
-    if (currentCategory) {
-      if (isEditing && currentCategory.id) {
-        await editQuestionCategory(currentCategory.id, currentCategory);
-      } else {
-        await addQuestionCategory(currentCategory);
+    const { type, mode, data } = modalState;
+    
+    try {
+      let updatedCategories = [...categories];
+      if (type === 'category') {
+        if (!data.name) {
+          SweetAlert.warning('Validación', 'El nombre de la categoría es obligatorio.');
+          return;
+        }
+        if (mode === 'edit') {
+          const response = await updateQuestionCategory(data.id, data.name, data.orden || 0);
+          const res = response as unknown as { data: QuestionCategory };
+          updatedCategories = categories.map(c => c.id === res.data.id ? res.data : c);
+        } else {
+          const response = await storeQuestionCategory(data.name, data.orden || 0);
+          const res = response as unknown as { data: QuestionCategory };
+          updatedCategories.push(res.data);
+        }
+        setCategories(updatedCategories.sort((a, b) => a.orden - b.orden));
+        SweetAlert.success('Éxito', 'Categoría guardada correctamente.');
+      } 
+      else if (type === 'question') {
+        if (!data.texto || !data.type_question_id) {
+          SweetAlert.warning('Validación', 'El texto y el tipo de pregunta son obligatorios.');
+          return;
+        }
+        if (mode === 'edit') {
+          await updateQuestion(data.id, data, data.orden);
+        } else {
+          await storeQuestion(
+            data.type_question_id,
+            data.texto,
+            data.question_category_id,
+            data.opciones,
+            data.orden
+          );
+        }
+        // Recargar preguntas para la categoría afectada
+        const response = await getQuestion(String(data.question_category_id), '', '', 1, '100', 'orden', 'asc', true, true);
+        const res = response as { data: Question[] };
+        setQuestionsByCat(prev => ({ ...prev, [data.question_category_id]: res.data }));
+        SweetAlert.success('Éxito', 'Pregunta guardada correctamente.');
       }
       handleCloseModal();
+    } catch (error) {
+      SweetAlert.error('Error', `Ocurrió un error al guardar.`);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
-      await removeQuestionCategory(id);
-    }
+  const handleDelete = async (type: 'category' | 'question', id: number, categoryId?: number) => {
+    SweetAlert.onConfirmation(async () => {
+      try {
+        if (type === 'category') {
+          await deleteQuestionCategory(id);
+          setCategories(prev => prev.filter(c => c.id !== id));
+        } else {
+          await deleteQuestion(id);
+          if (categoryId) {
+            const response = await getQuestion(String(categoryId), '', '', 1, '100', 'orden', 'asc', true, true);
+            const res = response as { data: Question[] };
+            setQuestionsByCat(prev => ({ ...prev, [categoryId]: res.data }));
+          }
+        }
+        SweetAlert.success('Eliminado', 'El registro ha sido eliminado.');
+      } catch (error) {
+        SweetAlert.error('Error', 'No se pudo eliminar el registro.');
+      }
+    }, undefined, '¿Estás seguro?', 'Esta acción no se puede deshacer.');
   };
 
+  // --- RENDER ---
   return (
-    <div className="card">
-      <div className="card-header">
-        <h3>Gestionar Categorías de Preguntas</h3>
-        <Button variant="primary" onClick={() => handleShowModal()}>
+    <Card className="shadow-sm">
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        <Card.Title as="h5" className="mb-0">Configuración del Formulario Buyer</Card.Title>
+        <Button variant="primary" onClick={() => handleShowModal('category', 'create')}>
+          <Plus size={18} className="me-1" />
           Añadir Categoría
         </Button>
-      </div>
-      <div className="card-body">
-        {loading && <p>Cargando...</p>}
-        <ul className="list-group">
-          {questionCategories.map((cat) => (
-            <li key={cat.id} className="list-group-item d-flex justify-content-between align-items-center">
-              {cat.name} (Orden: {cat.orden})
-              <div>
-                <Button variant="secondary" size="sm" onClick={() => handleShowModal(cat)}>
-                  Editar
-                </Button>
-                <Button variant="danger" size="sm" className="ms-2" onClick={() => handleDelete(cat.id)}>
-                  Eliminar
-                </Button>
+      </Card.Header>
+      <Card.Body>
+        {isCategoriesLoading && <p>Cargando...</p>}
+        {!isCategoriesLoading && categories.length === 0 && <Alert variant="info">No hay categorías. ¡Crea la primera!</Alert>}
+        
+        <Accordion
+          activeKey={activeAccordionKey}
+          onSelect={(eventKey) => {
+            if (eventKey) {
+              // Ensure eventKey is a string, not string[]
+              const key = Array.isArray(eventKey) ? eventKey[0] : eventKey;
+              handleAccordionToggle(Number(key), key);
+            } else {
+              setActiveAccordionKey(null);
+            }
+          }}
+        >
+          {Array.isArray(categories) && categories.map((cat: QuestionCategory) => (
+            <Accordion.Item eventKey={String(cat.id)} key={cat.id}>
+              <div className="d-flex align-items-center">
+                <Accordion.Header className="flex-grow-1">
+                  {cat.name} (Orden: {cat.orden})
+                </Accordion.Header>
+                <div className="p-2">
+                  <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleShowModal('category', 'edit', cat)}>
+                    <Pencil size={14} />
+                  </Button>
+                  <Button variant="outline-danger" size="sm" onClick={() => handleDelete('category', cat.id)}>
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
               </div>
-            </li>
+              <Accordion.Body>
+                <h5>Preguntas en esta Categoría</h5>
+                <Button variant="success" size="sm" className="mb-3" onClick={() => handleShowModal('question', 'create', { categoryId: cat.id })}>
+                  <Plus size={16} /> Añadir Pregunta
+                </Button>
+                
+                {isQuestionsLoading[cat.id] && <p>Cargando preguntas...</p>}
+                
+                {!isQuestionsLoading[cat.id] && questionsByCat[cat.id] && questionsByCat[cat.id].length > 0 ? (
+                  <Table striped bordered hover size="sm">
+                    <thead><tr><th>Pregunta</th><th>Tipo</th><th>Orden</th><th className="text-end">Acciones</th></tr></thead>
+                    <tbody>
+                      {questionsByCat[cat.id].sort((a,b) => a.orden - b.orden).map(q => (
+                        <tr key={q.id}>
+                          <td>{q.texto}</td>
+                          <td>{typeQuestions.find(tq => tq.id === Number(q.type_question_id))?.name}</td>
+                          <td>{q.orden}</td>
+                          <td className="text-end">
+                            <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleShowModal('question', 'edit', q)}><Pencil size={14} /></Button>
+                            <Button variant="outline-danger" size="sm" onClick={() => handleDelete('question', q.id, cat.id)}><Trash2 size={14} /></Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  !isQuestionsLoading[cat.id] && <Alert variant="secondary" className="mt-2">No hay preguntas en esta categoría.</Alert>
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
           ))}
-        </ul>
-      </div>
+        </Accordion>
+      </Card.Body>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
+      {/* --- MODAL UNIVERSAL --- */}
+      <Modal show={modalState.show} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>{isEditing ? 'Editar' : 'Añadir'} Categoría</Modal.Title>
+          <Modal.Title>{modalState.mode === 'edit' ? 'Editar' : 'Añadir'} {modalState.type === 'category' ? 'Categoría' : 'Pregunta'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type="text"
-                value={currentCategory?.name || ''}
-                onChange={(e) => setCurrentCategory({ ...currentCategory, name: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Orden</Form.Label>
-              <Form.Control
-                type="number"
-                value={currentCategory?.orden || 0}
-                onChange={(e) => setCurrentCategory({ ...currentCategory, orden: parseInt(e.target.value) })}
-              />
-            </Form.Group>
-          </Form>
+          {modalState.type === 'category' ? (
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Nombre de la Categoría</Form.Label>
+                <Form.Control type="text" value={modalState.data?.name || ''} onChange={(e) => handleModalChange('name', e.target.value)} autoFocus />
+              </Form.Group>
+              <Form.Group><Form.Label>Orden</Form.Label><Form.Control type="number" value={modalState.data?.orden || ''} onChange={(e) => handleModalChange('orden', parseInt(e.target.value) || 0)} /></Form.Group>
+            </Form>
+          ) : (
+            <Form>
+              <Form.Group className="mb-3"><Form.Label>Texto de la Pregunta</Form.Label><Form.Control type="text" value={modalState.data?.texto || ''} onChange={(e) => handleModalChange('texto', e.target.value)} autoFocus /></Form.Group>
+              <Form.Group className="mb-3"><Form.Label>Tipo de Pregunta</Form.Label><Form.Select value={modalState.data?.type_question_id || ''} onChange={(e) => handleModalChange('type_question_id', parseInt(e.target.value))}>
+                  <option value="">Selecciona un tipo</option>
+                  {typeQuestions.map(tq => <option key={tq.id} value={tq.id}>{tq.name}</option>)}
+              </Form.Select></Form.Group>
+              <Form.Group className="mb-3"><Form.Label>Opciones (separadas por coma)</Form.Label><Form.Control as="textarea" rows={2} value={modalState.data?.opciones || ''} onChange={(e) => handleModalChange('opciones', e.target.value)} /></Form.Group>
+              <Form.Group><Form.Label>Orden</Form.Label><Form.Control type="number" value={modalState.data?.orden || ''} onChange={(e) => handleModalChange('orden', parseInt(e.target.value) || 0)} /></Form.Group>
+            </Form>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Guardar Cambios
-          </Button>
+          <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
+          <Button variant="primary" onClick={handleSave} disabled={loading}>{loading ? 'Guardando...' : 'Guardar'}</Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Card>
   );
 };
 
