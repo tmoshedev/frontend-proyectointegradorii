@@ -8,7 +8,7 @@ import { SweetAlert } from '../../../../utilities';
 
 // Componentes de UI
 import { Button, Card, Form, Modal, Accordion, Alert, Table } from 'react-bootstrap';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { AlignCenter, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useTypeQuestions } from '../../../../hooks';
 
 const CategoriesManagement = () => {
@@ -127,7 +127,7 @@ const CategoriesManagement = () => {
         const updatedCategories = mode === 'edit'
           ? categories.map(c => c.id === res.question_category.id ? res.question_category : c)
           : [...categories, res.question_category];
-        
+
         setCategories(updatedCategories.sort((a, b) => a.orden - b.orden));
         SweetAlert.success('Éxito', 'Categoría guardada correctamente.');
       }
@@ -189,7 +189,7 @@ const CategoriesManagement = () => {
   // --- RENDER ---
   const renderQuestionModal = () => {
     const selectedType = typeQuestions.find(tq => tq.id === modalState.data?.type_question_id);
-    const showOptions = selectedType && (selectedType.codigo === 'SELECT' || selectedType.codigo === 'CHECKBOX');
+    const showOptions = selectedType && (selectedType.codigo === 'SELECT' || selectedType.codigo === 'CHECKBOX'|| selectedType.codigo === 'RADIO');
 
     return (
       <Form>
@@ -219,12 +219,16 @@ const CategoriesManagement = () => {
   }
 
   return (
-    <Card className="shadow-sm">
+
+    //<div className="container-fluid">
+     // <div className="row">
+     //   <div className="card">
+    <Card className="row">
       <Card.Header className="d-flex justify-content-between align-items-center">
         <Card.Title as="h5" className="mb-0">Configuración del Formulario Buyer</Card.Title>
         <Button variant="primary" onClick={() => handleShowModal('category', 'create')}>
           <Plus size={18} className="me-1" />
-          Añadir Categoría
+          Nueva Categoría
         </Button>
       </Card.Header>
       <Card.Body>
@@ -260,21 +264,21 @@ const CategoriesManagement = () => {
               <Accordion.Body>
                 <h5>Preguntas en esta Categoría</h5>
                 <Button variant="success" size="sm" className="mb-3" onClick={() => handleShowModal('question', 'create', { categoryId: cat.id })}>
-                  <Plus size={16} /> Añadir Pregunta
+                  <Plus size={16} /> Nueva Pregunta
                 </Button>
 
                 {isQuestionsLoading[cat.id] && <p>Cargando preguntas...</p>}
 
                 {!isQuestionsLoading[cat.id] && questionsByCat[cat.id] && questionsByCat[cat.id].length > 0 ? (
-                  <Table striped bordered hover size="sm">
-                    <thead><tr><th>Pregunta</th><th>Tipo</th><th>Orden</th><th className="text-end">Acciones</th></tr></thead>
+                  <Table style={{ textAlign: 'center' }} className='table text-nowrap table-bordered table-resource'>
+                    <thead className="table-primary"><tr><th>Pregunta</th><th>Tipo</th><th>Orden</th><th>Acciones</th></tr></thead>
                     <tbody>
                       {[...questionsByCat[cat.id]].sort((a, b) => a.orden - b.orden).map(q => (
-                        <tr key={q.id}>
+                        <tr key={q.id} style={{ textAlign: 'center' }} className="font-size-11">
                           <td>{q.texto}</td>
                           <td>{q.name_type}</td>
                           <td>{q.orden}</td>
-                          <td className="text-end">
+                          <td >
                             <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleShowModal('question', 'edit', q)}><Pencil size={14} /></Button>
                             <Button variant="outline-danger" size="sm" onClick={() => handleDelete('question', q.id, cat.id)}><Trash2 size={14} /></Button>
                           </td>
@@ -294,7 +298,7 @@ const CategoriesManagement = () => {
       {/* --- MODAL UNIVERSAL --- */}
       <Modal show={modalState.show} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>{modalState.mode === 'edit' ? 'Editar' : 'Añadir'} {modalState.type === 'category' ? 'Categoría' : 'Pregunta'}</Modal.Title>
+          <Modal.Title >{modalState.mode === 'edit' ? 'Editar' : 'Nueva'} {modalState.type === 'category' ? 'Categoría' : 'Pregunta'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {modalState.type === 'category' ? (

@@ -75,7 +75,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             if (question) {
               switch (question.codigo_type) {
                 case 'SELECT':
-                  // Solo guardar el valor seleccionado como string
                   if (typeof value === 'object' && value !== null && 'selected' in value) {
                     normalizedValue = value.selected ?? '';
                   } else {
@@ -86,7 +85,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
                   if (Array.isArray(value)) {
                     normalizedValue = { selected: value, otherValue: '' };
                   } else if (typeof value === 'object' && value !== null) {
-                    // Normalizar claves en mayúsculas si vienen del backend
+                    // Soportar claves en mayúsculas y minúsculas
                     const selected = value.selected ?? value.SELECTED ?? [];
                     const otherValue = value.otherValue ?? value.OTHERVALUE ?? '';
                     normalizedValue = {
@@ -103,7 +102,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
                   }
                   break;
                 default:
-                  // Para otros tipos, dejar el valor tal cual
                   break;
               }
             }
@@ -157,22 +155,22 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
           if (question) {
             switch (question.codigo_type) {
               case 'SELECT':
-                if (typeof value === 'string') {
-                  normalizedValue = { selected: value, otherValue: '' };
-                } else if (typeof value === 'object' && value !== null) {
-                  normalizedValue = {
-                    selected: value.selected ?? '',
-                    otherValue: value.otherValue ?? ''
-                  };
+                if (typeof value === 'object' && value !== null && 'selected' in value) {
+                  normalizedValue = value.selected ?? '';
+                } else {
+                  normalizedValue = typeof value === 'string' ? value : '';
                 }
                 break;
               case 'CHECKBOX':
                 if (Array.isArray(value)) {
                   normalizedValue = { selected: value, otherValue: '' };
                 } else if (typeof value === 'object' && value !== null) {
+                  // Soportar claves en mayúsculas y minúsculas
+                  const selected = value.selected ?? value.SELECTED ?? [];
+                  const otherValue = value.otherValue ?? value.OTHERVALUE ?? '';
                   normalizedValue = {
-                    selected: value.selected ?? [],
-                    otherValue: value.otherValue ?? ''
+                    selected,
+                    otherValue
                   };
                 } else if (typeof value === 'string') {
                   normalizedValue = { selected: [value], otherValue: '' };
@@ -184,7 +182,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
                 }
                 break;
               default:
-                // Para otros tipos, dejar el valor tal cual
                 break;
             }
           }
@@ -412,6 +409,55 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         );
       }
 
+      case 'RADIO': {
+  // Opciones + 'Otro'
+  let radioOptions = Array.isArray(question.opciones)
+    ? question.opciones
+    : (typeof question.opciones === 'string' ? question.opciones.split(',').map(opt => opt.trim()) : []);
+  // Normaliza todas las opciones para evitar problemas de mayúsculas/minúsculas
+  const normalize = (str: string) => str.trim().toLowerCase();
+  if (!radioOptions.some(opt => normalize(opt) === 'otro')) {
+    radioOptions = [...radioOptions, 'Otro'];
+  }
+  // Extraer valor seleccionado y valor de 'Otro'
+  let selectedValue = '';
+  let otherValue = '';
+  if (typeof answerValue === 'object' && answerValue !== null) {
+    selectedValue = answerValue.selected ?? answerValue.SELECTED ?? '';
+    otherValue = answerValue.otherValue ?? answerValue.OTHERVALUE ?? '';
+  } else {
+    selectedValue = answerValue ?? '';
+  }
+  // Normaliza el valor seleccionado para comparar correctamente
+  const isOtroSelected = normalize(selectedValue) === 'otro';
+
+  return (
+    <div>
+      {radioOptions.map((optionText) => (
+        <Form.Check
+          key={`${question.id}-${optionText}`}
+          type="radio"
+          name={`question-${question.id}`}
+          id={`question-${question.id}-${optionText.replace(/\s+/g, '-')}`}
+          label={optionText}
+          checked={normalize(selectedValue) === normalize(optionText)}
+          onChange={() => handleAnswerChange(questionIdStr, { selected: optionText, otherValue: '' }, 'RADIO')}
+        />
+      ))}
+      {/* Si 'Otro' está seleccionado, mostrar el input de texto */}
+      {isOtroSelected && (
+        <Form.Control
+          type="text"
+          className="mt-2"
+          placeholder="Por favor, especifique"
+          value={otherValue}
+          onChange={(e) => handleAnswerChange(questionIdStr, { selected: 'Otro', otherValue: e.target.value }, 'RADIO')}
+        />
+      )}
+    </div>
+  );
+}
+
       case 'NUMBER':
         return <Form.Control type="number" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Escriba un número..." />;
 
@@ -454,7 +500,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   }
 
   if (categories.length === 0) {
-  return <Alert variant="info" className="m-3">Pronto se subirán nuevas preguntas para el formulario Buyer. ¡Vuelve a intentarlo más tarde!</Alert>
+    return <Alert variant="info" className="m-3">Pronto se subirán nuevas preguntas para el formulario Buyer. ¡Vuelve a intentarlo más tarde!</Alert>
   }
 
   return (
