@@ -259,22 +259,31 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
     Object.entries(answers).forEach(([questionId, answerState]) => {
       if (answerState.value === undefined || answerState.value === null) return;
 
-      let respuesta: string;
-      // Si es un objeto (para SELECT o CHECKBOX con "Otro"), lo convertimos a JSON
-      if (typeof answerState.value === 'object' && answerState.value !== null && !(answerState.value instanceof File)) {
-        respuesta = JSON.stringify(answerState.value);
-      } else if (answerState.value instanceof File) {
-        respuesta = answerState.value.name;
-      } else if (typeof answerState.value === 'boolean') {
-        respuesta = answerState.value ? 'true' : 'false';
-      } else {
-        respuesta = String(answerState.value);
-      }
+      // Buscar la pregunta para saber el tipo
+      const question = questions.find(q => String(q.id) === String(questionId));
 
-      if (answerState.answer_id) {
-        promises.push(updateAnswer(answerState.answer_id, respuesta));
+      if (question && question.codigo_type === 'IMAGE' && answerState.value instanceof File) {
+        // Guardar solo el nombre del archivo como respuesta
+        const respuesta = answerState.value.name;
+        if (answerState.answer_id) {
+          promises.push(updateAnswer(answerState.answer_id, respuesta));
+        } else {
+          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
+        }
       } else {
-        promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
+        let respuesta: string;
+        if (typeof answerState.value === 'object' && answerState.value !== null && !(answerState.value instanceof File)) {
+          respuesta = JSON.stringify(answerState.value);
+        } else if (typeof answerState.value === 'boolean') {
+          respuesta = answerState.value ? 'true' : 'false';
+        } else {
+          respuesta = String(answerState.value);
+        }
+        if (answerState.answer_id) {
+          promises.push(updateAnswer(answerState.answer_id, respuesta));
+        } else {
+          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
+        }
       }
     });
 
@@ -404,40 +413,11 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         return <Form.Control type="date" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} />;
 
       case 'IMAGE': {
-        // Lógica para subir la imagen y guardar la ruta
-        const imageUrl = typeof answerValue === 'string' && answerValue ? answerValue : null;
-
-        // Función para manejar el cambio de archivo y subirlo al storage
-        const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-          const file = e.target.files ? e.target.files[0] : null;
-          if (!file) return;
-          // Simulación de subida a storage (reemplaza por tu lógica real de subida)
-          try {
-            // Aquí deberías subir el archivo a tu storage y obtener la URL/UUID
-            // Por ejemplo:
-            // const url = await uploadImageToStorage(file);
-            // handleAnswerChange(questionIdStr, url, 'IMAGE');
-            // Simulación:
-            const fakeStorageUrl = `/storage/${file.name}`;
-            handleAnswerChange(questionIdStr, fakeStorageUrl, 'IMAGE');
-          } catch (err) {
-            SweetAlert.error('Error', 'No se pudo subir la imagen.');
-          }
-        };
-
+        const isFile = answerValue instanceof File;
+        const imageUrl = isFile ? URL.createObjectURL(answerValue) : (typeof answerValue === 'string' && answerValue ? answerValue : null);
         return (
-          <div className="form-group col-md-12">
-            <label htmlFor={`image-${question.id}`} className="form-label">
-              {"Actualizar imagen"}
-            </label>
-            <input
-              id={`image-${question.id}`}
-              name={`image-${question.id}`}
-              type="file"
-              accept="image/*"
-              className="form-control form-control-sm"
-              onChange={handleImageUpload}
-            />
+          <div>
+            <Form.Control type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => handleAnswerChange(questionIdStr, e.target.files ? e.target.files[0] : null)} />
             {imageUrl && (
               <div className="mt-2">
                 <img src={imageUrl} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />

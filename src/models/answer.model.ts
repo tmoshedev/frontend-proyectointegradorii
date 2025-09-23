@@ -10,5 +10,4 @@ export interface Answer {
   updated_at: string;
   deleted_at: string | null;
   question?: Question;
-  image_url: string | null;
 }
