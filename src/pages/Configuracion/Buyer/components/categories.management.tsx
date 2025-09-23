@@ -137,7 +137,13 @@ const CategoriesManagement = () => {
           return;
         }
         if (mode === 'edit') {
-          await updateQuestion(data.id, data.texto, data.orden);
+          await updateQuestion(
+            data.id,
+            data.type_question_id,
+            data.texto,
+            data.opciones,
+            data.orden
+          );
         } else {
           await storeQuestion(
             data.type_question_id,
@@ -168,7 +174,7 @@ const CategoriesManagement = () => {
         } else {
           await deleteQuestion(id);
           if (categoryId) {
-            const response = await getQuestion(String(categoryId), '', 'all', 1, '100', 'orden', 'asc', true, true, 'type_question');
+            const response = await getQuestion(String(categoryId), '', '', 1, '100', 'orden', 'asc', true, true, 'type_question');
             const res = response as { data: Question[] };
             setQuestionsByCat(prev => ({ ...prev, [categoryId]: res.data }));
           }

@@ -14,10 +14,12 @@ export const storeQuestion = async (type_question_id:string, texto: string, ques
   return response;
 };
 
-export const updateQuestion = async (id: number, name: string, orden: number) => {
+export const updateQuestion = async (id: number, type_question_id:string, texto: string, opciones: any, orden: number) => {
   const form = {
-    name,
-    orden,
+    type_question_id,
+    texto,
+    opciones,
+    orden
   };
   const response = await apiInstance.patch(`/questions/${id}`, {
     question: form,
@@ -26,7 +28,7 @@ export const updateQuestion = async (id: number, name: string, orden: number) =>
 };
 
 export const deleteQuestion = async (id: number) => {
-  const response = await apiInstance.delete(`/question-categories/${id}`);
+  const response = await apiInstance.delete(`/questions/${id}`);
   return response;
 };
 

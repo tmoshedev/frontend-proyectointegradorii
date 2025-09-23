@@ -347,9 +347,15 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       case 'SELECT': {
         const options = getOptions(question.opciones);
         // Normalizar el valor guardado para comparar correctamente
-        const normalize = (str: string) => (str ?? '').trim().toLowerCase();
+        const normalize = (str: any) => typeof str === 'string' ? str.trim().toLowerCase() : '';
+        // Extraer el valor seleccionado, soportando string o { selected: ... }
+        let selectedValue = '';
+        if (typeof answerValue === 'object' && answerValue !== null && 'selected' in answerValue) {
+          selectedValue = answerValue.selected ?? '';
+        } else {
+          selectedValue = answerValue ?? '';
+        }
         // Buscar la opción que coincide con el valor guardado
-        let selectedValue = answerValue ?? '';
         let matchedOption = options.find(opt => normalize(opt) === normalize(selectedValue));
         // Si hay coincidencia, usar el valor exacto de la opción, si no, usar el valor guardado
         selectedValue = matchedOption ?? selectedValue;
@@ -380,8 +386,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         const selectedValues = selectedValuesRaw.map(normalize);
         const otherValue = answerValue?.otherValue ?? '';
         // Renderizar los checkboxes normales, incluyendo 'Otro' como opción seleccionable
-
-        
         return (
           <div>
             {checkOptions.map((optionText) => (
@@ -415,44 +419,19 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         return <Form.Control type="date" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} />;
 
       case 'IMAGE': {
-    const isFile = answerValue instanceof File;
-    const imageUrl = isFile ? URL.createObjectURL(answerValue) : (typeof answerValue === 'string' && answerValue ? answerValue : null);
-
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files ? e.target.files[0] : null;
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                // Store the Base64 string in the state
-                if (event.target && typeof event.target.result === 'string') {
-                    handleAnswerChange(questionIdStr, event.target.result);
-                }
-            };
-            reader.readAsDataURL(file);
-        } else {
-            handleAnswerChange(questionIdStr, null);
-        }
-    };
-
-    return (
-        <div>
-            <Form.Control 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
-            />
+        const isFile = answerValue instanceof File;
+        const imageUrl = isFile ? URL.createObjectURL(answerValue) : (typeof answerValue === 'string' && answerValue ? answerValue : null);
+        return (
+          <div>
+            <Form.Control type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => handleAnswerChange(questionIdStr, e.target.files ? e.target.files[0] : null)} />
             {imageUrl && (
-                <div className="mt-2">
-                    <img 
-                        src={imageUrl} 
-                        alt="Vista previa" 
-                        style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} 
-                    />
-                </div>
+              <div className="mt-2">
+                <img src={imageUrl} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />
+              </div>
             )}
-        </div>
-    );
-}
+          </div>
+        );
+      }
 
       default:
         return <p className="text-danger small">Tipo de pregunta no soportado: {question.name_type || 'desconocido'}</p>;

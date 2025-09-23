@@ -11,7 +11,7 @@ export const storeQuestionCategory = async (name: string, orden: number) => {
   return response;
 };
 
-export const updateQuestionCategory = async (id: number, name: string, orden: number) => {
+export const updateQuestionCategory = async (id: string, name: string, orden: number) => {
   const form = {
     name,
     orden,

@@ -64,7 +64,7 @@ export function useQuestionCategories() {
   };
 
   //UPDATE
-  const updateQuestionCategory = async (id: number, name: string, orden: number) => {
+  const updateQuestionCategory = async (id: string, name: string, orden: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionCategoryService.updateQuestionCategory(

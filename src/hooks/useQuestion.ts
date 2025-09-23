@@ -71,13 +71,15 @@ export function useQuestions() {
   };
 
   //UPDATE
-  const updateQuestion = async (id: number, name: string, orden: number) => {
+  const updateQuestion = async (id: number, type_question_id:string, texto: string, opciones: any, orden: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionService.updateQuestion(
         id,
-        name || '',
-        orden || 0
+        type_question_id,
+        texto,
+        opciones,
+        orden
       );
       const typedResponse = response as { question: Question };
       dispatch(dataTable_updateResource(typedResponse.question));
