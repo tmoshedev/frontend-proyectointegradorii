@@ -380,6 +380,8 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         const selectedValues = selectedValuesRaw.map(normalize);
         const otherValue = answerValue?.otherValue ?? '';
         // Renderizar los checkboxes normales, incluyendo 'Otro' como opción seleccionable
+
+        
         return (
           <div>
             {checkOptions.map((optionText) => (
@@ -413,19 +415,44 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         return <Form.Control type="date" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} />;
 
       case 'IMAGE': {
-        const isFile = answerValue instanceof File;
-        const imageUrl = isFile ? URL.createObjectURL(answerValue) : (typeof answerValue === 'string' && answerValue ? answerValue : null);
-        return (
-          <div>
-            <Form.Control type="file" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => handleAnswerChange(questionIdStr, e.target.files ? e.target.files[0] : null)} />
+    const isFile = answerValue instanceof File;
+    const imageUrl = isFile ? URL.createObjectURL(answerValue) : (typeof answerValue === 'string' && answerValue ? answerValue : null);
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files ? e.target.files[0] : null;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                // Store the Base64 string in the state
+                if (event.target && typeof event.target.result === 'string') {
+                    handleAnswerChange(questionIdStr, event.target.result);
+                }
+            };
+            reader.readAsDataURL(file);
+        } else {
+            handleAnswerChange(questionIdStr, null);
+        }
+    };
+
+    return (
+        <div>
+            <Form.Control 
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileChange} 
+            />
             {imageUrl && (
-              <div className="mt-2">
-                <img src={imageUrl} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />
-              </div>
+                <div className="mt-2">
+                    <img 
+                        src={imageUrl} 
+                        alt="Vista previa" 
+                        style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} 
+                    />
+                </div>
             )}
-          </div>
-        );
-      }
+        </div>
+    );
+}
 
       default:
         return <p className="text-danger small">Tipo de pregunta no soportado: {question.name_type || 'desconocido'}</p>;
