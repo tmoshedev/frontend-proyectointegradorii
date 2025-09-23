@@ -454,7 +454,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   }
 
   if (categories.length === 0) {
-    return <Alert variant="info" className="m-3">No hay preguntas configuradas para el formulario Buyer.</Alert>
+  return <Alert variant="info" className="m-3">Pronto se subirán nuevas preguntas para el formulario Buyer. ¡Vuelve a intentarlo más tarde!</Alert>
   }
 
   return (
