@@ -504,10 +504,11 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   }
 
   return (
-    <Card className="border-0">
+    <div className="timeline_tabs__content">
+    <Card className="lead-actividad">
       <Card.Body>
         <Row>
-          <Col md={4}>
+          <Col md={4} >
             <h5 className="fw-bold">CATEGORIAS</h5>
             <hr />
             <ListGroup>
@@ -518,7 +519,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
               ))}
             </ListGroup>
           </Col>
-          <Col md={8}>
+          <Col md={5} className='lead-actividad__right'>
             {loading && questions.length === 0 ? (
               <div className="d-flex justify-content-center align-items-center p-5">
                 <Spinner animation="border" size="sm" />
@@ -542,14 +543,20 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             )}
           </Col>
         </Row>
-        <div className="mt-4 text-end">
-          <Button variant="success" onClick={submitAnswers} disabled={loading}>
-            <Save size={16} className="me-2" />
-            {loading ? 'Guardando...' : 'Guardar Respuestas'}
-          </Button>
-        </div>
+        
       </Card.Body>
+      
     </Card>
+    <div className="lead-actividad__left-footer">
+          <div className="lead-actividad__left-footer-right">
+            <Button variant="success" onClick={submitAnswers} disabled={loading}>
+              <Save size={16} className="me-2" />
+              {loading ? 'Guardando...' : 'Guardar Respuestas'}
+            </Button>
+          </div>
+        </div>
+    </div>
+    
   );
 };
 
