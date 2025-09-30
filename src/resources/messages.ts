@@ -1,6 +1,6 @@
 // message.ts
 const messages = {
-    NAME_APP: "ZIZEHOST SCHOOL",
+    NAME_APP: "CRM",
     NOT_CONECTION_CODE: "Problemas de conexión",
     NOT_CONECTION_MESSAGE: "No se pudo conectar con el servidor, vuelva a intentarlo nuevamente.",
     TOKEN_EXPIRED_CODE: "000",

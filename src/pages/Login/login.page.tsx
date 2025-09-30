@@ -100,7 +100,7 @@ export const LoginPage = () => {
                         </button>
                       </div>
                     </div>
-                    <p className="mt-4 mb-0 text-center">ZIZEHOST S.A.C. - Versión 1.0.0</p>
+                    <p className="mt-4 mb-0 text-center">Versión 1.0.0</p>
                   </form>
                 </div>
               </div>
