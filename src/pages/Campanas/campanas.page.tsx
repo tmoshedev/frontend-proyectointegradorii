@@ -63,7 +63,7 @@ export const CampaignsPage = () => {
       body: {
         widthAccion: '',
         cols: [
-          { name: 'codigo', alias: 'Código', roles: [] },
+          { name: 'code', alias: 'Código', roles: [] },
           { name: 'name', alias: 'Nombre', roles: [] },
           { name: 'channel_name', alias: 'Canal', roles: [] },
           { name: 'start_date', alias: 'Fecha Inicio', roles: [] },

@@ -3,12 +3,12 @@ import { TypeQuestion } from './type-question.model';
 
 export interface Question {
   id: number;
-  codigo_type: string;
-  texto: string;
+  code_type: string;
+  question: string;
   question_category_id: string;
-  opciones: string[] | string | null;
+  options: string[] | string | null;
   state: number;
-  orden: number;
+  order: number;
   type_question_id: string;
   name_type: string;
   

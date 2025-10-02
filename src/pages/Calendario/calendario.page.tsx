@@ -22,12 +22,12 @@ export const CalendarioPage = () => {
 
   const [formData, setFormData] = useState<{
     type: ViewType;
-    fecha_inicial: string;
-    fecha_final: string;
+    start_date: string;
+    end_date: string;
   }>({
     type: 'SEMANA',
-    fecha_inicial: moment().startOf('isoWeek').format('YYYY-MM-DD'), // lunes
-    fecha_final: moment().endOf('isoWeek').format('YYYY-MM-DD'), // domingo
+    start_date: moment().startOf('isoWeek').format('YYYY-MM-DD'), // lunes
+    end_date: moment().endOf('isoWeek').format('YYYY-MM-DD'), // domingo
   });
 
   const onEvent = (event: CalendarEvent) => {
@@ -51,7 +51,7 @@ export const CalendarioPage = () => {
 
   useEffect(() => {
     const dataInicial = () => {
-      getMiCalendario(formData.fecha_inicial, formData.fecha_final, true).then(
+      getMiCalendario(formData.start_date, formData.end_date, true).then(
         (response: MiCalendarioResponse) => {
           setUsers(response.users);
           setEvents(response.actividades);
@@ -60,7 +60,7 @@ export const CalendarioPage = () => {
     };
 
     dataInicial();
-  }, [formData.fecha_inicial, formData.fecha_final]);
+  }, [formData.start_date, formData.end_date]);
 
   return (
     <div
@@ -79,7 +79,7 @@ export const CalendarioPage = () => {
             {/* <MyCalendarComponent /> */}
             {formData.type == 'SEMANA' && (
               <WeeklyCalendar
-                weekStart={moment(formData.fecha_inicial).toDate()}
+                weekStart={moment(formData.start_date).toDate()}
                 events={events}
                 startHour={6}
                 users={users}
@@ -88,7 +88,7 @@ export const CalendarioPage = () => {
             )}
             {formData.type == 'DIA' && (
               <WeeklyCalendar
-                weekStart={moment(formData.fecha_inicial).toDate()}
+                weekStart={moment(formData.start_date).toDate()}
                 events={events}
                 startHour={6}
                 users={users}
@@ -98,8 +98,8 @@ export const CalendarioPage = () => {
             )}
             {formData.type == 'MES' && (
               <MonthCalendarComponent
-                date_start={formData.fecha_inicial}
-                date_end={formData.fecha_final}
+                date_start={formData.start_date}
+                date_end={formData.end_date}
                 events={events}
               />
             )}

@@ -51,14 +51,14 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
         defval: '',
         range: 1, // Saltar las dos primeras filas
         header: [
-          'campaign_codigo',
+          'campaign_code',
           'project_id',
           'channel_id',
           'document_number',
           'names',
           'last_names',
           'cellphone',
-          'ciudad',
+          'city',
         ],
       });
       setData(jsonData as ImportarLeadRequest[]);
@@ -155,28 +155,28 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                     isEmpty(item.names) ||
                     isEmpty(item.last_names) ||
                     isEmpty(item.cellphone) ||
-                    isEmpty(item.ciudad);
+                    isEmpty(item.city);
                   return (
                     <div className="tabla-zize-body-item" key={index}>
                       <div className="tabla-zize-col tabla-zize-col-10">
                         <select
                           className={`form-select form-select-sm ${
-                            erroresValidacion[index]?.campaign_codigo ? 'is-invalid' : ''
+                            erroresValidacion[index]?.campaign_code ? 'is-invalid' : ''
                           }`}
-                          value={item.campaign_codigo}
+                          value={item.campaign_code}
                           onChange={(e) => {
                             const value = e.target.value;
                             setData((prev) => {
                               const newData = [...prev];
-                              newData[index].campaign_codigo = value;
+                              newData[index].campaign_code = value;
                               return newData;
                             });
                           }}
                         >
                           <option value="">Seleccionar</option>
                           {campaigns.map((campaign: any) => (
-                            <option key={campaign.codigo} value={campaign.codigo}>
-                              {campaign.codigo}
+                            <option key={campaign.code} value={campaign.code}>
+                              {campaign.code}
                             </option>
                           ))}
                         </select>
@@ -299,12 +299,12 @@ export const ImportarLeadComponent = (props: ImportarLeadComponentProps) => {
                         <input
                           type="text"
                           className="form-control form-control-sm todo-mayuscula"
-                          value={item.ciudad}
+                          value={item.city}
                           onChange={(e) => {
                             const value = e.target.value;
                             setData((prev) => {
                               const newData = [...prev];
-                              newData[index].ciudad = value;
+                              newData[index].city = value;
                               return newData;
                             });
                           }}

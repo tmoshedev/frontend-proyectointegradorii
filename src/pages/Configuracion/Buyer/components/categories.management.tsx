@@ -53,7 +53,7 @@ const CategoriesManagement = () => {
   // --- DATA FETCHING ---
   useEffect(() => {
     setCategoriesLoading(true);
-    getQuestionCategory('', '', 1, '100', 'orden', 'asc', true, true)
+    getQuestionCategory('', '', 1, '100', 'order', 'asc', true, true)
       .then(response => {
         const res = response as { data: QuestionCategory[] };
         setCategories(res.data || []);
@@ -74,7 +74,7 @@ const CategoriesManagement = () => {
     if (newActiveKey && !questionsByCat[categoryId]) {
       setQuestionsLoading(prev => ({ ...prev, [categoryId]: true }));
       try {
-        const response = await getQuestion(String(categoryId), '', '', 1, '100', 'orden', 'asc', true, true, 'type_question');
+        const response = await getQuestion(String(categoryId), '', '', 1, '100', 'order', 'asc', true, true, 'type_question');
         const res = response as { data: Question[] };
         setQuestionsByCat(prev => ({ ...prev, [categoryId]: res.data }));
       } finally {
@@ -88,10 +88,10 @@ const CategoriesManagement = () => {
     let initialData = {};
     if (mode === 'create') {
       if (type === 'category') {
-        const nextOrder = categories.length > 0 ? Math.max(...categories.map((c: QuestionCategory) => c.orden)) + 10 : 10;
-        initialData = { name: '', orden: nextOrder };
+        const nextOrder = categories.length > 0 ? Math.max(...categories.map((c: QuestionCategory) => c.order)) + 10 : 10;
+        initialData = { name: '', order: nextOrder };
       } else { // question
-        initialData = { question_category_id: data.categoryId, texto: '', type_question_id: '', opciones: '', orden: 10 };
+        initialData = { question_category_id: data.categoryId, question: '', type_question_id: '', options: '', order: 10 };
       }
     } else {
       initialData = { ...data };
@@ -119,42 +119,42 @@ const CategoriesManagement = () => {
         }
         let response;
         if (mode === 'edit') {
-          response = await updateQuestionCategory(data.id, data.name, data.orden || 0);
+          response = await updateQuestionCategory(data.id, data.name, data.order || 0);
         } else {
-          response = await storeQuestionCategory(data.name, data.orden || 0);
+          response = await storeQuestionCategory(data.name, data.order || 0);
         }
         const res = response as { question_category: QuestionCategory };
         const updatedCategories = mode === 'edit'
           ? categories.map(c => c.id === res.question_category.id ? res.question_category : c)
           : [...categories, res.question_category];
 
-        setCategories(updatedCategories.sort((a, b) => a.orden - b.orden));
+        setCategories(updatedCategories.sort((a, b) => a.order - b.order));
         SweetAlert.success('Éxito', 'Categoría guardada correctamente.');
       }
       else if (type === 'question') {
-        if (!data.texto || !data.type_question_id) {
-          SweetAlert.warning('Validación', 'El texto y el tipo de pregunta son obligatorios.');
+        if (!data.question || !data.type_question_id) {
+          SweetAlert.warning('Validación', 'El question y el tipo de pregunta son obligatorios.');
           return;
         }
         if (mode === 'edit') {
           await updateQuestion(
             data.id,
             data.type_question_id,
-            data.texto,
-            data.opciones,
-            data.orden
+            data.question,
+            data.options,
+            data.order
           );
         } else {
           await storeQuestion(
             data.type_question_id,
-            data.texto,
+            data.question,
             data.question_category_id,
-            data.opciones,
-            data.orden
+            data.options,
+            data.order
           );
         }
         // Recargar preguntas para la categoría afectada
-        const response = await getQuestion(String(data.question_category_id), '', '', 1, '100', 'orden', 'asc', true, true, 'type_question');
+        const response = await getQuestion(String(data.question_category_id), '', '', 1, '100', 'order', 'asc', true, true, 'type_question');
         const res = response as { data: Question[] };
         setQuestionsByCat(prev => ({ ...prev, [data.question_category_id]: res.data }));
         SweetAlert.success('Éxito', 'Pregunta guardada correctamente.');
@@ -174,7 +174,7 @@ const CategoriesManagement = () => {
         } else {
           await deleteQuestion(id);
           if (categoryId) {
-            const response = await getQuestion(String(categoryId), '', '', 1, '100', 'orden', 'asc', true, true, 'type_question');
+            const response = await getQuestion(String(categoryId), '', '', 1, '100', 'order', 'asc', true, true, 'type_question');
             const res = response as { data: Question[] };
             setQuestionsByCat(prev => ({ ...prev, [categoryId]: res.data }));
           }
@@ -189,13 +189,13 @@ const CategoriesManagement = () => {
   // --- RENDER ---
   const renderQuestionModal = () => {
     const selectedType = typeQuestions.find(tq => tq.id === modalState.data?.type_question_id);
-    const showOptions = selectedType && (selectedType.codigo === 'SELECT' || selectedType.codigo === 'CHECKBOX'|| selectedType.codigo === 'RADIO');
+    const showOptions = selectedType && (selectedType.code === 'SELECT' || selectedType.code === 'CHECKBOX'|| selectedType.code === 'RADIO');
 
     return (
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Texto de la Pregunta</Form.Label>
-          <Form.Control type="text" value={modalState.data?.texto || ''} onChange={(e) => handleModalChange('texto', e.target.value)} autoFocus />
+          <Form.Control type="text" value={modalState.data?.question || ''} onChange={(e) => handleModalChange('question', e.target.value)} autoFocus />
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Tipo de Pregunta</Form.Label>
@@ -206,13 +206,13 @@ const CategoriesManagement = () => {
         </Form.Group>
         {showOptions && (
           <Form.Group className="mb-3">
-            <Form.Label>Opciones (separadas por coma)</Form.Label>
-            <Form.Control as="textarea" rows={2} value={modalState.data?.opciones || ''} onChange={(e) => handleModalChange('opciones', e.target.value)} />
+            <Form.Label>options (separadas por coma)</Form.Label>
+            <Form.Control as="textarea" rows={2} value={modalState.data?.options || ''} onChange={(e) => handleModalChange('options', e.target.value)} />
           </Form.Group>
         )}
         <Form.Group>
           <Form.Label>Orden</Form.Label>
-          <Form.Control type="number" value={modalState.data?.orden || ''} onChange={(e) => handleModalChange('orden', parseInt(e.target.value) || 0)} />
+          <Form.Control type="number" value={modalState.data?.order || ''} onChange={(e) => handleModalChange('order', parseInt(e.target.value) || 0)} />
         </Form.Group>
       </Form>
     );
@@ -250,7 +250,7 @@ const CategoriesManagement = () => {
             <Accordion.Item eventKey={String(cat.id)} key={cat.id}>
               <div className="d-flex align-items-center">
                 <Accordion.Header className="flex-grow-1">
-                  {cat.name} (Orden: {cat.orden})
+                  {cat.name} (Orden: {cat.order})
                 </Accordion.Header>
                 <div className="p-2">
                   <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleShowModal('category', 'edit', cat)}>
@@ -273,11 +273,11 @@ const CategoriesManagement = () => {
                   <Table style={{ textAlign: 'center' }} className='table text-nowrap table-bordered table-resource'>
                     <thead className="table-primary"><tr><th>Pregunta</th><th>Tipo</th><th>Orden</th><th>Acciones</th></tr></thead>
                     <tbody>
-                      {[...questionsByCat[cat.id]].sort((a, b) => a.orden - b.orden).map(q => (
+                      {[...questionsByCat[cat.id]].sort((a, b) => a.order - b.order).map(q => (
                         <tr key={q.id} style={{ textAlign: 'center' }} className="font-size-11">
-                          <td>{q.texto}</td>
+                          <td>{q.question}</td>
                           <td>{q.name_type}</td>
-                          <td>{q.orden}</td>
+                          <td>{q.order}</td>
                           <td >
                             <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleShowModal('question', 'edit', q)}><Pencil size={14} /></Button>
                             <Button variant="outline-danger" size="sm" onClick={() => handleDelete('question', q.id, cat.id)}><Trash2 size={14} /></Button>
@@ -307,7 +307,7 @@ const CategoriesManagement = () => {
                 <Form.Label>Nombre de la Categoría</Form.Label>
                 <Form.Control type="text" value={modalState.data?.name || ''} onChange={(e) => handleModalChange('name', e.target.value)} autoFocus />
               </Form.Group>
-              <Form.Group><Form.Label>Orden</Form.Label><Form.Control type="number" value={modalState.data?.orden || ''} onChange={(e) => handleModalChange('orden', parseInt(e.target.value) || 0)} /></Form.Group>
+              <Form.Group><Form.Label>Orden</Form.Label><Form.Control type="number" value={modalState.data?.order || ''} onChange={(e) => handleModalChange('order', parseInt(e.target.value) || 0)} /></Form.Group>
             </Form>
           ) : (
             renderQuestionModal()

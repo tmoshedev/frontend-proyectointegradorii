@@ -1,12 +1,12 @@
 import apiInstance from './api';
 
-export const storeQuestion = async (type_question_id:string, texto: string, question_category_id: string, opciones: any, orden: number) => {
+export const storeQuestion = async (type_question_id:string, question: string, question_category_id: string, options: any, order: number) => {
   const form = {
     type_question_id,
-    texto,
+    question,
     question_category_id,
-    opciones, // para preguntas de opcion multiple
-    orden
+    options, // para preguntas de opcion multiple
+    order
   };
   const response = await apiInstance.post(`/questions`, {
     question: form,
@@ -14,12 +14,12 @@ export const storeQuestion = async (type_question_id:string, texto: string, ques
   return response;
 };
 
-export const updateQuestion = async (id: number, type_question_id:string, texto: string, opciones: any, orden: number) => {
+export const updateQuestion = async (id: number, type_question_id:string, question: string, options: any, order: number) => {
   const form = {
     type_question_id,
-    texto,
-    opciones,
-    orden
+    question,
+    options,
+    order
   };
   const response = await apiInstance.patch(`/questions/${id}`, {
     question: form,

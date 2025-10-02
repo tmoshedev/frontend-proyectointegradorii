@@ -10,22 +10,22 @@ export const getAgendaDiaria = async (date: string) => {
 
 export const postLeadActividad = async (actividad: FormLeadActividadRequest) => {
   const response = await apiInstance.post('/lead-activities', {
-    lead_actividad: actividad,
+    lead_activity: actividad,
   });
   return response;
 };
 
 export const postActividadCompletada = async (uuid: string) => {
   const response = await apiInstance.post(`/lead-activities/completado`, {
-    lead_actividad_uuid: uuid,
+    lead_activity_uuid: uuid,
   });
   return response;
 };
 
-export const postCancelarActividad = async (lead_activity_uuid: string, motivo: string) => {
+export const postCancelarActividad = async (lead_activity_uuid: string, motive: string) => {
   const response = await apiInstance.post(`/lead-activities/cancelar`, {
     lead_activity_uuid,
-    motivo,
+    motive,
   });
   return response;
 };

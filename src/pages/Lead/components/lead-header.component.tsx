@@ -92,8 +92,8 @@ export const LeadHeaderComponent = (props: Props) => {
         });
     };
 
-  const openModal = (estado_final: string) => {
-    setEstadoFinalModal(estado_final);
+  const openModal = (final_state: string) => {
+    setEstadoFinalModal(final_state);
     setNotaModal('');
     setShowModal(true);
   };
@@ -172,14 +172,14 @@ export const LeadHeaderComponent = (props: Props) => {
   };
 
   // MODIFICADO: ahora abre el modal
-  const onLeadState = (estado_final: string) => {
-    openModal(estado_final);
+  const onLeadState = (final_state: string) => {
+    openModal(final_state);
   };
 
   const handleCancelDelete = () => {};
 
-  const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
-    changeEstadoFinal(id, estado_final, true, nota)
+  const handleLeadState = (id: any, final_state: string, nota: string = '') => {
+    changeEstadoFinal(id, final_state, true, nota)
       .then((response: LeadResponse) => {
         dispatch(
           setLeadAndHistorial({
@@ -188,7 +188,7 @@ export const LeadHeaderComponent = (props: Props) => {
             count_historial: response.count_historial,
           })
         );
-        toast.success(`Lead marcado como ${estado_final.toLowerCase()}.`, {
+        toast.success(`Lead marcado como ${final_state.toLowerCase()}.`, {
           position: 'top-center',
           autoClose: 4000,
           hideProgressBar: false,
@@ -202,15 +202,15 @@ export const LeadHeaderComponent = (props: Props) => {
       })
       .catch((error) => {
         SweetAlert.error(
-          `Error al marcar el lead como ${estado_final.toLowerCase()}.`,
+          `Error al marcar el lead como ${final_state.toLowerCase()}.`,
           error.message
         );
       });
   };
 
   const onRegresarLeads = () => {
-    if (lead.estado_final === 'BAJA') {
-      navigate('/leads', { state: { view: 'KANBAN'/*, estado_final: 'BAJA'*/ } });
+    if (lead.final_state === 'BAJA') {
+      navigate('/leads', { state: { view: 'KANBAN'/*, final_state: 'BAJA'*/ } });
     } else {
       navigate('/leads', { state: { view: 'KANBAN' } });
     }
@@ -321,7 +321,7 @@ export const LeadHeaderComponent = (props: Props) => {
             </div>
           </div>
         )}
-        {rolActual === 'ADMINISTRATOR' && lead.estado_final == null && (
+        {rolActual === 'ADMINISTRATOR' && lead.final_state == null && (
           <div className="d-flex ms-2">
             {/*<button
               onClick={() => onLeadState('GANADO')}
@@ -337,14 +337,14 @@ export const LeadHeaderComponent = (props: Props) => {
             </button>
           </div>
         )}
-        {lead.estado_final == 'GANADO' && (
+        {lead.final_state == 'GANADO' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-ganado">
               <i className="fa-solid fa-thumbs-up"></i> Lead ganado
             </button>
           </div>
         )}
-        {lead.estado_final == 'BAJA' && (
+        {lead.final_state == 'BAJA' && (
           <div className="d-flex ms-2">
             <button className="btn btn-primary btn-sm btn-perdido">
               <i className="fa-solid fa-thumbs-down"></i> Lead dado de baja

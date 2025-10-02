@@ -36,7 +36,7 @@ interface LeadCardProps {
   onClickLead: (lead_uuid: string) => void;
   onEditarAsesor: (lead: Lead) => void;
   onAsignarmeLead: (lead_uuid: string) => void;
-  onChangeStateLead: (lead_uuid: string, nivel_interes: string) => void;
+  onChangeStateLead: (lead_uuid: string, level_of_interest: string) => void;
   onRefresh: () => void;
   disabled?: boolean;
 }
@@ -121,10 +121,10 @@ export const LeadCardComponent = ({
    * @param e - The mouse event.
    * @param state - The new interest state ('CALIENTE', 'TIBIO', 'FRIO').
    */
-  const handleInterestChange = (e: React.MouseEvent, nivel_interes: string) => {
+  const handleInterestChange = (e: React.MouseEvent, level_of_interest: string) => {
     e.stopPropagation();
-    onChangeStateLead(uuid, nivel_interes);
-    setNivelInteres(nivel_interes);
+    onChangeStateLead(uuid, level_of_interest);
+    setNivelInteres(level_of_interest);
 
     if (dropdownToggleRef.current) {
       const dropdown = Dropdown.getOrCreateInstance(dropdownToggleRef.current);
@@ -242,7 +242,7 @@ export const LeadCardComponent = ({
         {actividad_estado?.state_view && (
           <div
             data-tooltip-id="tooltip-component"
-            data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.fecha_actividad}`}
+            data-tooltip-content={`${actividad_estado.state} - ${actividad_estado.activity_date}`}
             className={`alert-lead ${
               actividad_estado.type === 'VENCIDA' ? 'alert-lead-vencido' : 'alert-lead-actividad'
             }`}

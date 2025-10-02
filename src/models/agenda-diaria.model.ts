@@ -3,10 +3,10 @@ export interface AgendaDiaria {
   model_id: string;
   activity_name: string;
   title: string;
-  fecha_actividad: string;
-  fecha_fin_actividad: string;
-  hora_inicio: string;
-  hora_fin: string;
+  activity_date: string;
+  end_date_activity: string;
+  start_time: string;
+  end_time: string;
   start: Date;
   end: Date;
   save: boolean;

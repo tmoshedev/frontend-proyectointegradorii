@@ -282,7 +282,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                 <div className="tabla-cell text-center">Apellidos</div>
                 <div className="tabla-cell text-center">Celular</div>
                 <div className="tabla-cell text-center">Correo</div>
-                <div className="tabla-cell text-center">Ciudad</div>
+                <div className="tabla-cell text-center">city</div>
               </div>
               <div
                 className="zh-tabla-body overflow-auto"
@@ -305,7 +305,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                         onChange={(e) => handleLeadSelection(e.target.checked, leads[index])}
                       />
                     </div>
-                    <div className="tabla-cell">{lead.fecha_creacion ?? '-'}</div>
+                    <div className="tabla-cell">{lead.creation_date ?? '-'}</div>
                     <div className="tabla-cell">
                       <div className="d-flex gap-1">
                         {lead.lead_projects.map((project: LeadProject) => (
@@ -321,7 +321,7 @@ export const DistribuirLeadComponent = (props: Props) => {
                     <div className="tabla-cell">{lead.last_names ?? '-'}</div>
                     <div className="tabla-cell">{lead.cellphone ?? '-'}</div>
                     <div className="tabla-cell">{lead.email ?? '-'}</div>
-                    <div className="tabla-cell">{lead.ciudad ?? '-'}</div>
+                    <div className="tabla-cell">{lead.city ?? '-'}</div>
                   </div>
                 ))}
               </div>

@@ -5,7 +5,7 @@ export interface LeadFilterRequest {
   status?: number[];
   labels?: number[];
   users?: number[];
-  fecha_inicio?: string;
+  start_date?: string;
   fecha_fin?: string;
   page?: number;
   limit?: number;

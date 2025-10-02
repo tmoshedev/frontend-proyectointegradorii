@@ -45,14 +45,14 @@ export function useCalendarioActividades() {
   //POST - Cancelar Actividad
   const postCancelarActividad = async (
     lead_activity_uuid: string,
-    motivo: string,
+    motive: string,
     loading: boolean
   ) => {
     dispatch(setLoading(loading));
     try {
       const response = await calendarioActividadesService.postCancelarActividad(
         lead_activity_uuid,
-        motivo
+        motive
       );
       return response;
     } finally {

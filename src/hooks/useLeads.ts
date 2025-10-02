@@ -175,10 +175,10 @@ export function useLeads() {
   };
 
   //PATCH - CHANGE FINAL STATE
-  const changeEstadoFinal = async (id: string, estado_final: string, loading: boolean, nota: string) => {
+  const changeEstadoFinal = async (id: string, final_state: string, loading: boolean, nota: string) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.changeEstadoFinal(id, estado_final, loading, nota);
+      const response = await leadsService.changeEstadoFinal(id, final_state, loading, nota);
       return response;
     } finally {
       dispatch(setLoading(false));
@@ -187,7 +187,7 @@ export function useLeads() {
 
   //GET - LIST LEADS
   const getLeads = async (
-  user_ids: string, channel_ids: string, lead_label_ids: string, stage_ids: string, project_ids: string, activity_expiration_ids: string, lead_campaign_names: string, estado_final: string, text: string, limit: number, page: number, loading: boolean  ) => {
+  user_ids: string, channel_ids: string, lead_label_ids: string, stage_ids: string, project_ids: string, activity_expiration_ids: string, lead_campaign_names: string, final_state: string, text: string, limit: number, page: number, loading: boolean  ) => {
     dispatch(setLoading(loading));
     try {
       const response = await leadsService.getLeads(
@@ -198,7 +198,7 @@ export function useLeads() {
         project_ids,
         activity_expiration_ids,
         lead_campaign_names,
-        estado_final,
+        final_state,
         text,
         limit,
         page
@@ -210,10 +210,10 @@ export function useLeads() {
   };
 
   //PATCH - CHANGE INTEREST LEVEL
-  const changeNivelInteres = async (uuid: string, nivel_interes: string, loading: boolean) => {
+  const changeNivelInteres = async (uuid: string, level_of_interest: string, loading: boolean) => {
     dispatch(setLoading(loading));
     try {
-      const response = await leadsService.changeNivelInteres(uuid, nivel_interes);
+      const response = await leadsService.changeNivelInteres(uuid, level_of_interest);
       return response;
     } finally {
       dispatch(setLoading(false));

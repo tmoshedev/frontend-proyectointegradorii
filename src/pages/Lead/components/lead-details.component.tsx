@@ -294,17 +294,17 @@ export const LeadDetailsComponent = (props: Props) => {
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
-            label={'Ciudad'}
-            value={lead.ciudad}
-            name="ciudad"
+            label={'city'}
+            value={lead.city}
+            name="city"
             uuid={lead.uuid}
             disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
-            label={'Precio'}
-            value={lead.precio}
-            name="precio"
+            label={'price'}
+            value={lead.price}
+            name="price"
             uuid={lead.uuid}
             disabled={!(rolActual === 'ADMINISTRATOR' || (userid && lead.user_id == userid))}
           />
@@ -329,8 +329,8 @@ export const LeadDetailsComponent = (props: Props) => {
           <FieldLeadComponent
             onUpdateRest={onUpdateLead}
             label={'Estado Lead'}
-            value={lead.asesor_estado}
-            name="asesor_estado"
+            value={lead.advisor_state}
+            name="advisor_state"
             uuid={lead.uuid}
             disabled={!(rolActual === 'ADMINISTRATOR')}
             options={[

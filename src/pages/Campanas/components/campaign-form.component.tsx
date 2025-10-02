@@ -16,9 +16,9 @@ interface Props {
 export const CampaignFormComponent = (props: Props) => {
   const formData = props.data.row || {
     name: '',
-    fecha_inicio: '',
-    precio: '',
-    codigo: '',
+    start_date: '',
+    price: '',
+    code: '',
     channel_id: '',
     state: '',
   };
@@ -28,8 +28,8 @@ export const CampaignFormComponent = (props: Props) => {
   const getValidationSchema = (type: string) => {
       return Yup.object({
     name: Yup.string().required('El nombre de la campaña es obligatorio'),
-    fecha_inicio: Yup.date().required('La fecha de inicio es obligatoria'),
-    codigo: Yup.string().required('El código es obligatorio'),
+    start_date: Yup.date().required('La fecha de inicio es obligatoria'),
+    code: Yup.string().required('El código es obligatorio'),
     channel_id: Yup.string().required('El canal es obligatorio'),
   });
   };
@@ -72,12 +72,12 @@ export const CampaignFormComponent = (props: Props) => {
 
   const handleDateChange = (date: Date[]) => {
     const fecha = moment(date[0]).format('YYYY-MM-DD');
-    formik.setFieldValue('fecha_inicio', fecha);
+    formik.setFieldValue('start_date', fecha);
   };
 
-  const generarCodigo = () => {
+  const generarcode = () => {
     const randomCode = 'ALI-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-    formik.setFieldValue('codigo', randomCode);
+    formik.setFieldValue('code', randomCode);
   };
 
   return (
@@ -106,74 +106,74 @@ export const CampaignFormComponent = (props: Props) => {
 
           {/* Fecha de inicio */}
           <div className="col-md-6 mb-3">
-            <label className="form-label" htmlFor="fecha_inicio">
+            <label className="form-label" htmlFor="start_date">
               Fecha de inicio<span className="text-danger">*</span>
             </label>
             <Flatpickr
-              name="fecha_inicio"
-              id="fecha_inicio"
-              value={formik.values.fecha_inicio}
+              name="start_date"
+              id="start_date"
+              value={formik.values.start_date}
               onChange={handleDateChange}
               className={
                 'form-control form-control-sm' +
-                (formik.errors.fecha_inicio && formik.touched.fecha_inicio ? ' is-invalid' : '')
+                (formik.errors.start_date && formik.touched.start_date ? ' is-invalid' : '')
               }
               options={{
                 dateFormat: 'Y-m-d',
                 locale: 'es',
               }}
             />
-            <ErrorValidate state={formik.errors.fecha_inicio} />
+            <ErrorValidate state={formik.errors.start_date} />
           </div>
 
-          {/* Precio */}
+          {/* price */}
           <div className="col-md-6 mb-3">
-            <label className="form-label" htmlFor="precio">
-              Precio
+            <label className="form-label" htmlFor="price">
+              price
             </label>
             <input
               autoComplete="off"
               onChange={handleInputChange}
-              value={formik.values.precio ?? ''}
-              name="precio"
-              id="precio"
+              value={formik.values.price ?? ''}
+              name="price"
+              id="price"
               type="number"
               step="0.01"
               className={
                 'form-control form-control-sm' +
-                (formik.errors.precio && formik.touched.precio ? ' is-invalid' : '')
+                (formik.errors.price && formik.touched.price ? ' is-invalid' : '')
               }
             />
-            <ErrorValidate state={formik.errors.precio} />
+            <ErrorValidate state={formik.errors.price} />
           </div>
 
           {/* Código con botón para generar */}
           <div className="col-md-6 mb-3">
-            <label className="form-label" htmlFor="codigo">
+            <label className="form-label" htmlFor="code">
               Código<span className="text-danger">*</span>
             </label>
             <div className="input-group">
               <input
                 autoComplete="off"
                 onChange={handleInputChange}
-                value={formik.values.codigo ?? ''}
-                name="codigo"
-                id="codigo"
+                value={formik.values.code ?? ''}
+                name="code"
+                id="code"
                 type="text"
                 className={
                   'form-control form-control-sm' +
-                  (formik.errors.codigo && formik.touched.codigo ? ' is-invalid' : '')
+                  (formik.errors.code && formik.touched.code ? ' is-invalid' : '')
                 }
               />
               <button
                 type="button"
                 className="btn btn-outline-secondary btn-sm"
-                onClick={generarCodigo}
+                onClick={generarcode}
               >
                 Generar
               </button>
             </div>
-            <ErrorValidate state={formik.errors.codigo} />
+            <ErrorValidate state={formik.errors.code} />
           </div>
 
           {/* Canal */}

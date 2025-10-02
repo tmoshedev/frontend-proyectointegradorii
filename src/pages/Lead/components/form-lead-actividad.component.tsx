@@ -12,7 +12,7 @@ interface Props {
   handleAgendaDiaria: (hora: string) => void; // Función para actualizar la agenda diaria
 }
 export const FormLeadActividadComponent = (props: Props) => {
-  const [ubicacion, setUbicacion] = useState<boolean>(false);
+  const [location, setlocation] = useState<boolean>(false);
   const generarHoras = () => {
     const horas: string[] = [];
     for (let h = 0; h < 24; h++) {
@@ -41,7 +41,7 @@ export const FormLeadActividadComponent = (props: Props) => {
   };
 
   //Hora final
-  const horasDisponiblesFinal = generarHorasFinales(props.formik.values.hora_inicial);
+  const horasDisponiblesFinal = generarHorasFinales(props.formik.values.start_time);
 
   //Hora inicio
   const horasDisponibles = generarHoras();
@@ -54,9 +54,9 @@ export const FormLeadActividadComponent = (props: Props) => {
   const onChangeDate = (date: Date, field: string) => {
     const formattedDate = moment(date).format('YYYY-MM-DD');
     props.formik.setFieldValue(field, formattedDate);
-    if (field === 'fecha_inicial') {
+    if (field === 'start_date') {
       // Si se cambia la fecha inicial, actualizar la fecha final para que sea igual
-      props.formik.setFieldValue('fecha_final', formattedDate);
+      props.formik.setFieldValue('end_date', formattedDate);
       // También actualizar la agenda diaria
       props.handleAgendaDiaria(formattedDate);
     }
@@ -76,13 +76,13 @@ export const FormLeadActividadComponent = (props: Props) => {
         <div className="lead-actividad-form-times">
           <span>
             <Flatpickr
-              key={props.formik.values.fecha_inicial || 'default'} // 👈 fuerza recreación
+              key={props.formik.values.start_date || 'default'} // 👈 fuerza recreación
               value={
-                props.formik.values.fecha_inicial
-                  ? moment(props.formik.values.fecha_inicial).toDate()
+                props.formik.values.start_date
+                  ? moment(props.formik.values.start_date).toDate()
                   : undefined
               }
-              onChange={([date]) => onChangeDate(date, 'fecha_inicial')}
+              onChange={([date]) => onChangeDate(date, 'start_date')}
               className="form-control form-control-sm input-lead-actividad"
               options={{
                 altInput: true,
@@ -100,25 +100,25 @@ export const FormLeadActividadComponent = (props: Props) => {
                 placeholder="Hora inicio..."
                 className={
                   'form-control form-control-sm input-lead-actividad' +
-                  (props.formik.errors.hora_inicial && props.formik.touched.hora_inicial
+                  (props.formik.errors.start_time && props.formik.touched.start_time
                     ? ' is-invalid'
                     : '')
                 }
-                value={props.formik.values.hora_inicial || busquedaHora}
+                value={props.formik.values.start_time || busquedaHora}
                 onChange={(e) => {
                   setBusquedaHora(e.target.value);
-                  props.formik.setFieldValue('hora_inicial', '');
+                  props.formik.setFieldValue('start_time', '');
                 }}
                 onFocus={() => setActiveHoraInicio(true)}
                 onBlur={() => setActiveHoraInicio(false)}
               />
-              <ErrorValidate state={props.formik.errors.hora_inicial} />
-              {(props.formik.values.hora_inicial || busquedaHora) && (
+              <ErrorValidate state={props.formik.errors.start_time} />
+              {(props.formik.values.start_time || busquedaHora) && (
                 <button
                   type="button"
                   onClick={() => {
-                    props.formik.setFieldValue('hora_inicial', '');
-                    props.formik.setFieldValue('hora_final', '');
+                    props.formik.setFieldValue('start_time', '');
+                    props.formik.setFieldValue('end_time', '');
                     setBusquedaHora('');
                     setBusquedaHoraFinal('');
                   }}
@@ -152,8 +152,8 @@ export const FormLeadActividadComponent = (props: Props) => {
                         key={index}
                         className="select-dos-dropdown_option"
                         onMouseDown={() => {
-                          props.formik.setFieldValue('hora_inicial', hora);
-                          props.formik.setFieldValue('hora_final', '');
+                          props.formik.setFieldValue('start_time', hora);
+                          props.formik.setFieldValue('end_time', '');
                           setBusquedaHora('');
                           setActiveHoraInicio(false);
                           setBusquedaHoraFinal('');
@@ -171,29 +171,29 @@ export const FormLeadActividadComponent = (props: Props) => {
             <div className="" style={{ position: 'relative' }}>
               <input
                 autoComplete="off"
-                disabled={!props.formik.values.hora_inicial}
+                disabled={!props.formik.values.start_time}
                 type="text"
                 placeholder="Hora final..."
                 className={
                   'form-control form-control-sm input-lead-actividad' +
-                  (props.formik.errors.hora_final && props.formik.touched.hora_final
+                  (props.formik.errors.end_time && props.formik.touched.end_time
                     ? ' is-invalid'
                     : '')
                 }
-                value={props.formik.values.hora_final || busquedaHoraFinal}
+                value={props.formik.values.end_time || busquedaHoraFinal}
                 onChange={(e) => {
                   setBusquedaHora(e.target.value);
-                  props.formik.setFieldValue('hora_final', '');
+                  props.formik.setFieldValue('end_time', '');
                 }}
                 onFocus={() => setActiveHoraFinal(true)}
                 onBlur={() => setActiveHoraFinal(false)}
               />
-              <ErrorValidate state={props.formik.errors.hora_final} />
-              {(props.formik.values.hora_final || busquedaHoraFinal) && (
+              <ErrorValidate state={props.formik.errors.end_time} />
+              {(props.formik.values.end_time || busquedaHoraFinal) && (
                 <button
                   type="button"
                   onClick={() => {
-                    props.formik.setFieldValue('hora_final', '');
+                    props.formik.setFieldValue('end_time', '');
                     setBusquedaHoraFinal('');
                   }}
                   style={{
@@ -223,7 +223,7 @@ export const FormLeadActividadComponent = (props: Props) => {
                     .filter((hora) => hora.toLowerCase().includes(busquedaHoraFinal.toLowerCase()))
                     .map((hora, index) => {
                       // Calcular la diferencia respecto a la hora de inicio
-                      const inicio = moment(props.formik.values.hora_inicial, 'hh:mm A');
+                      const inicio = moment(props.formik.values.start_time, 'hh:mm A');
                       const fin = moment(hora, 'hh:mm A');
                       const diffMin = fin.diff(inicio, 'minutes');
                       let diffLabel = '';
@@ -239,7 +239,7 @@ export const FormLeadActividadComponent = (props: Props) => {
                           key={index}
                           className="select-dos-dropdown_option"
                           onMouseDown={() => {
-                            props.formik.setFieldValue('hora_final', hora);
+                            props.formik.setFieldValue('end_time', hora);
                             setBusquedaHoraFinal('');
                             setActiveHoraFinal(false);
                           }}
@@ -260,14 +260,14 @@ export const FormLeadActividadComponent = (props: Props) => {
           </span>
           <span>
             <Flatpickr
-              key={props.formik.values.fecha_final || 'default'} // 👈 fuerza recreación
+              key={props.formik.values.end_date || 'default'} // 👈 fuerza recreación
               value={
-                props.formik.values.fecha_final
-                  ? moment(props.formik.values.fecha_final).toDate()
+                props.formik.values.end_date
+                  ? moment(props.formik.values.end_date).toDate()
                   : undefined
               }
               onChange={([date]) => {
-                props.formik.setFieldValue('fecha_final', moment(date).format('YYYY-MM-DD'));
+                props.formik.setFieldValue('end_date', moment(date).format('YYYY-MM-DD'));
               }}
               className="form-control form-control-sm input-lead-actividad"
               options={{
@@ -275,7 +275,7 @@ export const FormLeadActividadComponent = (props: Props) => {
                 altInput: true,
                 altFormat: 'F j, Y', // Esto es lo que el usuario ve
                 dateFormat: 'Y-m-d', // Esto es lo que internamente usa flatpickr
-                minDate: props.formik.values.fecha_inicial,
+                minDate: props.formik.values.start_date,
               }}
             />
           </span>
@@ -294,9 +294,9 @@ export const FormLeadActividadComponent = (props: Props) => {
         <div className="d-flex align-items-center">
           <div style={{ minWidth: '30%' }} className="me-1">
             <select
-              value={props.formik.values.disponibilidad}
-              name="disponibilidad"
-              id="disponibilidad"
+              value={props.formik.values.availability}
+              name="availability"
+              id="availability"
               className="form-control form-select form-control-sm input-lead-actividad"
               onChange={props.formik.handleChange}
             >
@@ -316,7 +316,7 @@ export const FormLeadActividadComponent = (props: Props) => {
       </div>
 
       {/* Configuracion*/}
-      {!ubicacion && (
+      {!location && (
         <div className="lead-actividad-form">
           <div className="lead-actividad-form-icon">
             <Ellipsis height={18} />
@@ -324,7 +324,7 @@ export const FormLeadActividadComponent = (props: Props) => {
           <div className="d-flex align-items-center">
             <span>Agregar</span>
             <span
-              onClick={() => setUbicacion(true)}
+              onClick={() => setlocation(true)}
               role="button"
               className="ms-2 text-primary agregar-ubicacion"
             >
@@ -335,7 +335,7 @@ export const FormLeadActividadComponent = (props: Props) => {
       )}
 
       {/* Ubicación*/}
-      {ubicacion && (
+      {location && (
         <div className="lead-actividad-form">
           <div className="lead-actividad-form-icon mt-1">
             <MapPin
@@ -349,9 +349,9 @@ export const FormLeadActividadComponent = (props: Props) => {
               type="text"
               placeholder="Ubicación"
               className="form-control form-control-sm input-lead-actividad"
-              name="ubicacion"
-              id="ubicacion"
-              value={props.formik.values.ubicacion || ''}
+              name="location"
+              id="location"
+              value={props.formik.values.location || ''}
               onChange={props.formik.handleChange}
               autoComplete="off"
             />

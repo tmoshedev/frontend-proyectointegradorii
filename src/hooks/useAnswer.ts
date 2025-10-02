@@ -51,14 +51,14 @@ export function useAnswers() {
   };
 
   //STORE
-  const storeAnswer = async (question_id: string, lead_id: string, user_id: string, respuesta: string) => {
+  const storeAnswer = async (question_id: string, lead_id: string, user_id: string, answer: string) => {
     dispatch(setLoading(true));
     try {
       const response = await AnswerService.storeAnswer(
         question_id,
         lead_id,
         user_id,
-        respuesta,
+        answer,
         
       );
       const typedResponse = response as { answer: Answer };
@@ -70,12 +70,12 @@ export function useAnswers() {
   };
 
   //UPDATE
-  const updateAnswer = async (id: number, respuesta: string) => {
+  const updateAnswer = async (id: number, answer: string) => {
     dispatch(setLoading(true));
     try {
       const response = await AnswerService.updateAnswer(
         id,
-        respuesta
+        answer
       );
       const typedResponse = response as { answer: Answer };
       dispatch(dataTable_updateResource(typedResponse.answer));

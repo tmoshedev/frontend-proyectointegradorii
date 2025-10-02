@@ -5,7 +5,7 @@ export interface Answer {
   question_id: number | null;
   lead_id: number | null;
   user_id: number | null;
-  respuesta: string;
+  answer: string;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

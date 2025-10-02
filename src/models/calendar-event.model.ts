@@ -1,6 +1,6 @@
 export interface CalendarEvent {
   title: string;
-  fecha_actividad: string;
+  activity_date: string;
   start: string;
   end: string;
   state_name: string;

@@ -1,9 +1,9 @@
 import apiInstance from './api';
 
-export const storeQuestionCategory = async (name: string, orden: number) => {
+export const storeQuestionCategory = async (name: string, order: number) => {
   const form = {
     name,
-    orden
+    order
   };
   const response = await apiInstance.post(`/question-categories`, {
     question_category: form,
@@ -11,10 +11,10 @@ export const storeQuestionCategory = async (name: string, orden: number) => {
   return response;
 };
 
-export const updateQuestionCategory = async (id: string, name: string, orden: number) => {
+export const updateQuestionCategory = async (id: string, name: string, order: number) => {
   const form = {
     name,
-    orden,
+    order,
   };
   const response = await apiInstance.patch(`/question-categories/${id}`, {
     question_category: form,

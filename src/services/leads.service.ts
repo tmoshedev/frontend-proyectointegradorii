@@ -134,13 +134,13 @@ export const updateLeadAsesor = async (lead_uuid: string, assigned_to: string) =
 
 export const changeEstadoFinal = async (
   id: string,
-  estado_final: string,
+  final_state: string,
   p0: boolean,
   nota: string
 ) => {
   const response = await apiInstance.patch<LeadResponse>(`/leads/${id}/change-estado-final`, {
     lead: {
-      estado_final,
+      final_state,
       nota: nota || '',
     },
   });
@@ -155,22 +155,22 @@ export const getLeads = async (
   project_ids: string,
   activity_expiration_ids: string,
   lead_campaign_names: string,
-  estado_final: string,
+  final_state: string,
   text: string,
   limit: number,
   page: number
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<TableCrmResponse>(
-    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&estado_final=${estado_final}`
+    `/leads?rolActual=${rolActual}&text=${text}&limit=${limit}&page=${page}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&final_state=${final_state}`
   );
   return response;
 };
 
-export const changeNivelInteres = async (uuid: string, nivel_interes: string) => {
+export const changeNivelInteres = async (uuid: string, level_of_interest: string) => {
   const response = await apiInstance.patch<LeadResponse>(`/leads/${uuid}/change-nivel-interes`, {
     lead: {
-      nivel_interes,
+      level_of_interest,
     },
   });
   return response;

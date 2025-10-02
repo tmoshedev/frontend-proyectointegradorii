@@ -68,7 +68,7 @@ export const MonthCalendarComponent = (props: Props) => {
           // Filtrar eventos de este día
           const eventosDelDia = props.events.filter(
             (ev) =>
-              format(parseISO(ev.fecha_actividad), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+              format(parseISO(ev.activity_date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
           );
           const cantidad = eventosDelDia.length;
 

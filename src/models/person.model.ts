@@ -10,6 +10,6 @@ export interface Person {
     label: string;
     value: string;
   };
-  fecha_nacimiento: string;
+  birth_date: string;
   sexo: string;
 }

@@ -14,19 +14,19 @@ export const CancelarActividadComponent = (props: Props) => {
   const { postCancelarActividad } = useCalendarioActividades();
   const formData = {
     lead_activity_uuid: props.data.row.lead_activity_uuid,
-    motivo: '',
+    motive: '',
   };
 
   const validationSchema = Yup.object({
     lead_activity_uuid: Yup.string().required('Campo requerido'),
-    motivo: Yup.string().required('Campo requerido'),
+    motive: Yup.string().required('Campo requerido'),
   });
 
   const formik = useFormik({
     initialValues: formData,
     validationSchema: validationSchema,
     onSubmit: () => {
-      postCancelarActividad(formik.values.lead_activity_uuid, formik.values.motivo, true)
+      postCancelarActividad(formik.values.lead_activity_uuid, formik.values.motive, true)
         .then((response: any) => {
           SweetAlert.success('Mensaje', response.message);
           props.data.onCloseModalForm();
@@ -51,14 +51,14 @@ export const CancelarActividadComponent = (props: Props) => {
         <div className="row">
           {/* Motivo */}
           <div className="col-md-12 mb-3">
-            <label className="form-label" htmlFor="motivo">
+            <label className="form-label" htmlFor="motive">
               Motivo<span className="text-danger">*</span>
             </label>
             <textarea
               onChange={handleTextAreaChange}
-              value={formik.values.motivo ?? ''}
-              name="motivo"
-              id="motivo"
+              value={formik.values.motive ?? ''}
+              name="motive"
+              id="motive"
               rows={4}
               className={'todo-mayuscula form-control form-control-sm'}
             />

@@ -75,32 +75,32 @@ export default function CalendarioDisponibilidad({
   const alturaTotal = 60 * 24; // 60px * 24 horas
 
   useEffect(() => {
-    const { fecha_inicial, fecha_final, hora_inicial, hora_final } = formik.values;
+    const { start_date, end_date, start_time, end_time } = formik.values;
     let nuevosEventos = eventos.filter((evento) => evento.save !== false);
 
-    if (fecha_inicial && fecha_final && hora_inicial && hora_final) {
+    if (start_date && end_date && start_time && end_time) {
       // Agrega el nuevo evento temporal
       const fechaInicio = moment.tz(
-        `${fecha_inicial} ${hora_inicial}`,
+        `${start_date} ${start_time}`,
         'YYYY-MM-DD hh:mm A',
         'America/Lima'
       );
       const fechaFin = moment.tz(
-        `${fecha_final} ${hora_final}`,
+        `${end_date} ${end_time}`,
         'YYYY-MM-DD hh:mm A',
         'America/Lima'
       );
       const nuevoEvento: AgendaDiaria = {
         start: fechaInicio.toDate(),
         end: fechaFin.toDate(),
-        title: formik.values.titulo == '' ? formik.values.tipo_actividad : formik.values.titulo,
-        activity_name: formik.values.tipo_actividad,
+        title: formik.values.title == '' ? formik.values.activity_type : formik.values.title,
+        activity_name: formik.values.activity_type,
         model_type: '',
         model_id: '',
-        fecha_actividad: '',
-        fecha_fin_actividad: '',
-        hora_inicio: '',
-        hora_fin: '',
+        activity_date: '',
+        end_date_activity: '',
+        start_time: '',
+        end_time: '',
         save: false,
       };
       nuevosEventos = [...nuevosEventos, nuevoEvento];
@@ -109,12 +109,12 @@ export default function CalendarioDisponibilidad({
     setEventosFiltrados(nuevosEventos);
   }, [
     eventos,
-    formik.values.fecha_inicial,
-    formik.values.fecha_final,
-    formik.values.hora_inicial,
-    formik.values.hora_final,
-    formik.values.titulo,
-    formik.values.tipo_actividad,
+    formik.values.start_date,
+    formik.values.end_date,
+    formik.values.start_time,
+    formik.values.end_time,
+    formik.values.title,
+    formik.values.activity_type,
   ]);
 
   useEffect(() => {

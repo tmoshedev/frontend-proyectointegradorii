@@ -94,7 +94,7 @@ export const FormulariosPage = () => {
     {
       id: 'fb-city',
       position: { x: 100, y: 340 },
-      data: { label: 'ciudad' },
+      data: { label: 'city' },
       type: 'sourceNode',
       draggable: false
     },
@@ -113,9 +113,9 @@ export const FormulariosPage = () => {
       draggable: false
     },
     {
-      id: 'crm-ciudad',
+      id: 'crm-city',
       position: { x: 500, y: 340 },
-      data: { label: 'ciudad' },
+      data: { label: 'city' },
       type: 'targetNode',
       draggable: false
     },

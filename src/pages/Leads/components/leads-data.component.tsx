@@ -154,12 +154,12 @@ export const LeadsDataComponent = (props: Props) => {
 
   const rolActual = localStorage.getItem('rolActual') || '';
 
-  const onLeadState = (estado_final: string) => {
-    openModal(estado_final);
+  const onLeadState = (final_state: string) => {
+    openModal(final_state);
   };
 
-  const openModal = (estado_final: string) => {
-    setEstadoFinalModal(estado_final);
+  const openModal = (final_state: string) => {
+    setEstadoFinalModal(final_state);
     setNotaModal('');
     setShowModal(true);
   };
@@ -201,12 +201,12 @@ export const LeadsDataComponent = (props: Props) => {
   const handleCancelDelete = () => { };
 
 
-  const handleLeadState = (id: any, estado_final: string, nota: string = '') => {
-    return changeEstadoFinal(id, estado_final, true, nota)
+  const handleLeadState = (id: any, final_state: string, nota: string = '') => {
+    return changeEstadoFinal(id, final_state, true, nota)
       .then((response: LeadResponse) => {
         // No actualizamos el lead individual en Redux aquí para evitar sobreescrituras en el bucle.
         // La actualización de la lista se encargará de reflejar los cambios.
-        toast.success(`Lead marcado como ${estado_final.toLowerCase()}.`, {
+        toast.success(`Lead marcado como ${final_state.toLowerCase()}.`, {
           position: 'top-center',
           autoClose: 4000,
           hideProgressBar: false,
@@ -220,7 +220,7 @@ export const LeadsDataComponent = (props: Props) => {
       })
       .catch((error) => {
         SweetAlert.error(
-          `Error al marcar el lead como ${estado_final.toLowerCase()}.`,
+          `Error al marcar el lead como ${final_state.toLowerCase()}.`,
           error.message
         );
         // Rechazamos la promesa para que Promise.all pueda detectar el error si es necesario
@@ -352,7 +352,7 @@ export const LeadsDataComponent = (props: Props) => {
                             style={{ cursor: 'pointer' }}>{lead.cellphone}</td>
                           <td onClick={() => onClickLead(lead.uuid)}
                             style={{ cursor: 'pointer' }}>
-                            <span className="badge bg-danger-transparent">{lead.estado_final}</span>
+                            <span className="badge bg-danger-transparent">{lead.final_state}</span>
                           </td>
                           <td onClick={() => onClickLead(lead.uuid)}
                             style={{ cursor: 'pointer' }}>

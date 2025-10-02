@@ -34,24 +34,24 @@ export const LeadActividadComponent = (props: Props) => {
 
   const formActividad: FormLeadActividadRequest = {
     lead_id: lead.id,
-    tipo_actividad: 'LLAMADA',
-    titulo: '',
-    fecha_inicial: moment().format('YYYY-MM-DD'),
-    fecha_final: moment().format('YYYY-MM-DD'),
-    hora_inicial: '',
-    hora_final: '',
-    disponibilidad: 'LIBRE',
-    ubicacion: '',
+    activity_type: 'LLAMADA',
+    title: '',
+    start_date: moment().format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD'),
+    start_time: '',
+    end_time: '',
+    availability: 'LIBRE',
+    location: '',
     check_actividad: false,
   };
 
   const validationSchema = Yup.object({
-    fecha_inicial: Yup.date().required('Fecha inicial es requerida'),
-    fecha_final: Yup.date()
+    start_date: Yup.date().required('Fecha inicial es requerida'),
+    end_date: Yup.date()
       .required('Fecha final es requerida')
-      .min(Yup.ref('fecha_inicial'), 'La fecha final debe ser mayor o igual a la fecha inicial'),
-    hora_inicial: Yup.string().required('Hora inicial es requerida'),
-    hora_final: Yup.string().required('Hora final es requerida'),
+      .min(Yup.ref('start_date'), 'La fecha final debe ser mayor o igual a la fecha inicial'),
+    start_time: Yup.string().required('Hora inicial es requerida'),
+    end_time: Yup.string().required('Hora final es requerida'),
   });
 
   const formik = useFormik({
@@ -69,7 +69,7 @@ export const LeadActividadComponent = (props: Props) => {
   });
 
   const setTipoActividad = (tipo: string) => {
-    formik.setFieldValue('tipo_actividad', tipo);
+    formik.setFieldValue('activity_type', tipo);
   };
 
   const handleAgendaDiaria = (fecha: string) => {
@@ -79,7 +79,7 @@ export const LeadActividadComponent = (props: Props) => {
   };
 
   useEffect(() => {
-    const fecha = moment(formik.values.fecha_inicial).format('YYYY-MM-DD');
+    const fecha = moment(formik.values.start_date).format('YYYY-MM-DD');
     getAgendaDiaria(fecha, true).then((response) => {
       setAgendaDiaria(response.agenda);
     });
@@ -97,17 +97,17 @@ export const LeadActividadComponent = (props: Props) => {
                     <input
                       type="text"
                       className="form-control input-lead-actividad"
-                      placeholder={capitalizarPrimeraPalabra(formik.values.tipo_actividad)}
-                      value={formik.values.titulo}
+                      placeholder={capitalizarPrimeraPalabra(formik.values.activity_type)}
+                      value={formik.values.title}
                       onChange={formik.handleChange}
-                      name="titulo"
-                      id="titulo"
+                      name="title"
+                      id="title"
                       autoComplete="off"
                     />
                   </div>
                 </div>
                 <ActividadesListComponent
-                  tipoActividad={formik.values.tipo_actividad}
+                  tipoActividad={formik.values.activity_type}
                   setTipoActividad={setTipoActividad}
                 />
               </div>
@@ -134,7 +134,7 @@ export const LeadActividadComponent = (props: Props) => {
       <div className="lead-actividad__right">
         <div className="h-100 position-relative" style={{ borderTop: 'none' }}>
           <CalendarioDisponibilidad
-            fecha={moment.tz(formik.values.fecha_inicial, 'YYYY-MM-DD', 'America/Lima').toDate()}
+            fecha={moment.tz(formik.values.start_date, 'YYYY-MM-DD', 'America/Lima').toDate()}
             eventos={AgendaDiaria}
             formik={formik}
           />

@@ -52,15 +52,15 @@ export function useQuestions() {
   };
 
   //STORE
-  const storeQuestion = async (type_question_id:string, texto: string, question_category_id: string, opciones: any, orden: number) => {
+  const storeQuestion = async (type_question_id:string, question: string, question_category_id: string, opciones: any, order: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionService.storeQuestion(
         type_question_id,
-        texto,
+        question,
         question_category_id,
         opciones,
-        orden  
+        order  
       );
       const typedResponse = response as { question: Question };
       dispatch(dataTable_addResource(typedResponse.question));
@@ -71,15 +71,15 @@ export function useQuestions() {
   };
 
   //UPDATE
-  const updateQuestion = async (id: number, type_question_id:string, texto: string, opciones: any, orden: number) => {
+  const updateQuestion = async (id: number, type_question_id:string, question: string, opciones: any, order: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionService.updateQuestion(
         id,
         type_question_id,
-        texto,
+        question,
         opciones,
-        orden
+        order
       );
       const typedResponse = response as { question: Question };
       dispatch(dataTable_updateResource(typedResponse.question));

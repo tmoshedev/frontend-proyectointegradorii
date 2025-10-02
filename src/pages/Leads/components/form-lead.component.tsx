@@ -25,13 +25,13 @@ export const LeadFormComponent = (props: Props) => {
     names: '',
     last_names: '',
     cellphone: '',
-    ciudad: '',
-    precio: '',
+    city: '',
+    price: '',
     info: '',
-    asesor_estado: 'LIBERADO',
+    advisor_state: 'LIBERADO',
     asignarme_lead: false,
-    nivel_interes: 'FRIO',
-    campaign_codigo: '',
+    level_of_interest: 'FRIO',
+    campaign_code: '',
   };
   const [projects, setProjects] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
@@ -91,14 +91,14 @@ export const LeadFormComponent = (props: Props) => {
         <div className="row">
           {/*Nivel de interés*/}
           <div className="col-md-12 mb-3">
-            <label className="form-label" htmlFor="nivel_interes">
+            <label className="form-label" htmlFor="level_of_interest">
               Nivel de interés
             </label>
             <select
               onChange={handleInputChangeSelect}
-              value={formik.values.nivel_interes ?? ''}
-              name="nivel_interes"
-              id="nivel_interes"
+              value={formik.values.level_of_interest ?? ''}
+              name="level_of_interest"
+              id="level_of_interest"
               className="form-select form-select-sm"
             >
               <option value="FRIO">Frío</option>
@@ -230,15 +230,15 @@ export const LeadFormComponent = (props: Props) => {
           </div>
           {/* Ciudad */}
           <div className="col-md-12 mb-3">
-            <label className="form-label" htmlFor="ciudad">
+            <label className="form-label" htmlFor="city">
               Ciudad
             </label>
             <input
               autoComplete="off"
               onChange={handleInputChange}
-              value={formik.values.ciudad ?? ''}
-              name="ciudad"
-              id="ciudad"
+              value={formik.values.city ?? ''}
+              name="city"
+              id="city"
               type="text"
               className={'todo-mayuscula form-control form-control-sm'}
             />

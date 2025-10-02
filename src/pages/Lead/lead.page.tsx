@@ -173,7 +173,7 @@ export const LeadPage = () => {
             <div className="timeline-content">
               <div className="w-100">
                 {/* Timeline Header */}
-                {lead.estado_final == null && (
+                {lead.final_state == null && (
                   <div className="timeline-content__header">
                     <div className="timeline-content__content">
                       <div className="timeline_tabs">

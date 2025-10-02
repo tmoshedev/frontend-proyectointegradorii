@@ -48,12 +48,12 @@ export function useQuestionCategories() {
   };
 
   //STORE
-  const storeQuestionCategory = async (name: string, orden: number) => {
+  const storeQuestionCategory = async (name: string, order: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionCategoryService.storeQuestionCategory(
         name || '',
-        orden || 0,
+        order || 0,
       );
       const typedResponse = response as { question_category: QuestionCategory };
       dispatch(dataTable_addResource(typedResponse.question_category));
@@ -64,13 +64,13 @@ export function useQuestionCategories() {
   };
 
   //UPDATE
-  const updateQuestionCategory = async (id: string, name: string, orden: number) => {
+  const updateQuestionCategory = async (id: string, name: string, order: number) => {
     dispatch(setLoading(true));
     try {
       const response = await QuestionCategoryService.updateQuestionCategory(
         id,
         name || '',
-        orden || 0
+        order || 0
       );
       const typedResponse = response as { question_category: QuestionCategory };
       dispatch(dataTable_updateResource(typedResponse.question_category));

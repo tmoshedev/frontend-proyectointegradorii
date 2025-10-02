@@ -17,7 +17,7 @@ interface LeadItemActividadProps {
     activity_name: string;
     state: string;
     uuid: string;
-    motivo: string;
+    motive: string;
   };
   onActividadCompletada: (uuid: string) => void;
   handleModalCancelarActividad: (lead_activity_uuid: string) => void;
@@ -115,7 +115,7 @@ const canPerformActions =
               </span>
             </div>
             {props.data.state == 'CANCELADO' && (
-              <div className="historial-item__content__description">{props.data.motivo}</div>
+              <div className="historial-item__content__description">{props.data.motive}</div>
             )}
           </div>
         </div>

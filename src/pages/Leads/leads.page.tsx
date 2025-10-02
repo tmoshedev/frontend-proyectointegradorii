@@ -393,7 +393,7 @@ export const LeadsPage = () => {
       lead_campaign_names
     } = filtrosActuales(filtros);
 
-    const nivel_interes = nivelesInteres.join(',');
+    const level_of_interest = nivelesInteres.join(',');
 
     getLeadByEtapa(
       '1', // business_id
@@ -406,7 +406,7 @@ export const LeadsPage = () => {
       project_ids,
       activity_expiration_ids,
       lead_campaign_names,
-      nivel_interes,
+      level_of_interest,
       terminoBusqueda,
       50, // per_page
       nextPage,
@@ -456,7 +456,7 @@ export const LeadsPage = () => {
         lead_campaign_names
 
       } = filtrosActuales(currentFiltros);
-      const nivel_interes = currentNiveles.join(',');
+      const level_of_interest = currentNiveles.join(',');
       const etiquetas_ids = Array.isArray(etiquetas)
         ? etiquetas
             .filter((etiqueta) => etiqueta.selected)
@@ -488,7 +488,7 @@ export const LeadsPage = () => {
         project_ids,
         activity_expiration_ids,
         campanas_names,
-        nivel_interes,
+        level_of_interest,
         false
       );
 
@@ -547,7 +547,7 @@ export const LeadsPage = () => {
           project_ids,
           activity_expiration_ids,
           campanas_names,
-          nivel_interes,
+          level_of_interest,
           termino,
           50,
           1,
@@ -583,7 +583,7 @@ export const LeadsPage = () => {
         activity_expiration_ids,
         lead_campaign_names,
       } = filtrosActuales(currentFiltros);
-      const nivel_interes = currentNiveles.join(',');
+      const level_of_interest = currentNiveles.join(',');
 
       const response = await getLeads(
         user_ids,

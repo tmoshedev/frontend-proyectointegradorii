@@ -12,11 +12,11 @@ export const getLeadStatus = async (
   project_ids: string,
   activity_expiration_ids: string,
   lead_campaign_names: string,
-  nivel_interes: string
+  level_of_interest: string
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<LeadStatusResponse>(
-    `/lead-status?business_id=${business_id}&type=${type}&lead_activos=${lead_activos}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&nivel_interes=${nivel_interes}`
+    `/lead-status?business_id=${business_id}&type=${type}&lead_activos=${lead_activos}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&level_of_interest=${level_of_interest}`
   );
   return response;
 };
@@ -32,14 +32,14 @@ export const getLeadByEtapa = async (
   project_ids: string,
   activity_expiration_ids: string,
   lead_campaign_names: string,
-  nivel_interes: string,
+  level_of_interest: string,
   text: string,
   limit: number,
   page: number
 ) => {
   const rolActual = localStorage.getItem('rolActual') || '';
   const response = await apiInstance.get<EtapaConPaginacion>(
-    `/lead-status/leads?business_id=${business_id}&lead_activos=${lead_activos}&etapa_ids=${etapa_ids}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&nivel_interes=${nivel_interes}&text=${text}&limit=${limit}&page=${page}`
+    `/lead-status/leads?business_id=${business_id}&lead_activos=${lead_activos}&etapa_ids=${etapa_ids}&rolActual=${rolActual}&user_ids=${user_ids}&channel_ids=${channel_ids}&lead_label_ids=${lead_label_ids}&stage_ids=${stage_ids}&project_ids=${project_ids}&activity_expiration_ids=${activity_expiration_ids}&lead_campaign_names=${lead_campaign_names}&level_of_interest=${level_of_interest}&text=${text}&limit=${limit}&page=${page}`
   );
   return response;
 };

@@ -113,8 +113,8 @@ interface KanbanBoardComponentProps {
     props.onFiltrosLeads('LEADS_KANBAN');
   };
 
-  const onChangeStateLead = (lead_uuid: string, nivel_interes: string) => {
-    changeNivelInteres(lead_uuid, nivel_interes, false).then(() => {});
+  const onChangeStateLead = (lead_uuid: string, level_of_interest: string) => {
+    changeNivelInteres(lead_uuid, level_of_interest, false).then(() => {});
   };
 
   const userlocal = localStorage.getItem('user');

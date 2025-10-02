@@ -1,12 +1,12 @@
 export interface FormLeadActividadRequest {
   lead_id: number;
-  tipo_actividad: string;
-  titulo: string;
-  fecha_inicial: string;
-  fecha_final: string;
-  hora_inicial: string;
-  hora_final: string;
-  disponibilidad: string;
-  ubicacion: string;
+  activity_type: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  availability: string;
+  location: string;
   check_actividad: boolean;
 }

@@ -13,7 +13,7 @@ export interface Lead {
   channel_icon_html: string;
   prediccion_ia: string;
   interes: string;
-  estado_final: string;
+  final_state: string;
   user_id: string;
   user_names: string;
   user_father_last_name: string;
@@ -23,14 +23,14 @@ export interface Lead {
   lead_labels: LeadLabel[];
   uuid: string;
   state_histories: LeadHistory[];
-  ciudad: string;
-  precio: string;
+  city: string;
+  price: string;
   info: string;
   email: string;
-  asesor_estado: string;
+  advisor_state: string;
   supervisor_names: string;
-  fecha_creacion?: string;
+  creation_date?: string;
   actividad_estado: LeadActividadEstado;
-  campaign_codigo: string;
+  campaign_code: string;
   conteo_actividad: number;
 }

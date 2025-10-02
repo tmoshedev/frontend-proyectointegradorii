@@ -10,8 +10,8 @@ interface Props {
   setFormData: (data: any) => void;
   formData: {
     type: ViewType;
-    fecha_inicial: string;
-    fecha_final: string;
+    start_date: string;
+    end_date: string;
   };
 }
 
@@ -34,24 +34,24 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
       if (type === 'DIA') {
         setFormData((prev: any) => ({
           ...prev,
-          fecha_inicial: getToday(),
-          fecha_final: getToday(),
+          start_date: getToday(),
+          end_date: getToday(),
           type,
         }));
       } else if (type === 'SEMANA') {
         const { monday, sunday } = getWeekRange();
         setFormData((prev: any) => ({
           ...prev,
-          fecha_inicial: monday,
-          fecha_final: sunday,
+          start_date: monday,
+          end_date: sunday,
           type,
         }));
       } else if (type === 'MES') {
         const { startOfMonth, endOfMonth } = getMonthRange();
         setFormData((prev: any) => ({
           ...prev,
-          fecha_inicial: startOfMonth,
-          fecha_final: endOfMonth,
+          start_date: startOfMonth,
+          end_date: endOfMonth,
           type,
         }));
       }
@@ -60,31 +60,31 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
   );
 
   const cambiarSemana = (delta: number) => {
-    const base = moment(formData.fecha_inicial).add(delta, 'week');
+    const base = moment(formData.start_date).add(delta, 'week');
     const { monday, sunday } = getWeekRange(base);
     setFormData((prev: any) => ({
       ...prev,
-      fecha_inicial: monday,
-      fecha_final: sunday,
+      start_date: monday,
+      end_date: sunday,
     }));
   };
 
   const cambiarDia = (delta: number) => {
-    const fecha = moment(formData.fecha_inicial).add(delta, 'day').format(DATE_FORMAT);
+    const fecha = moment(formData.start_date).add(delta, 'day').format(DATE_FORMAT);
     setFormData((prev: any) => ({
       ...prev,
-      fecha_inicial: fecha,
-      fecha_final: fecha,
+      start_date: fecha,
+      end_date: fecha,
     }));
   };
 
   const cambiarMes = (delta: number) => {
-    const base = moment(formData.fecha_inicial).add(delta, 'month');
+    const base = moment(formData.start_date).add(delta, 'month');
     const { startOfMonth, endOfMonth } = getMonthRange(base);
     setFormData((prev: any) => ({
       ...prev,
-      fecha_inicial: startOfMonth,
-      fecha_final: endOfMonth,
+      start_date: startOfMonth,
+      end_date: endOfMonth,
     }));
   };
 
@@ -114,12 +114,12 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
             ></i>
             <div style={{ width: '17rem' }}>
               <Flatpickr
-                key={`${formData.fecha_inicial}-${formData.fecha_final}`}
+                key={`${formData.start_date}-${formData.end_date}`}
                 value={
-                  formData.fecha_inicial && formData.fecha_final
+                  formData.start_date && formData.end_date
                     ? [
-                        moment(formData.fecha_inicial).toDate(),
-                        moment(formData.fecha_final).toDate(),
+                        moment(formData.start_date).toDate(),
+                        moment(formData.end_date).toDate(),
                       ]
                     : undefined
                 }
@@ -127,8 +127,8 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
                   const { monday, sunday } = getWeekRange(moment(start));
                   setFormData((prev: any) => ({
                     ...prev,
-                    fecha_inicial: monday,
-                    fecha_final: sunday,
+                    start_date: monday,
+                    end_date: sunday,
                   }));
                 }}
                 className="form-control form-control-sm input-lead-actividad"
@@ -163,14 +163,14 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
             ></i>
             <div style={{ width: '17rem' }}>
               <Flatpickr
-                key={formData.fecha_inicial}
-                value={formData.fecha_inicial ? moment(formData.fecha_inicial).toDate() : undefined}
+                key={formData.start_date}
+                value={formData.start_date ? moment(formData.start_date).toDate() : undefined}
                 onChange={([date]) => {
                   const selected = moment(date).format(DATE_FORMAT);
                   setFormData((prev: any) => ({
                     ...prev,
-                    fecha_inicial: selected,
-                    fecha_final: selected,
+                    start_date: selected,
+                    end_date: selected,
                   }));
                 }}
                 className="form-control form-control-sm input-lead-actividad"
@@ -201,18 +201,18 @@ export const CrmCalendarTopbarComponent = ({ setFormData, formData }: Props) => 
             ></i>
             <div style={{ width: '17rem' }}>
               <Flatpickr
-                key={`${formData.fecha_inicial}-${formData.fecha_final}`}
+                key={`${formData.start_date}-${formData.end_date}`}
                 value={
-                  formData.fecha_inicial
-                    ? moment(formData.fecha_inicial).format(MONTH_FORMAT)
+                  formData.start_date
+                    ? moment(formData.start_date).format(MONTH_FORMAT)
                     : undefined
                 }
                 onChange={([date]) => {
                   const { startOfMonth, endOfMonth } = getMonthRange(moment(date));
                   setFormData((prev: any) => ({
                     ...prev,
-                    fecha_inicial: startOfMonth,
-                    fecha_final: endOfMonth,
+                    start_date: startOfMonth,
+                    end_date: endOfMonth,
                   }));
                 }}
                 className="form-control form-control-sm input-lead-actividad"

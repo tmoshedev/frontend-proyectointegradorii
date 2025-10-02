@@ -11,9 +11,9 @@ export interface AccessUser {
   state?: string;
   roles: any[];
   ubigeo_domicilio?: string;
-  direccion?: string;
-  fecha_nacimiento?: string;
-  genero?: string;
+  address?: string;
+  birth_date?: string;
+  gender?: string;
   selectedUbigeoDomilicio?: any;
   superior_id?: string;
 }

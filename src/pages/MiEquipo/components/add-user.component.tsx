@@ -39,9 +39,9 @@ export const AddUserComponent = (props: Props) => {
     cellphone: '',
     role_id: '',
     ubigeo_domicilio: '',
-    direccion: '',
-    fecha_nacimiento: '',
-    genero: '',
+    address: '',
+    birth_date: '',
+    gender: '',
     selectedUbigeoDomilicio: { label: 'Buscar ciudad...', value: '' },
     roles: [],
     superior_id: props.data.row?.user_id || '',
@@ -85,11 +85,11 @@ export const AddUserComponent = (props: Props) => {
           formik.setFieldValue('names', response.names);
           formik.setFieldValue('father_last_name', response.father_last_name);
           formik.setFieldValue('mother_last_name', response.mother_last_name);
-          formik.setFieldValue('direccion', response.address);
+          formik.setFieldValue('address', response.address);
           formik.setFieldValue('ubigeo_domicilio', response.ubigeo_id);
           formik.setFieldValue('selectedUbigeoDomilicio', response.selectedUbigeo);
-          formik.setFieldValue('fecha_nacimiento', response.fecha_nacimiento);
-          formik.setFieldValue('genero', response.sexo);
+          formik.setFieldValue('birth_date', response.birth_date);
+          formik.setFieldValue('gender', response.sexo);
         }
       });
     }
@@ -117,7 +117,7 @@ export const AddUserComponent = (props: Props) => {
 
   const handleDateChange = (date: Date[]) => {
     const birth_date = moment(date[0]).format('YYYY-MM-DD');
-    formik.setFieldValue('fecha_nacimiento', birth_date);
+    formik.setFieldValue('birth_date', birth_date);
   };
 
   return (
@@ -249,10 +249,10 @@ export const AddUserComponent = (props: Props) => {
               className="form-control form-control-sm"
             />
           </div>
-          {/* Ciudad de domicilio [Ciudad / Provincia / Departamento] */}
+          {/* city de domicilio [city / Provincia / Departamento] */}
           <div className="col-md-6 mb-3">
             <label className="form-label" htmlFor="student_ubigeo_domicilio">
-              Ciudad de domicilio [Ciudad / Provincia / Departamento]
+              city de domicilio [city / Provincia / Departamento]
             </label>
             <Select
               name="student_ubigeo_domicilio"
@@ -268,28 +268,28 @@ export const AddUserComponent = (props: Props) => {
           </div>
           {/* Domicilio */}
           <div className="col-md-6 mb-3">
-            <label className="form-label" htmlFor="direccion">
+            <label className="form-label" htmlFor="address">
               Domicilio
             </label>
             <input
               autoComplete="off"
               onChange={handleInputChange}
-              value={formik.values.direccion ?? ''}
-              name="direccion"
-              id="direccion"
+              value={formik.values.address ?? ''}
+              name="address"
+              id="address"
               type="text"
               className="todo-mayuscula form-control form-control-sm"
             />
           </div>
           {/* Fecha de nacimiento */}
           <div className="col-md-4 mb-3">
-            <label className="form-label" htmlFor="fecha_nacimiento">
+            <label className="form-label" htmlFor="birth_date">
               Fecha de nacimiento
             </label>
             <Flatpickr
-              name="student_fecha_nacimiento"
-              id="student_fecha_nacimiento"
-              value={formik.values.fecha_nacimiento}
+              name="student_birth_date"
+              id="student_birth_date"
+              value={formik.values.birth_date}
               onChange={handleDateChange}
               className="form-control form-control-sm"
               options={{
@@ -300,14 +300,14 @@ export const AddUserComponent = (props: Props) => {
           </div>
           {/* Género */}
           <div className="col-md-4 mb-3">
-            <label className="form-label" htmlFor="genero">
+            <label className="form-label" htmlFor="gender">
               Género
             </label>
             <select
               onChange={handleInputChangeSelect}
-              value={formik.values.genero ?? ''}
-              name="genero"
-              id="genero"
+              value={formik.values.gender ?? ''}
+              name="gender"
+              id="gender"
               className="form-select form-select-sm"
             >
               <option value="">Seleccionar</option>

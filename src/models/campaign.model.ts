@@ -1,9 +1,9 @@
 export interface Campaign {
   id?: string;
-  codigo: string;       // Código de la campaña
+  code: string;       // Código de la campaña
   name: string;          // Nombre de la campaña
-  fecha_inicio: string;  // Fecha de inicio (YYYY-MM-DD)
+  start_date: string;  // Fecha de inicio (YYYY-MM-DD)
   channel: string;       // Canal asignado
-  precio?: number;        // Precio de la campaña
+  price?: number;        // price de la campaña
   state?: string;         // Estado (ej. "Activo", "Inactivo")
 }

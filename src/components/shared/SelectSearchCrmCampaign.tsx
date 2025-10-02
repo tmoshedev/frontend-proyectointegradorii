@@ -13,9 +13,9 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
   const inputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
 
-  const toggleSelect = (codigo: string) => {
+  const toggleSelect = (code: string) => {
     const newItems = props.items.map((item) =>
-      item.codigo === codigo ? { ...item, selected: !item.selected } : item
+      item.code === code ? { ...item, selected: !item.selected } : item
     );
     props.onChange(newItems);
   };
@@ -53,7 +53,7 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
               key={index}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleSelect(item.codigo);
+                toggleSelect(item.code);
               }}
               className={item.selected ? 'selected' : ''}
               style={{ userSelect: 'none' }}
@@ -63,7 +63,7 @@ export const SelectSearchCrmCampaign = (props: SelectSearchCrmCampaignProps) => 
                 className="ssc-item-checkbox"
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleSelect(item.codigo);
+                  toggleSelect(item.code);
                 }}
               >
                 <input
