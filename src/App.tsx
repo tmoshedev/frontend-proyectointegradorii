@@ -19,14 +19,17 @@ import {
   CalendarioPage,
   CampanaPage,
   ConfiguracionPage,
-  BuyerConfigPage
+  BuyerConfigPage,
 } from './pages';
+import TwoFactorAuthPage from './pages/Login/TwoFactorAuth.page';
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/verify-2fa" element={<TwoFactorAuthPage />} />
           <Route path="/" element={<AuthLayout />}>
             <Route element={<ProtectedRoute permission="home-index" />}>
               <Route path="/" element={<HomePage />} />
@@ -72,8 +75,6 @@ function App() {
               </Route>
             </Route>
           </Route>
-          {/* Login */}
-          <Route path="login" element={<LoginPage />}></Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

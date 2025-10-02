@@ -4,6 +4,15 @@ import apiInstance from './api';
 import { Login } from '../models';
 import { LoginResponse } from '../models/responses';
 
+interface ResendResponse {
+  message: string;
+}
+
+interface ChangeEmailResponse {
+  message: string;
+  new_email: string;
+}
+
 const MAX_REFRESH_ATTEMPTS = 1;
 
 export const checkAuth = async (refreshAttempts = 0): Promise<LoginResponse | null> => {
@@ -28,8 +37,23 @@ export const checkAuth = async (refreshAttempts = 0): Promise<LoginResponse | nu
   }
 };
 
-export const login = async (login: Login) => {
-  const response = await apiInstance.post<LoginResponse>('/auth/login', login);
+export const login = async (login: Login, captcha: string) => {
+  const response = await apiInstance.post<LoginResponse>('/auth/login', { ...login, captcha });
+  return response;
+};
+
+export const verifyTwoFactor = async (userId: number, code: string) => {
+  const response = await apiInstance.post<LoginResponse>('/auth/verify-2fa', { userId, code });
+  return response;
+};
+
+export const resendTwoFactor = async (userId: number) => {
+  const response = await apiInstance.post<ResendResponse>('/auth/resend-2fa', { userId });
+  return response;
+};
+
+export const changeEmailAndResendTwoFactor = async (userId: number, new_email: string) => {
+  const response = await apiInstance.post<ChangeEmailResponse>('/auth/change-email-2fa', { userId, new_email });
   return response;
 };
 

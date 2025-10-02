@@ -12,10 +12,14 @@ import { LoadingState } from '../../components/shared';
 import { AppStore } from '../../redux/store';
 /**Models */
 import { Login } from '../../models';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useRef, useState } from 'react';
 
 export const LoginPage = () => {
   const loadingState = useSelector((store: AppStore) => store.loading);
   const { login } = useLogin();
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const captchaRef = useRef<ReCAPTCHA>(null);
 
   const formData: Login = {
     username: '',
@@ -31,8 +35,25 @@ export const LoginPage = () => {
   const formik = useFormik({
     initialValues: formData,
     validationSchema,
-    onSubmit: () => {
-      login(formik.values);
+    onSubmit: async (values, { resetForm }) => {
+      if (captcha) {
+        const success = await login(values, captcha);
+        if (!success) {
+          // Si el login falla (credenciales incorrectas, etc.)
+          resetForm({
+            values: {
+              ...values,
+              password: '', // Limpia solo la contraseña
+            },
+          });
+          captchaRef.current?.reset(); // Resetea el reCAPTCHA
+          setCaptcha(null);
+        }
+        // Si el login es parcialmente exitoso (2FA), no se hace nada aquí
+        // para que el usuario sea redirigido.
+      } else {
+        console.log('Por favor, completa el reCAPTCHA');
+      }
     },
   });
 
@@ -93,9 +114,21 @@ export const LoginPage = () => {
                         <ErrorValidate state={formik.errors.password} />
                       </div>
                     </div>
+                    <div className="form-group d-flex justify-content-center my-4">
+                      <ReCAPTCHA
+                        ref={captchaRef}
+                        sitekey="6LetRNwrAAAAAMI3XZEj5w-A9lduGgkQw39NIZkl" // ¡Importante! Reemplaza esto
+                        onChange={(token) => setCaptcha(token)}
+                        onExpired={() => setCaptcha(null)}
+                      />
+                    </div>
                     <div className="form-group mb-0 checkbox-checked">
                       <div className="text-end mt-3">
-                        <button className="btn btn-primary btn-block w-100" type="submit">
+                        <button
+                          className="btn btn-primary btn-block w-100"
+                          type="submit"
+                          disabled={!captcha}
+                        >
                           <i className="fe fe-arrow-right"></i> Ingresar
                         </button>
                       </div>

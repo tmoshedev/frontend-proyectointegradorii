@@ -76,7 +76,7 @@ export const UsuariosPage = () => {
           },
           {
             name: 'email',
-            alias: 'Correo institucional',
+            alias: 'Correo corporativo',
             roles: [],
           },
           {
