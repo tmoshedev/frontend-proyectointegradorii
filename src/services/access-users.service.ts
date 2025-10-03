@@ -53,3 +53,48 @@ export const getRequirements = async () => {
   const response = await apiInstance.get(`/access-users/requirements`);
   return response;
 };
+
+interface ContactVerificationResponse {
+  message: string;
+  expires_in: number;
+  verification_id: string;
+}
+
+interface ContactVerificationConfirmResponse {
+  message: string;
+  verified: boolean;
+}
+
+type ContactVerificationType = 'email' | 'cellphone';
+
+export const sendContactVerificationCode = async (
+  type: ContactVerificationType,
+  value: string
+) => {
+  const response = await apiInstance.post<ContactVerificationResponse>(
+    '/access-users/contact/send-code',
+    {
+      type,
+      value,
+    }
+  );
+  return response;
+};
+
+export const verifyContactVerificationCode = async (
+  type: ContactVerificationType,
+  value: string,
+  code: string,
+  verification_id: string
+) => {
+  const response = await apiInstance.post<ContactVerificationConfirmResponse>(
+    '/access-users/contact/verify-code',
+    {
+      type,
+      value,
+      code,
+      verification_id,
+    }
+  );
+  return response;
+};

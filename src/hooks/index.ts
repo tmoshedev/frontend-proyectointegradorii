@@ -1,4 +1,5 @@
 export * from './useLogin';
+export * from './useChangePassword';
 export * from './useAccessUsers';
 export * from './useSidebarResponsive';
 export * from './useLeadStatus';

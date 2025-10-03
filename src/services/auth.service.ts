@@ -13,6 +13,28 @@ interface ChangeEmailResponse {
   new_email: string;
 }
 
+export interface PasswordCodeRequestPayload {
+  channel: 'primary_email' | 'phone' | 'alternate_email';
+  alternate_email?: string;
+}
+
+export interface PasswordCodeResponse {
+  message: string;
+  masked_destination?: string;
+  destination_mask?: string;
+  challenge_id: string;
+  expires_in: number;
+}
+
+export interface ChangePasswordPayload {
+  challenge_id: string;
+  code: string;
+  password_current: string;
+  password: string;
+  password_confirmation: string;
+  logout_others?: boolean;
+}
+
 const MAX_REFRESH_ATTEMPTS = 1;
 
 export const checkAuth = async (refreshAttempts = 0): Promise<LoginResponse | null> => {
@@ -57,11 +79,19 @@ export const changeEmailAndResendTwoFactor = async (userId: number, new_email: s
   return response;
 };
 
+export const requestPasswordChangeCode = async (payload: PasswordCodeRequestPayload) => {
+  const response = await apiInstance.post<PasswordCodeResponse>(
+    '/auth/change-password/request-code',
+    payload
+  );
+  return response;
+};
+
 export const logout = async () => {
   await apiInstance.get('/auth/logout');
 };
 
-export const changePassword = async (formData: any) => {
+export const changePassword = async (formData: ChangePasswordPayload) => {
   const response = await apiInstance.patch('/auth/change-password', formData);
 
   return response;

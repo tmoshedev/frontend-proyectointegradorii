@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   login as loginService,
   logout,
-  changePassword,
   verifyTwoFactor as verifyTwoFactorService,
   resendTwoFactor as resendTwoFactorService,
   changeEmailAndResendTwoFactor as changeEmailAndResendTwoFactorService,
@@ -99,19 +98,6 @@ export const useLogin = () => {
       .finally(() => dispatch(setLoading(false)));
   };
 
-  const changePasswordHook = async (formData: any) => {
-    dispatch(setLoading(true));
-    try {
-      const response = await changePassword(formData).then(() => {
-        SweetAlert.success('Contraseña actualizada correctamente.');
-        handleLogout();
-      });
-      return response;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
   const handleResendTwoFactor = async (userId: number) => {
     dispatch(setLoading(true));
     try {
@@ -143,7 +129,6 @@ export const useLogin = () => {
   return {
     login,
     handleLogout,
-    changePassword: changePasswordHook,
     verifyTwoFactor,
     resendTwoFactor: handleResendTwoFactor,
     changeEmailAndResend: handleChangeEmailAndResend,
