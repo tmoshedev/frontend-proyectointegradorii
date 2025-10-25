@@ -18,8 +18,8 @@ export interface ReportsCommonFilters {
   date_to?: string;
   interval_preset?: string;
   metric?: string;
-  campaign_codigos?: string[];
-  campaign_codigo?: string;
+  campaign_codes?: string[];
+  campaign_code?: string;
   assigned_to_ids?: string[];
   advisor_ids?: string[];
   advisor_id?: string;
@@ -97,7 +97,7 @@ export interface ReportsDailyLeadDetailItem {
   stage_name?: string | null;
   lead_state_id?: string | number | null;
   lead_state_name?: string | null;
-  campaign_codigo?: string | number | null;
+  campaign_code?: string | number | null;
   campaign_name?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
@@ -106,7 +106,7 @@ export interface ReportsDailyLeadDetailItem {
 export interface ReportsDailyLeadSourceItem {
   date: string;
   total: number;
-  campaign_codigo?: string | number | null;
+  campaign_code?: string | number | null;
   campaign_name?: string | null;
   source?: string | null;
   source_type?: string | null;
@@ -180,7 +180,7 @@ export interface ReportsGoalStatus {
 export interface ReportsGoalEntity {
   id?: string;
   name?: string;
-  codigo?: string;
+  code?: string;
 }
 
 export interface ReportsGoalItem {
@@ -197,7 +197,7 @@ export interface ReportsGoalItem {
   period_end?: string;
   campaign?: ReportsGoalEntity;
   campaigns?: ReportsGoalEntity[];
-  campaign_codigos?: (string | number)[];
+  campaign_codes?: (string | number)[];
   advisor?: ReportsGoalEntity;
   notes?: string;
 }
@@ -223,8 +223,8 @@ export interface ReportsGoalPayload {
   target_value: number;
   period_start: string;
   period_end: string;
-  campaign_codigo?: string;
-  campaign_codigos?: string[];
+  campaign_code?: string;
+  campaign_codes?: string[];
   advisor_id?: string;
   name?: string;
   notes?: string;
@@ -245,7 +245,7 @@ export interface ReportsGoalsListResponse {
 export interface ReportsStageTargetScope {
   id?: string | number | null;
   name?: string;
-  codigo?: string | number | null;
+  code?: string | number | null;
   label?: string;
   order?: number | null;
 }
@@ -285,7 +285,7 @@ export interface ReportsStageTargetPayload {
   target_total: number;
   period_start: string;
   period_end: string;
-  campaign_codigo?: string;
+  campaign_code?: string;
   advisor_id?: string;
   notes?: string;
 }
@@ -293,7 +293,7 @@ export interface ReportsStageTargetPayload {
 export interface ReportsSelectableItem {
   id?: string | number;
   value?: string | number;
-  codigo?: string | number;
+  code?: string | number;
   name?: string;
   label?: string;
   selected?: boolean;

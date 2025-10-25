@@ -30,11 +30,11 @@
 ## Gestión dinámica de metas
 - Proveer endpoints para crear/editar metas por etapa y campaña. Alternativas:
   - `POST /reports/goals/stage-targets` para registrar objetivos por campaña + etapa (rango de fechas).
-  - `GET /reports/goals/stage-targets` filtrado por `campaign_codigo`, `advisor_id`, `date_from`, `date_to` para devolver lo configurado.
+  - `GET /reports/goals/stage-targets` filtrado por `campaign_code`, `advisor_id`, `date_from`, `date_to` para devolver lo configurado.
 - El frontend enviará los filtros actuales (campaña, asesor, rango, métrica). La respuesta debe ajustarse al filtro vigente.
 - Para `POST /reports/goals` (creación de metas globales) el cliente ahora envía:
   - `goal.name` (string) para identificar la meta en la UI.
-  - `goal.campaign_codigos` (array de strings) cuando la meta aplica a varias campañas a la vez. Si se envía un solo código, también se envía `goal.campaign_codigo` para mantener compatibilidad.
+  - `goal.campaign_codes` (array de strings) cuando la meta aplica a varias campañas a la vez. Si se envía un solo código, también se envía `goal.campaign_code` para mantener compatibilidad.
 - Las respuestas de `GET /reports/goals` y `GET /reports/goals/performance` deben incluir el campo `name` y, si aplica, la lista de campañas asociadas para poder mostrarlas en el gestor de metas.
 
 ## Descarga de gráficos
@@ -46,7 +46,7 @@
 - Mantener consistencia de nombres de etapas: se usa `stage.name` como identificador para emparejar metas con valores reales.
 
 ## Filtros avanzados y catálogos
-- `campaign_codigos` debe aceptar un **arreglo** (`["ALPHA", "BETA"]`) para combinar campañas que pertenecen a la misma iniciativa.
+- `campaign_codes` debe aceptar un **arreglo** (`["ALPHA", "BETA"]`) para combinar campañas que pertenecen a la misma iniciativa.
 - El frontend envía `closing_stage_ids` como arreglo con los estados finales seleccionados en la UI; aplica tanto para Hit Rate como para Tiempo de ciclo. Si se omite, el backend puede inferirlos.
 - Devuelve los estados consumidos en cada respuesta dentro de `summary.closing_stage_ids` y/o `summary.closing_estado_finales` para que el dashboard pueda mostrarlos como contexto.
 - El catálogo de etapas proviene de `GET /reports/funnel`: asegúrate de incluir `id` y `name` para cada etapa, ya que se usan para poblar el selector de estados de cierre.
@@ -54,9 +54,9 @@
 
 ## Reporte diario de leads por origen
 - **Nuevo endpoint**: `GET /reports/leads/daily-sources`.
-- Filtros soportados: mismos filtros globales (`business_id`, `date_from`, `date_to`, `interval_preset`, `campaign_codigos`, `advisor_ids`).
+- Filtros soportados: mismos filtros globales (`business_id`, `date_from`, `date_to`, `interval_preset`, `campaign_codes`, `advisor_ids`).
 - Respuesta esperada:
-  - `records`: arreglo con objetos `{ "date": "2025-10-15", "total": 12, "campaign_codigo": "FACEBOOK", "campaign_name": "Facebook Ads", "source_type": "CAMPAÑA" | "REGISTRO_DEL_SISTEMA", "source": "Facebook", "web_hook_id": "abc123", "registered_by_system": false }`.
+  - `records`: arreglo con objetos `{ "date": "2025-10-15", "total": 12, "campaign_code": "FACEBOOK", "campaign_name": "Facebook Ads", "source_type": "CAMPAÑA" | "REGISTRO_DEL_SISTEMA", "source": "Facebook", "web_hook_id": "abc123", "registered_by_system": false }`.
   - `summary`: totales agregados `{ "total": 120, "campaign_total": 95, "system_total": 25, "by_source": [{ "source": "Facebook", "total": 60 }] }`.
 - Reglas de negocio:
   - Si un lead proviene de webhook/campaña debe incluir `web_hook_id` y la campaña asociada.
@@ -72,7 +72,7 @@
 
 ## Reporte de Hit Rate
 - Endpoint disponible: `POST /api/v1/reports/leads/hit-rate` (payload JSON).
-- Acepta los mismos filtros generales (`business_id`, `date_from`, `date_to`, `interval_preset`, `campaign_codigos`, `advisor_ids`, `assigned_to_ids`) más campos opcionales:
+- Acepta los mismos filtros generales (`business_id`, `date_from`, `date_to`, `interval_preset`, `campaign_codes`, `advisor_ids`, `assigned_to_ids`) más campos opcionales:
   - `closing_stage_ids`: lista de etapas a considerar como cierre (se infieren si se omiten).
   - `closing_estado_finales`: estados finales que cuentan como cierre.
   - `benchmarks`: arreglo de referencias `{ "label": string, "hit_rate": number }` que el backend puede devolver en el resumen.

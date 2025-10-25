@@ -59,8 +59,8 @@ const resolveSourceLabel = (record: ReportsDailyLeadSourceItem) => {
   if (record.source) {
     return record.source;
   }
-  if (record.campaign_codigo) {
-    return `Campaña ${record.campaign_codigo}`;
+  if (record.campaign_code) {
+    return `Campaña ${record.campaign_code}`;
   }
   if (record.registered_by_system || !record.web_hook_id) {
     return 'Registro manual';

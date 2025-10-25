@@ -159,7 +159,7 @@ const selectableToOptions = (items?: ReportsSelectableItem[]): ReportSelectOptio
 
   return items
     .map(item => {
-      const rawValue = item.codigo ?? item.value ?? item.id;
+      const rawValue = item.code ?? item.value ?? item.id;
       const label = item.label ?? item.name ?? (rawValue != null ? String(rawValue) : undefined);
       if (!rawValue || !label) {
         return null;
@@ -349,7 +349,7 @@ const buildGoalsSummaryCards = (summary?: ReportsGoalsPerformanceResponse['summa
 };
 
 const goalMatchesFilters = (
-  goal: { campaign?: { id?: string | number | null; codigo?: string | number | null } | null; advisor?: { id?: string | number | null; codigo?: string | number | null } | null } | null,
+  goal: { campaign?: { id?: string | number | null; code?: string | number | null } | null; advisor?: { id?: string | number | null; code?: string | number | null } | null } | null,
   filters: ReportFiltersState,
 ) => {
   if (!goal) {
@@ -364,9 +364,9 @@ const goalMatchesFilters = (
       : null;
 
   if (campaignCodeSet && campaignCodeSet.size > 0) {
-    const primaryIdentifier = goal.campaign?.codigo ?? goal.campaign?.id ?? null;
-    const campaignArray = Array.isArray((goal as { campaign_codigos?: unknown }).campaign_codigos)
-      ? ((goal as { campaign_codigos?: unknown }).campaign_codigos as unknown[])
+    const primaryIdentifier = goal.campaign?.code ?? goal.campaign?.id ?? null;
+    const campaignArray = Array.isArray((goal as { campaign_codes?: unknown }).campaign_codes)
+      ? ((goal as { campaign_codes?: unknown }).campaign_codes as unknown[])
           .map(value => (value != null ? String(value) : null))
           .filter((value): value is string => Boolean(value))
       : [];
@@ -380,7 +380,7 @@ const goalMatchesFilters = (
   }
 
   if (filters.advisorId) {
-    const advisorIdentifier = goal.advisor?.id ?? goal.advisor?.codigo ?? null;
+    const advisorIdentifier = goal.advisor?.id ?? goal.advisor?.code ?? null;
     if (advisorIdentifier == null || String(advisorIdentifier) !== filters.advisorId) {
       return false;
     }
@@ -431,17 +431,17 @@ const collectStageTargetCampaignIdentifiers = (target: ReportsStageTargetItem): 
     }
   };
 
-  register(target.campaign?.codigo);
+  register(target.campaign?.code);
   register(target.campaign?.id);
   register((target.campaign as unknown as Record<string, unknown> | undefined)?.['value']);
 
   const raw = target as unknown as Record<string, unknown>;
-  register(raw['campaign_codigo']);
+  register(raw['campaign_code']);
   register(raw['campaign_id']);
   register(raw['campaignCode']);
   register(raw['campaignId']);
 
-  const multiple = raw['campaign_codigos'];
+  const multiple = raw['campaign_codes'];
   if (Array.isArray(multiple)) {
     multiple.forEach(value => register(value));
   }
@@ -459,12 +459,12 @@ const collectStageTargetAdvisorIdentifiers = (target: ReportsStageTargetItem): S
   };
 
   register(target.advisor?.id);
-  register(target.advisor?.codigo);
+  register(target.advisor?.code);
   register((target.advisor as unknown as Record<string, unknown> | undefined)?.['value']);
 
   const raw = target as unknown as Record<string, unknown>;
   register(raw['advisor_id']);
-  register(raw['advisor_codigo']);
+  register(raw['advisor_code']);
   register(raw['advisorCode']);
   register(raw['advisorId']);
   register(raw['assigned_to_id']);
@@ -599,7 +599,7 @@ const getStageKeyFromValue = (stage: { id?: string | number | null; name: string
 
 const getStageKeyFromTarget = (target: ReportsStageTargetItem) => {
   const state = target.lead_state ?? {};
-  return buildStageKey(state.id ?? state.codigo ?? null, state.name ?? state.label ?? null);
+  return buildStageKey(state.id ?? state.code ?? null, state.name ?? state.label ?? null);
 };
 
 interface StageTargetInsightItem {
@@ -904,7 +904,7 @@ export default function ReportesPage() {
         ? Array.from(
             new Set(
               appliedFilters.campaignCodigos.filter(
-                (codigo): codigo is string => typeof codigo === 'string' && codigo.trim().length > 0,
+                (code): code is string => typeof code === 'string' && code.trim().length > 0,
               ),
             ),
           )
@@ -921,7 +921,7 @@ export default function ReportesPage() {
         date_from: appliedFilters.dateFrom,
         date_to: appliedFilters.dateTo,
         interval_preset: intervalPresetParam,
-        campaign_codigos: campaignCodigos,
+        campaign_codes: campaignCodigos,
         advisor_ids: advisorIds,
         assigned_to_ids: advisorIds,
       };
@@ -1008,7 +1008,7 @@ export default function ReportesPage() {
               business_id: BUSINESS_ID,
             };
             if (appliedFilters.campaignCodigos?.length) {
-              filters.campaign_codigo = appliedFilters.campaignCodigos[0];
+              filters.campaign_code = appliedFilters.campaignCodigos[0];
             }
             if (appliedFilters.advisorId) {
               filters.assigned_to = appliedFilters.advisorId;

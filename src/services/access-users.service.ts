@@ -1,7 +1,6 @@
 import { AccessUser } from '../models';
 import { AccessUserResponse } from '../models/responses';
 import apiInstance from './api';
-import { DataTable } from "../models";
 
 export const getAccessUsers = async (
   role_id: string,
@@ -57,32 +56,47 @@ export const getRequirements = async () => {
   return response;
 };
 
+interface ContactVerificationResponse {
+  message: string;
+  expires_in: number;
+  verification_id: string;
+}
 
+interface ContactVerificationConfirmResponse {
+  message: string;
+  verified: boolean;
+}
 
+type ContactVerificationType = 'email' | 'cellphone';
 
-export const getRoles = async (page: number, text: string, limit: string) => {
-  const response = await apiInstance.get<DataTable>(
-    `access-users/roles?page=${page}&text=${text}&limit=${limit}`,
+export const sendContactVerificationCode = async (
+  type: ContactVerificationType,
+  value: string
+) => {
+  const response = await apiInstance.post<ContactVerificationResponse>(
+    '/access-users/contact/send-code',
+    {
+      type,
+      value,
+    }
   );
   return response;
 };
 
-export const permissionsNotAssign = async (role_id: string) => {
-  const response = await apiInstance.get(`/access-users/roles/${role_id}/permissions-not-assign`);
-  return response;
-};
-
-export const permissionsAssign = async (role_id: string) => {
-  const response = await apiInstance.get(`/access-users/roles/${role_id}/permissions`);
-  return response;
-};
-
-export const updatePermissions = async (role_id: string, permissions: string[], type: string) => {
-  const response = await apiInstance.patch(`/access-users/roles/${role_id}/permissions`, {
-    permissions: {
-      permissions: permissions,
-      type: type,
-    },
-  });
+export const verifyContactVerificationCode = async (
+  type: ContactVerificationType,
+  value: string,
+  code: string,
+  verification_id: string
+) => {
+  const response = await apiInstance.post<ContactVerificationConfirmResponse>(
+    '/access-users/contact/verify-code',
+    {
+      type,
+      value,
+      code,
+      verification_id,
+    }
+  );
   return response;
 };

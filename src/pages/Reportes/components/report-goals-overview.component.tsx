@@ -38,16 +38,16 @@ const resolveGoalEntityLabel = (goal: ReportsGoalsListItem): string => {
     return goal.name;
   }
 
-  if (Array.isArray(goal.campaign_codigos) && goal.campaign_codigos.length > 1) {
-    return goal.campaign_codigos.map((code) => String(code)).join(', ');
+  if (Array.isArray(goal.campaign_codes) && goal.campaign_codes.length > 1) {
+    return goal.campaign_codes.map((code) => String(code)).join(', ');
   }
 
   if (goal.campaign?.name) {
     return goal.campaign.name;
   }
 
-  if (Array.isArray(goal.campaign_codigos) && goal.campaign_codigos.length === 1) {
-    return String(goal.campaign_codigos[0]);
+  if (Array.isArray(goal.campaign_codes) && goal.campaign_codes.length === 1) {
+    return String(goal.campaign_codes[0]);
   }
 
   if (goal.advisor?.name) {

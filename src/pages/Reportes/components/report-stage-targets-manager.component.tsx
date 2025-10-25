@@ -17,14 +17,14 @@ interface StageOption {
 interface RawSelectable {
   id?: string | number | null;
   value?: string | number | null;
-  codigo?: string | number | null;
+  code?: string | number | null;
   name?: string | null;
   label?: string | null;
 }
 
 interface StageReference {
   id?: string | number | null;
-  codigo?: string | number | null;
+  code?: string | number | null;
   name?: string | null;
   label?: string | null;
   order?: number | null;
@@ -48,7 +48,7 @@ interface ReportStageTargetsManagerProps {
 interface StageTargetFiltersState {
   period_start: string;
   period_end: string;
-  campaign_codigo?: string;
+  campaign_code?: string;
   advisor_id?: string;
   notes?: string;
 }
@@ -80,17 +80,17 @@ const extractStageTargetCampaignIdentifiers = (target: ReportsStageTargetItem): 
     }
   };
 
-  register(target.campaign?.codigo);
+  register(target.campaign?.code);
   register(target.campaign?.id);
   register((target.campaign as unknown as Record<string, unknown>)?.['value']);
 
   const raw = target as unknown as Record<string, unknown>;
-  register(raw['campaign_codigo']);
+  register(raw['campaign_code']);
   register(raw['campaign_id']);
   register(raw['campaignCode']);
   register(raw['campaignId']);
 
-  const multiple = raw['campaign_codigos'];
+  const multiple = raw['campaign_codes'];
   if (Array.isArray(multiple)) {
     multiple.forEach(value => register(value));
   }
@@ -108,12 +108,12 @@ const extractStageTargetAdvisorIdentifiers = (target: ReportsStageTargetItem): s
   };
 
   register(target.advisor?.id);
-  register(target.advisor?.codigo);
+  register(target.advisor?.code);
   register((target.advisor as unknown as Record<string, unknown>)?.['value']);
 
   const raw = target as unknown as Record<string, unknown>;
   register(raw['advisor_id']);
-  register(raw['advisor_codigo']);
+  register(raw['advisor_code']);
   register(raw['advisorCode']);
   register(raw['advisorId']);
   register(raw['assigned_to_id']);
@@ -153,7 +153,7 @@ dayjs.locale('es');
 
 const mapSelectableToOption = (item: RawSelectable, fallbackLabel: string): StageOption => {
   const label = item.label ?? item.name ?? fallbackLabel;
-  const value = item.id ?? item.value ?? item.codigo ?? fallbackLabel;
+  const value = item.id ?? item.value ?? item.code ?? fallbackLabel;
   return {
     value: String(value),
     label,
@@ -162,7 +162,7 @@ const mapSelectableToOption = (item: RawSelectable, fallbackLabel: string): Stag
 
 const mapStageToOption = (stage: StageReference, fallbackIndex: number): StageOption => {
   const label = stage.name ?? stage.label ?? `Etapa ${fallbackIndex}`;
-  const value = stage.id ?? stage.codigo ?? label;
+  const value = stage.id ?? stage.code ?? label;
   return {
     value: String(value),
     label,
@@ -290,7 +290,7 @@ export default function ReportStageTargetsManager({
     stages.forEach(stage => {
       const identifiers = [
         normalizeValue(stage.id),
-        normalizeValue(stage.codigo),
+        normalizeValue(stage.code),
         normalizeValue(stage.name),
         normalizeValue(stage.label),
       ].filter(Boolean);
@@ -319,7 +319,7 @@ export default function ReportStageTargetsManager({
     (item: ReportsStageTargetItem): string | null => {
       const candidates = [
         normalizeValue(item.lead_state?.id),
-        normalizeValue(item.lead_state?.codigo),
+        normalizeValue(item.lead_state?.code),
         normalizeValue(item.lead_state?.name),
         normalizeValue(item.lead_state?.label),
         normalizeValue((item as any).lead_state_id),
@@ -353,7 +353,7 @@ export default function ReportStageTargetsManager({
     return {
       period_start: start,
       period_end: end,
-      campaign_codigo: defaultFilters?.campaignCodigo ?? '',
+      campaign_code: defaultFilters?.campaignCodigo ?? '',
       advisor_id: defaultFilters?.advisorId ?? '',
       notes: '',
     };
@@ -371,8 +371,8 @@ export default function ReportStageTargetsManager({
   );
 
   const normalizedCampaignFilter = useMemo(
-    () => normalizeValue(filtersState.campaign_codigo),
-    [filtersState.campaign_codigo],
+    () => normalizeValue(filtersState.campaign_code),
+    [filtersState.campaign_code],
   );
 
   const stageTargetsForCurrentFilters = useMemo(() => {
@@ -585,7 +585,7 @@ export default function ReportStageTargetsManager({
       business_id: businessId,
       period_start: monthlyStart,
       period_end: monthlyEnd,
-      campaign_codigo: normalizeValue(filtersState.campaign_codigo) || undefined,
+      campaign_code: normalizeValue(filtersState.campaign_code) || undefined,
       notes: filtersState.notes?.trim() ? filtersState.notes.trim() : undefined,
     };
 
@@ -673,7 +673,7 @@ export default function ReportStageTargetsManager({
 
   const findExistingTarget = useCallback(
     (stageValue: string, filters: StageTargetFiltersState): ReportsStageTargetItem | undefined => {
-      const normalizedCampaign = normalizeValue(filters.campaign_codigo);
+      const normalizedCampaign = normalizeValue(filters.campaign_code);
       const normalizedAdvisor = normalizeValue(filters.advisor_id);
       const { start: normalizedStart, end: normalizedEnd } = resolveMonthlyRangeFromDates(
         filters.period_start,
@@ -683,7 +683,7 @@ export default function ReportStageTargetsManager({
       return stageTargets.find(item => {
         const stageIdentifiers = [
           normalizeValue(item.lead_state?.id),
-          normalizeValue(item.lead_state?.codigo),
+          normalizeValue(item.lead_state?.code),
           normalizeValue(item.lead_state?.name),
           normalizeValue(item.lead_state?.label),
         ].filter(Boolean);
@@ -800,8 +800,8 @@ export default function ReportStageTargetsManager({
                 <label className="form-label">Campaña</label>
                 <select
                   className="form-select form-select-sm"
-                  value={filtersState.campaign_codigo ?? ''}
-                  onChange={event => handleFiltersChange('campaign_codigo', event.target.value)}
+                  value={filtersState.campaign_code ?? ''}
+                  onChange={event => handleFiltersChange('campaign_code', event.target.value)}
                 >
                   <option value="">General</option>
                   {campaignOptions.map(option => (

@@ -13,7 +13,7 @@ interface SelectOption {
 interface RawSelectable {
   id?: Primitive;
   value?: Primitive;
-  codigo?: Primitive;
+  code?: Primitive;
   name?: string;
   label?: string;
   selected?: boolean;
@@ -35,8 +35,8 @@ interface GoalFormState {
   target_value: number;
   period_start: string;
   period_end: string;
-  campaign_codigo?: string;
-  campaign_codigos: string[];
+  campaign_code?: string;
+  campaign_codes: string[];
   advisor_id?: string;
   name: string;
   notes?: string;
@@ -73,7 +73,7 @@ const endOfCurrentMonth = (): string => {
 const mapSelectableToOption = (item: RawSelectable, fallback: string): SelectOption => {
   const label = item.name ?? item.label ?? fallback;
   const value =
-    item.codigo ??
+    item.code ??
     item.value ??
     item.id ??
     fallback;
@@ -125,8 +125,8 @@ export default function ReportGoalsManager({
     target_value: 100,
     period_start: startOfCurrentMonth(),
     period_end: endOfCurrentMonth(),
-    campaign_codigo: campaignOptions[0]?.value,
-    campaign_codigos: campaignOptions[0]?.value ? [campaignOptions[0].value] : [],
+    campaign_code: campaignOptions[0]?.value,
+    campaign_codes: campaignOptions[0]?.value ? [campaignOptions[0].value] : [],
     advisor_id: advisorOptions[0]?.value,
     name: '',
     notes: '',
@@ -139,7 +139,7 @@ export default function ReportGoalsManager({
       }
 
       const validValues = new Set(campaignOptions.map((option) => option.value));
-      const filteredSelection = prev.campaign_codigos.filter((codigo) => validValues.has(codigo));
+      const filteredSelection = prev.campaign_codes.filter((code) => validValues.has(code));
 
       const nextSelection = filteredSelection.length > 0
         ? filteredSelection
@@ -150,17 +150,17 @@ export default function ReportGoalsManager({
       const nextPrimary = nextSelection[0];
 
       const isSameSelection =
-        nextSelection.length === prev.campaign_codigos.length &&
-        nextSelection.every((value, index) => value === prev.campaign_codigos[index]);
+        nextSelection.length === prev.campaign_codes.length &&
+        nextSelection.every((value, index) => value === prev.campaign_codes[index]);
 
-      if (isSameSelection && nextPrimary === prev.campaign_codigo) {
+      if (isSameSelection && nextPrimary === prev.campaign_code) {
         return prev;
       }
 
       return {
         ...prev,
-        campaign_codigos: nextSelection,
-        campaign_codigo: nextPrimary,
+        campaign_codes: nextSelection,
+        campaign_code: nextPrimary,
       };
     });
   }, [campaignOptions]);
@@ -191,8 +191,8 @@ export default function ReportGoalsManager({
     setIsCampaignPickerOpen(false);
     setForm((prev) => {
       const defaultCampaign = campaignOptions[0]?.value;
-      const sanitizedSelection = prev.campaign_codigos.filter((codigo) =>
-        campaignOptions.some((option) => option.value === codigo)
+      const sanitizedSelection = prev.campaign_codes.filter((code) =>
+        campaignOptions.some((option) => option.value === code)
       );
 
       const nextCampaignSelection = value === 'campaign'
@@ -201,7 +201,7 @@ export default function ReportGoalsManager({
             : defaultCampaign
               ? [defaultCampaign]
               : [])
-        : prev.campaign_codigos;
+        : prev.campaign_codes;
 
       const nextAdvisor = value === 'advisor'
         ? advisorOptions[0]?.value ?? prev.advisor_id ?? ''
@@ -210,8 +210,8 @@ export default function ReportGoalsManager({
       return {
         ...prev,
         goal_scope: value,
-        campaign_codigos: value === 'campaign' ? nextCampaignSelection : prev.campaign_codigos,
-        campaign_codigo: value === 'campaign' ? nextCampaignSelection[0] : prev.campaign_codigo,
+        campaign_codes: value === 'campaign' ? nextCampaignSelection : prev.campaign_codes,
+        campaign_code: value === 'campaign' ? nextCampaignSelection[0] : prev.campaign_code,
         advisor_id: nextAdvisor,
       };
     });
@@ -251,7 +251,7 @@ export default function ReportGoalsManager({
 
   const handleCampaignToggle = (campaignValue: string, checked: boolean) => {
     setForm((prev) => {
-      const current = new Set(prev.campaign_codigos);
+      const current = new Set(prev.campaign_codes);
       if (checked) {
         current.add(campaignValue);
       } else {
@@ -264,8 +264,8 @@ export default function ReportGoalsManager({
 
       return {
         ...prev,
-        campaign_codigos: orderedSelection,
-        campaign_codigo: orderedSelection[0],
+        campaign_codes: orderedSelection,
+        campaign_code: orderedSelection[0],
       };
     });
   };
@@ -273,23 +273,23 @@ export default function ReportGoalsManager({
   const clearCampaignSelection = () => {
     setForm((prev) => ({
       ...prev,
-      campaign_codigos: [],
-      campaign_codigo: undefined,
+      campaign_codes: [],
+      campaign_code: undefined,
     }));
   };
 
   const campaignSelectionLabel = useMemo(() => {
-    if (!form.campaign_codigos.length) {
+    if (!form.campaign_codes.length) {
       return 'Selecciona campañas';
     }
-    const labels = form.campaign_codigos
-      .map((codigo) => campaignLabelMap.get(codigo) ?? codigo);
+    const labels = form.campaign_codes
+      .map((code) => campaignLabelMap.get(code) ?? code);
     return labels.join(', ');
-  }, [campaignLabelMap, form.campaign_codigos]);
+  }, [campaignLabelMap, form.campaign_codes]);
 
   const getGoalCampaignLabel = (goal: ReportsGoalItem): string => {
-    const arrayCodes = Array.isArray(goal.campaign_codigos)
-      ? goal.campaign_codigos.map(codigo => String(codigo))
+    const arrayCodes = Array.isArray(goal.campaign_codes)
+      ? goal.campaign_codes.map(code => String(code))
       : [];
     if (arrayCodes.length > 1) {
       const labels = arrayCodes.map(code => campaignLabelMap.get(String(code)) ?? String(code));
@@ -304,7 +304,7 @@ export default function ReportGoalsManager({
       return goal.campaign.name;
     }
 
-    const fallbackCodigo = goal.campaign?.codigo;
+    const fallbackCodigo = goal.campaign?.code;
     if (fallbackCodigo != null) {
       return campaignLabelMap.get(String(fallbackCodigo)) ?? String(fallbackCodigo);
     }
@@ -329,7 +329,7 @@ export default function ReportGoalsManager({
     }
 
     if (form.goal_scope === 'campaign') {
-      const selectedCampaigns = form.campaign_codigos.filter((codigo) => codigo && codigo.trim().length > 0);
+      const selectedCampaigns = form.campaign_codes.filter((code) => code && code.trim().length > 0);
       if (selectedCampaigns.length === 0) {
         SweetAlert.warning('Validación', 'Selecciona al menos una campaña para la meta.');
         return false;
@@ -364,9 +364,9 @@ export default function ReportGoalsManager({
     }
 
     if (form.goal_scope === 'campaign') {
-      const selectedCampaigns = form.campaign_codigos.filter((codigo) => codigo && codigo.trim().length > 0);
-      payload.campaign_codigos = selectedCampaigns;
-      payload.campaign_codigo = selectedCampaigns.length === 1 ? selectedCampaigns[0] : undefined;
+      const selectedCampaigns = form.campaign_codes.filter((code) => code && code.trim().length > 0);
+      payload.campaign_codes = selectedCampaigns;
+      payload.campaign_code = selectedCampaigns.length === 1 ? selectedCampaigns[0] : undefined;
     } else {
       payload.advisor_id = form.advisor_id;
     }
@@ -439,7 +439,7 @@ export default function ReportGoalsManager({
                     <div className="border rounded bg-white shadow-sm p-3 mt-2 position-absolute w-100" style={{ zIndex: 20, maxHeight: '260px', overflowY: 'auto' }}>
                       <div className="d-flex flex-column gap-2">
                         {campaignOptions.map((option) => {
-                          const isChecked = form.campaign_codigos.includes(option.value);
+                          const isChecked = form.campaign_codes.includes(option.value);
                           return (
                             <label key={option.value} className="form-check">
                               <input
@@ -458,7 +458,7 @@ export default function ReportGoalsManager({
                           type="button"
                           className="btn btn-link btn-sm text-decoration-none"
                           onClick={clearCampaignSelection}
-                          disabled={!form.campaign_codigos.length}
+                          disabled={!form.campaign_codes.length}
                         >
                           Limpiar
                         </button>
