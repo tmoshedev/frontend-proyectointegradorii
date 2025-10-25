@@ -20,6 +20,8 @@ export function useAccessUsers() {
   //GET
   const getAccessUsers = async (
     rol_id: string,
+    state: string,
+    user_uuid: string,
     text: string,
     type: string,
     page: number,
@@ -33,6 +35,8 @@ export function useAccessUsers() {
     try {
       const response = await accessUsersService.getAccessUsers(
         rol_id,
+        state,
+        user_uuid,
         text,
         type,
         page,

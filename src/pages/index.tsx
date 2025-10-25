@@ -10,3 +10,6 @@ export { default as CalendarioPage } from './Calendario/calendario.page';
 export { default as CampanaPage } from './Campanas/campanas.page';
 export { default as ConfiguracionPage } from './Configuracion/configuracion.page';
 export { default as BuyerConfigPage } from './Configuracion/Buyer/buyer.page';
+export { default as ReportesPage } from './Reportes/reportes.page';
+export { default as RolesPage } from './GestionAccesos/Roles/roles.page';
+export { default as UsuariosConectadosPage } from './UsuariosConectados/usuarios-conectados.page';

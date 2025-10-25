@@ -16,3 +16,7 @@ export * from './useQuestionCategory';
 export * from './useTypeQuestion';
 export * from './useQuestion';
 export * from './useAnswer';
+export * from './useWebSocket';
+export * from './useRoles';
+export * from './useReports';
+export * from './usePdfTemplate';

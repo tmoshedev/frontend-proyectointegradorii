@@ -35,7 +35,7 @@ const Menu: MenuItem[] = [
     path: '/my-teams',
     icon: 'ri-user-heart-line',
     permission: 'teams-index',
-    rolesPermitidos: ['SALES_SUPERVISOR', 'COMMERCIAL_LEADER'],
+    rolesPermitidos: ['SALES_SUPERVISOR', 'COMMERCIAL_LEADER','DEVELOPER', 'CEO', 'ADMINISTRATOR' ],
   },
   {
     name: 'Leads',
@@ -52,6 +52,13 @@ const Menu: MenuItem[] = [
     rolesPermitidos: ['ALLS'],
   },
   {
+    name: 'Reportes',
+    path: '/reportes',
+    icon: 'ri-file-chart-line',
+    permission: 'reportes-index',
+    rolesPermitidos: ['ADMINISTRATOR','DEVELOPER'],
+  },
+  {
     name: 'Gestión accesos',
     icon: 'ri-group-line',
     permissions: ['access-users-index'],
@@ -61,6 +68,18 @@ const Menu: MenuItem[] = [
       {
         name: 'Usuarios',
         path: '/access-users',
+        permission: 'access-users-index',
+        rolesPermitidos: ['ALLS'],
+      },
+      {
+        name: 'Roles',
+        path: '/access-roles',
+        permission: 'access-roles-index',
+        rolesPermitidos: ['ADMINISTRATOR' ,'DEVELOPER', 'CEO' ],
+      },
+      {
+        name: 'Usuarios Conectados',
+        path: '/connected-users',
         permission: 'access-users-index',
         rolesPermitidos: ['ALLS'],
       },
@@ -80,6 +99,7 @@ const Menu: MenuItem[] = [
     permission: 'change-password',
     rolesPermitidos: ['ALLS'],
   },
+  
 ];
 
 export default Menu;

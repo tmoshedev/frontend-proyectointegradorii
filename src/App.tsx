@@ -19,8 +19,12 @@ import {
   CalendarioPage,
   CampanaPage,
   ConfiguracionPage,
-  BuyerConfigPage,
+  RolesPage,
+  ReportesPage,
+  UsuariosConectadosPage, 
+  
 } from './pages';
+
 import TwoFactorAuthPage from './pages/Login/TwoFactorAuth.page';
 
 function App() {
@@ -64,17 +68,27 @@ function App() {
                 <Route element={<ProtectedRoute permission="campaigns-index" />}>
                   <Route path="campaigns" element={<CampanaPage />} />
                 </Route>
+                {/*ReportesPage*/}
+                <Route element={<ProtectedRoute permission="reportes-index" />}>
+                  <Route path="reportes" element={<ReportesPage />} />
+                </Route>
                 {/*ConfiguracionPage*/}
                 <Route element={<ProtectedRoute permission="settings-index" />}>
                   <Route path="settings" element={<ConfiguracionPage />} />
                 </Route>
-                {/*BuyerConfigPage*/}
-                <Route element={<ProtectedRoute permission="settings-index" />}>
-                  <Route path="settings/buyer" element={<BuyerConfigPage />} />
-                </Route>
+                /*RolesPage*/
+              <Route element={<ProtectedRoute permission="access-roles-index" />}>
+                <Route path="access-roles" element={<RolesPage />} />
+              </Route>
+              {/*UsuariosConectadosPage*/}
+              <Route element={<ProtectedRoute permission="access-users-index" />}>
+                <Route path="connected-users" element={<UsuariosConectadosPage />} />
               </Route>
             </Route>
+            </Route>
           </Route>
+          {/* Login */}
+          <Route path="login" element={<LoginPage />}></Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

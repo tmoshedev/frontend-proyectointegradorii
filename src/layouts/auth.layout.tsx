@@ -23,6 +23,15 @@ const AuthLayout = () => {
         const response: any = await checkAuth();
         if (response) {
           dispatch(setUser(response.user));
+          // Guardar UUID para WebSocket
+          console.log('Respuesta completa de checkAuth:', response);
+          console.log('UUID en checkAuth:', response.user.uuid);
+          console.log('ID en checkAuth:', response.user.id);
+          const identifier = response.user.uuid || response.user.id.toString();
+          console.log('Identificador usado:', identifier);
+          if (identifier) {
+            localStorage.setItem('user_uuid', identifier);
+          }
         } else {
           console.warn('🔴 Usuario no autenticado. Redirigiendo a /login...');
           navigate('/login');
@@ -38,7 +47,9 @@ const AuthLayout = () => {
     if (!authChecked) {
       fetchUser();
     }
-  }, [authChecked, dispatch, navigate]);
+
+      }, [authChecked, dispatch, navigate]);
+
 
   if (!authChecked) {
     return <Loading />;
