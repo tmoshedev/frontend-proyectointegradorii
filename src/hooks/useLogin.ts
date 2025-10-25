@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-  login as loginService,
-  logout,
-  verifyTwoFactor as verifyTwoFactorService,
-  resendTwoFactor as resendTwoFactorService,
-  changeEmailAndResendTwoFactor as changeEmailAndResendTwoFactorService,
-} from '../services/auth.service';
+import { login, logout, changePassword } from '../services/auth.service';
 import { setUser, setToken } from '../redux/states/auth.slice';
 import { SweetAlert } from '../utilities';
 import { Login } from '../models';
@@ -21,66 +15,45 @@ export const useLogin = () => {
   const navigate = useNavigate();
 
   /** Función para manejar el login */
-  const login = async (credentials: Login, captcha: string): Promise<boolean> => {
+  const handleLogin = async (credentials: Login) => {
     dispatch(setLoading(true));
     try {
-      const response = await loginService(credentials, captcha);
+      const response = await login(credentials); // ✅ No usar .data, ya es un LoginResponse
 
-      // Corregido para coincidir con tu backend: `2fa_required` y `userId`
-      if (response['2fa_required']) {
-        SweetAlert.info('Verificación Requerida', response.message);
-        navigate('/verify-2fa', { state: { userId: response.userId } });
-        return true; // Se considera un "éxito" parcial para no mostrar error
-      }
-
-      const { access_token, refresh_token, user } = response;
+      const { access_token, refresh_token, user } = response; // ✅ Extraer directamente
 
       // Guardar tokens en localStorage
       localStorage.setItem('token', access_token);
       localStorage.setItem('refreshToken', refresh_token);
-      const roleCodes = user.roles.map((role: any) => role.code);
+      const roleCodes = response.user.roles.map((role) => role.code);
       localStorage.setItem('roles', JSON.stringify(roleCodes));
-      localStorage.setItem('permissions', user.permissions.join(','));
+      localStorage.setItem('permissions', response.user.permissions.join(','));
 
       // Guardar usuario en Redux
       dispatch(setUser(user));
       dispatch(setToken(access_token));
 
+      // Verifica que user.uuid exista, si no, usa user.id
+      console.log('UUID del usuario:', user.uuid);
+      console.log('ID del usuario:', user.id);
+      const identifier = user.uuid || user.id.toString();
+      console.log('Identificador usado:', identifier);
+
+      if (identifier) {
+        localStorage.setItem('user_uuid', identifier);
+      } else {
+        console.error('Ni UUID ni ID encontrado en respuesta de login');
+      }
+
+      //SweetAlert.success('Inicio de sesión exitoso', 'Bienvenido de nuevo');
+
       navigate('/');
-      return true; // Login completo exitoso
     } catch (error: any) {
       if (error.response?.status === 401) {
         SweetAlert.error('Error de autenticación', error.response.data.message);
       } else {
         SweetAlert.error('Error de autenticación', 'Ocurrió un problema inesperado.');
       }
-      return false; // Error en el login
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  const verifyTwoFactor = async (userId: number, code: string) => {
-    dispatch(setLoading(true));
-    try {
-      const response = await verifyTwoFactorService(userId, code);
-      const { access_token, refresh_token, user } = response;
-
-      // Guardar tokens en localStorage
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('refreshToken', refresh_token);
-      const roleCodes = user.roles.map((role: any) => role.code);
-      localStorage.setItem('roles', JSON.stringify(roleCodes));
-      localStorage.setItem('permissions', user.permissions.join(','));
-
-      // Guardar usuario en Redux
-      dispatch(setUser(user));
-      dispatch(setToken(access_token));
-
-      return true;
-    } catch (error: any) {
-      SweetAlert.error('Error', error.response?.data?.message || 'Código de verificación incorrecto.');
-      return false;
     } finally {
       dispatch(setLoading(false));
     }
@@ -98,39 +71,18 @@ export const useLogin = () => {
       .finally(() => dispatch(setLoading(false)));
   };
 
-  const handleResendTwoFactor = async (userId: number) => {
+  const changePasswordHook = async (formData: any) => {
     dispatch(setLoading(true));
     try {
-      const response = await resendTwoFactorService(userId);
-      SweetAlert.success('Éxito', response.message);
-      return true;
-    } catch (error: any) {
-      SweetAlert.error('Error', error.response?.data?.message || 'No se pudo reenviar el código.');
-      return false;
+      const response = await changePassword(formData).then(() => {
+        SweetAlert.success('Contraseña actualizada correctamente.');
+        handleLogout();
+      });
+      return response;
     } finally {
       dispatch(setLoading(false));
     }
   };
 
-  const handleChangeEmailAndResend = async (userId: number, newEmail: string) => {
-    dispatch(setLoading(true));
-    try {
-      const response = await changeEmailAndResendTwoFactorService(userId, newEmail);
-      SweetAlert.success('Éxito', response.message);
-      return { success: true, newEmail: response.new_email };
-    } catch (error: any) {
-      SweetAlert.error('Error', error.response?.data?.message || 'No se pudo cambiar el correo.');
-      return { success: false };
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  return {
-    login,
-    handleLogout,
-    verifyTwoFactor,
-    resendTwoFactor: handleResendTwoFactor,
-    changeEmailAndResend: handleChangeEmailAndResend,
-  };
+  return { login: handleLogin, handleLogout, changePassword: changePasswordHook };
 };

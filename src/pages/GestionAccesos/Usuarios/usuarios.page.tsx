@@ -21,6 +21,8 @@ export const UsuariosPage = () => {
   const [requirements, setRequirements] = useState<any[]>([]);
   const [filterState, setFilterState] = useState({
     role_id: '',
+    state: '',
+    user_uuid: '',
     text: '',
     type: '',
     page: 1,
@@ -215,6 +217,8 @@ export const UsuariosPage = () => {
 
     getAccessUsers(
       filterState.role_id,
+      filterState.state,
+      '',
       filterState.text,
       filterState.type,
       newPage,
@@ -230,6 +234,8 @@ export const UsuariosPage = () => {
     setFilterState({
       ...filterState,
       role_id: '',
+      state: '',
+      user_uuid: '',
       text: '',
       type: '',
       page: 1,
@@ -237,13 +243,15 @@ export const UsuariosPage = () => {
       orderBy: '',
       order: '',
     });
-    getAccessUsers('', '', '', 1, '', '', '', true, true);
+    getAccessUsers('', '','',  '','', 1, '', '', '', true, true);
   };
 
   const handleFilterSearch = (newFilters: any, state: boolean) => {
     setFilterState(newFilters);
     getAccessUsers(
       newFilters.role_id,
+      newFilters.state,
+      newFilters.user_uuid,
       newFilters.text,
       newFilters.type,
       1,
@@ -277,10 +285,15 @@ export const UsuariosPage = () => {
   };
 
   const onClickEditResource = (row: any) => {
+    // Si el row tiene email pero no personal_email, lo copiamos
+    const rowFixed = {
+      ...row,
+      personal_email: row.personal_email || row.email || '',
+    };
     setDataModalResourceState({
       type: 'edit',
       buttonSubmit: 'Actualizar',
-      row: row,
+      row: rowFixed,
       title: 'Editar usuario',
       requirements: requirements,
       onCloseModalForm: onCloseModalForm,
@@ -296,6 +309,8 @@ export const UsuariosPage = () => {
       });
       getAccessUsers(
         filterState.role_id,
+        filterState.state,
+        '',
         filterState.text,
         filterState.type,
         filterState.page,

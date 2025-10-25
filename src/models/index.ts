@@ -29,4 +29,7 @@ export * from './question-category.model';
 export * from './type-question.model';
 export * from './question.model';
 export * from './answer.model';
+export * from './pdf-template.model';
+export * from './pdf-template.model';
+export * from './reports.model';
 

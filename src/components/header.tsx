@@ -3,6 +3,9 @@
 import { useSelector } from 'react-redux';
 import { AppStore } from '../redux/store';
 import { useLogin } from '../hooks';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { useState, useEffect } from 'react';
+import * as accessUsersService from '../services/access-users.service';
 
 interface HeaderProps {
   openToggled: () => void;
@@ -12,10 +15,27 @@ interface HeaderProps {
 export const Header = (props: HeaderProps) => {
   const authState = useSelector((state: AppStore) => state.auth);
   const { handleLogout } = useLogin();
+  const { isConnected, connectedUsers, onlineUsers } = useWebSocket();
+  const [users, setUsers] = useState<any[]>([]);
   const roleActualName = localStorage.getItem('rolActualName') || '';
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await accessUsersService.getAccessUsers('', '','','', '', 1, '100', '', '');
+        setUsers((response as any).data || []);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, []);
   const logout = () => {
     handleLogout();
   };
+
+  const rolActual = localStorage.getItem('rolActual') || '';
+
 
   const getInitials = () => {
     if (authState.user.names && authState.user.father_last_name) {
@@ -91,7 +111,7 @@ export const Header = (props: HeaderProps) => {
           </div>
         </div>
         <div className="header-content-right">
-          <div className="header-element d-lg-flex">
+          {/*<div className="header-element d-lg-flex">
             <a
               role="button"
               className="header-link dropdown-toggle"
@@ -108,7 +128,50 @@ export const Header = (props: HeaderProps) => {
                 EMPRESA
               </a>
             </div>
-          </div>
+          </div>*/}
+          {(rolActual === 'ADMINISTRATOR' ) && (
+            <>
+              <div className="header-element d-flex align-items-center">
+                <span className={`badge ${isConnected ? 'bg-success' : 'bg-danger'} fs-12`}>
+                  {isConnected ? 'Conectado' : 'Desconectado'}
+                </span>
+              </div>
+              <div className="header-element d-lg-flex">
+                <a
+                  role="button"
+                  className="header-link dropdown-toggle position-relative"
+                  data-bs-auto-close="outside"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="ri-user-line fs-20"></i>
+                  {onlineUsers.length > 0 && (
+                    <span className="badge bg-success position-absolute top-0 start-100 translate-middle">
+                      {onlineUsers.length}
+                    </span>
+                  )}
+                </a>
+                <div className="main-header-dropdown dropdown-menu dropdown-menu-end" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                  <ul className="list-unstyled mb-0">
+                    {users.slice(0, 100).map(user => (
+                      <li key={user.id} className="dropdown-item d-flex align-items-center">
+                        <div className="me-2">
+                          <span className={`badge ${onlineUsers.includes(user.user_uuid) ? 'bg-success' : 'bg-danger'}`}>●</span>
+                        </div>
+                        <div>
+                          <div className="fw-medium">{user.names} {user.father_last_name}</div>
+                          <small className="text-muted">{user.email}</small>
+                        </div>
+                      </li>
+                    ))}
+                    {users.length === 0 && (
+                      <li className="dropdown-item text-muted">No hay usuarios disponibles</li>
+                    )}
+                  </ul>
+                </div>
+              </div></>
+          )}
+
           <div className="header-element main-profile-user">
             <a
               href="#"

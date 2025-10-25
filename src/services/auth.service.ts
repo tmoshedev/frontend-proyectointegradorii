@@ -59,8 +59,8 @@ export const checkAuth = async (refreshAttempts = 0): Promise<LoginResponse | nu
   }
 };
 
-export const login = async (login: Login, captcha: string) => {
-  const response = await apiInstance.post<LoginResponse>('/auth/login', { ...login, captcha });
+export const login = async (login: Login) => {
+  const response = await apiInstance.post<LoginResponse>('/auth/login', login);
   return response;
 };
 
