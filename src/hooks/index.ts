@@ -20,3 +20,4 @@ export * from './useWebSocket';
 export * from './useRoles';
 export * from './useReports';
 export * from './usePdfTemplate';
+export * from './useProjects';
