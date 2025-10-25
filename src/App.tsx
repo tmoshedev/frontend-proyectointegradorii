@@ -21,14 +21,19 @@ import {
   ConfiguracionPage,
   RolesPage,
   ReportesPage,
-  UsuariosConectadosPage,
+  UsuariosConectadosPage, 
+  
 } from './pages';
+
+import TwoFactorAuthPage from './pages/Login/TwoFactorAuth.page';
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/verify-2fa" element={<TwoFactorAuthPage />} />
           <Route path="/" element={<AuthLayout />}>
             <Route element={<ProtectedRoute permission="home-index" />}>
               <Route path="/" element={<HomePage />} />
