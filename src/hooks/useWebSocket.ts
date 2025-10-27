@@ -13,16 +13,16 @@ export const useWebSocket = () => {
   };
 
   useEffect(() => {
+
     const isAdmin = localStorage.getItem('rolActual') === 'ADMINISTRATOR';
-    const ws = new WebSocket('ws://localhost:8080');
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080';
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log('Conectado al WebSocket');
       setIsConnected(true);
 
       const userId = localStorage.getItem('user_uuid');
-      console.log('Enviando REGISTER con userId:', userId); // Verifica que no sea undefined
 
       if (userId) {
         if (isAdmin) {
@@ -32,8 +32,6 @@ export const useWebSocket = () => {
           // Pedir lista de usuarios conectados
           ws.send(JSON.stringify({ type: 'GET_CONNECTED_USERS' }));
         }
-      } else {
-        console.error('userId es undefined, no se envía REGISTER');
       }
     };
 
@@ -91,12 +89,11 @@ export const useWebSocket = () => {
           break;
 
         default:
-          console.log('Mensaje desconocido:', data);
+          // Mensaje desconocido, ignorar
       }
     };
 
     ws.onclose = () => {
-      console.log('Desconectado del WebSocket');
       setIsConnected(false);
       setConnectedUsers([]);
       setOnlineUsers([]);
