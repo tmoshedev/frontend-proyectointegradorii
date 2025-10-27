@@ -1,4 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
+import { usePdfTemplates } from '../../../hooks/usePdfTemplate';
+import { Modal } from 'react-bootstrap';
 import { Form, Button, Alert, Card, Spinner, ListGroup, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { Save } from 'lucide-react';
@@ -22,6 +24,8 @@ interface AnswerState {
 }
 
 export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  const { getPdfTemplates } = usePdfTemplates();
   const { lead } = useSelector((store: AppStore) => store.lead);
   const { user } = useSelector((store: AppStore) => store.auth);
   const { getQuestionCategory } = useQuestionCategories();
@@ -34,6 +38,34 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | null>(null);
   const [answers, setAnswers] = useState<{ [key: string]: AnswerState }>({});
+
+  
+  // PDF Templates
+  const [pdfTemplates, setPdfTemplates] = useState<any[]>([]);
+  const [selectedPdfTemplate, setSelectedPdfTemplate] = useState<string>('');
+
+  // Descargar PDF
+  const handleDownloadPdf = async () => {
+    if (!selectedPdfTemplate || !lead?.uuid) {
+      SweetAlert.info('Selecciona una plantilla y un lead válido.');
+      return;
+    }
+    try {
+      const url = `https://backend-demo-crm.alitorres.com.pe/pdf-templates/${selectedPdfTemplate}/export/${lead.uuid}`;
+      const response = await fetch(url, { method: 'GET' });
+      if (!response.ok) throw new Error('Error al generar el PDF');
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `buyer_${lead.names || lead.uuid}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setShowPdfModal(false);
+    } catch (err) {
+      SweetAlert.error('Error', 'No se pudo descargar el PDF.');
+    }
+  };
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -548,13 +580,47 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       
     </Card>
     <div className="lead-actividad__left-footer">
-          <div className="lead-actividad__left-footer-right">
-            <Button variant="success" onClick={submitAnswers} disabled={loading}>
-              <Save size={16} className="me-2" />
-              {loading ? 'Guardando...' : 'Guardar answers'}
-            </Button>
-          </div>
+        <div className="lead-actividad__left-footer-right d-flex align-items-center gap-2">
+          <Button variant="success" onClick={submitAnswers} disabled={loading}>
+            <Save size={16} className="me-2" />
+            {loading ? 'Guardando...' : 'Guardar Respuestas'}
+          </Button>
+          <Button variant="primary" onClick={() => setShowPdfModal(true)} disabled={pdfTemplates.length === 0}>
+            <i className="fa-solid fa-file-pdf"></i> Descargar PDF
+          </Button>
         </div>
+        {/* Modal para seleccionar plantilla PDF */}
+        <Modal show={showPdfModal} onHide={() => setShowPdfModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Selecciona la plantilla PDF</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {pdfTemplates.length > 0 ? (
+              <Form.Group>
+                <Form.Label>Plantilla</Form.Label>
+                <Form.Select
+                  value={selectedPdfTemplate}
+                  onChange={e => setSelectedPdfTemplate(e.target.value)}
+                >
+                  {pdfTemplates.map(tpl => (
+                    <option key={tpl.uuid} value={tpl.uuid}>{tpl.name}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            ) : (
+              <Alert variant="info">No hay plantillas disponibles.</Alert>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowPdfModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={handleDownloadPdf} disabled={!selectedPdfTemplate}>
+              <i className="fa-solid fa-file-pdf"></i> Descargar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </div>
     
   );
