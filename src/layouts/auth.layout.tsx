@@ -21,14 +21,16 @@ const AuthLayout = () => {
     const fetchUser = async () => {
       try {
         const response: any = await checkAuth();
-        if (response) {
-          dispatch(setUser(response.user));
+        if (response && response.user) {
+          // Normalizar must_change_password a un booleano estricto
+          const processedUser = {
+            ...response.user,
+            must_change_password: !!response.user.must_change_password,
+          };
+          dispatch(setUser(processedUser));
+
           // Guardar UUID para WebSocket
-          console.log('Respuesta completa de checkAuth:', response);
-          console.log('UUID en checkAuth:', response.user.uuid);
-          console.log('ID en checkAuth:', response.user.id);
-          const identifier = response.user.uuid || response.user.id.toString();
-          console.log('Identificador usado:', identifier);
+          const identifier = processedUser.uuid || processedUser.id.toString();
           if (identifier) {
             localStorage.setItem('user_uuid', identifier);
           }

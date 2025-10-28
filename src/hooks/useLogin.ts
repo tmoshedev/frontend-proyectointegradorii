@@ -35,15 +35,25 @@ export const useLogin = () => {
 
       const { access_token, refresh_token, user } = response;
 
+      console.log('Raw user from backend:', user);
+
+      // Normalizar must_change_password a un booleano estricto
+      const processedUser = {
+        ...user,
+        must_change_password: !!user.must_change_password,
+      };
+
+      console.log('Processed user for Redux:', processedUser);
+
       // Guardar tokens en localStorage
       localStorage.setItem('token', access_token);
       localStorage.setItem('refreshToken', refresh_token);
-      const roleCodes = user.roles.map((role: any) => role.code);
+      const roleCodes = processedUser.roles.map((role: any) => role.code);
       localStorage.setItem('roles', JSON.stringify(roleCodes));
-      localStorage.setItem('permissions', user.permissions.join(','));
+      localStorage.setItem('permissions', processedUser.permissions.join(','));
 
       // Guardar usuario en Redux
-      dispatch(setUser(user));
+      dispatch(setUser(processedUser));
       dispatch(setToken(access_token));
 
       navigate('/');
@@ -66,15 +76,21 @@ export const useLogin = () => {
       const response = await verifyTwoFactorService(userId, code);
       const { access_token, refresh_token, user } = response;
 
+      // Normalizar must_change_password a un booleano estricto
+      const processedUser = {
+        ...user,
+        must_change_password: !!user.must_change_password,
+      };
+
       // Guardar tokens en localStorage
       localStorage.setItem('token', access_token);
       localStorage.setItem('refreshToken', refresh_token);
-      const roleCodes = user.roles.map((role: any) => role.code);
+      const roleCodes = processedUser.roles.map((role: any) => role.code);
       localStorage.setItem('roles', JSON.stringify(roleCodes));
-      localStorage.setItem('permissions', user.permissions.join(','));
+      localStorage.setItem('permissions', processedUser.permissions.join(','));
 
       // Guardar usuario en Redux
-      dispatch(setUser(user));
+      dispatch(setUser(processedUser));
       dispatch(setToken(access_token));
 
       return true;

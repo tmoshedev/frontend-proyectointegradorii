@@ -38,9 +38,48 @@ interface ContactOption {
   helper: string;
 }
 
+interface PasswordValidationIndicatorProps {
+  validation: {
+    length: boolean;
+    uppercase: boolean;
+    lowercase: boolean;
+    number: boolean;
+    specialChar: boolean;
+  };
+}
+
+const PasswordValidationIndicator = ({ validation }: PasswordValidationIndicatorProps) => (
+  <div className="mt-2">
+    <h6 className="mb-2 fs-12">La contraseña debe contener:</h6>
+    <ul className="list-unstyled">
+      <li className={validation.length ? 'text-success' : 'text-muted'}>
+        <i className={`fa-solid ${validation.length ? 'fa-check' : 'fa-circle'} me-2 fs-10`}></i>
+        Al menos 8 caracteres
+      </li>
+      <li className={validation.uppercase ? 'text-success' : 'text-muted'}>
+        <i className={`fa-solid ${validation.uppercase ? 'fa-check' : 'fa-circle'} me-2 fs-10`}></i>
+        Una letra mayúscula
+      </li>
+      <li className={validation.lowercase ? 'text-success' : 'text-muted'}>
+        <i className={`fa-solid ${validation.lowercase ? 'fa-check' : 'fa-circle'} me-2 fs-10`}></i>
+        Una letra minúscula
+      </li>
+      <li className={validation.number ? 'text-success' : 'text-muted'}>
+        <i className={`fa-solid ${validation.number ? 'fa-check' : 'fa-circle'} me-2 fs-10`}></i>
+        Un número
+      </li>
+      <li className={validation.specialChar ? 'text-success' : 'text-muted'}>
+        <i className={`fa-solid ${validation.specialChar ? 'fa-check' : 'fa-circle'} me-2 fs-10`}></i>
+        Un carácter especial (!@#$...)
+      </li>
+    </ul>
+  </div>
+);
+
 export const ChangePasswordPage = () => {
   const { sendVerificationCode, updatePassword } = useChangePassword();
   const authUser = useSelector((store: AppStore) => store.auth.user);
+  const mustChangePassword = (authUser as any)?.must_change_password || false;
 
   const primaryEmail = authUser?.email ?? '';
   const phone = (authUser as any)?.cellphone || (authUser as any)?.phone || '';
@@ -53,7 +92,7 @@ export const ChangePasswordPage = () => {
 
   const [selectedMethod, setSelectedMethod] = useState<VerificationMethod>(defaultMethod);
   const [alternateEmail, setAlternateEmail] = useState('');
-  const [verificationStep, setVerificationStep] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(mustChangePassword);
   const [errors, setErrors] = useState<any>({});
   const [challengeId, setChallengeId] = useState('');
   const [destinationMask, setDestinationMask] = useState('');
@@ -68,9 +107,26 @@ export const ChangePasswordPage = () => {
     logout_others: true,
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
+
+  const isPasswordValid = useMemo(() => {
+    return Object.values(passwordValidation).every(Boolean);
+  }, [passwordValidation]);
+
   useEffect(() => {
+    if (mustChangePassword) {
+      setVerificationStep(true);
+    }
     setSelectedMethod(defaultMethod);
-  }, [defaultMethod]);
+  }, [defaultMethod, mustChangePassword]);
 
   useEffect(() => {
     if (secondsToResend <= 0) return;
@@ -108,8 +164,18 @@ export const ChangePasswordPage = () => {
   }, [primaryEmail, phone]);
 
   const handleInputPasswords = (event: ChangeEvent<HTMLInputElement>) => {
-    setErrors((prev: any) => ({ ...prev, [event.target.name]: undefined }));
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+    setErrors((prev: any) => ({ ...prev, [name]: undefined }));
+    setFormData({ ...formData, [name]: value });
+
+    if (name === 'password') {
+      const length = value.length >= 8;
+      const uppercase = /[A-Z]/.test(value);
+      const lowercase = /[a-z]/.test(value);
+      const number = /[0-9]/.test(value);
+      const specialChar = /[!@#$%^&*]/.test(value);
+      setPasswordValidation({ length, uppercase, lowercase, number, specialChar });
+    }
   };
 
   const handleAlternateEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -197,18 +263,23 @@ export const ChangePasswordPage = () => {
   const handleSubmitChange = async () => {
     setErrors({});
 
-    if (!challengeId) {
+    if (!mustChangePassword && !challengeId) {
       SweetAlert.warning('Validación', 'Primero solicita el código de seguridad.');
       return;
     }
 
-    if (!code) {
+    if (!mustChangePassword && !code) {
       setErrors({ code: ['Ingresa el código recibido.'] });
       return;
     }
 
     if (formData.password !== formData.password_confirmation) {
       setErrors({ password_confirmation: ['Las contraseñas no coinciden.'] });
+      return;
+    }
+
+    if (!isPasswordValid) {
+      SweetAlert.warning('Contraseña Insegura', 'La nueva contraseña no cumple con todos los requisitos de seguridad.');
       return;
     }
 
@@ -252,7 +323,7 @@ export const ChangePasswordPage = () => {
                 onModalResource={() => null}
               />
               <div className="card-body pt-1">
-                {!verificationStep && (
+                {!verificationStep && !mustChangePassword && (
                   <div className="row g-4">
                     <div className="col-12">
                       <p className="text-muted mb-3">
@@ -309,110 +380,147 @@ export const ChangePasswordPage = () => {
                 )}
 
                 {verificationStep && (
-                  <div className="row g-4">
-                    <div className="col-lg-4">
-                      <div className="alert alert-info">
-                        <h6 className="alert-heading mb-2">Revisa tu bandeja</h6>
-                        <p className="mb-0">
-                          Enviamos un código temporal a <strong>{destinationMask}</strong>.
-                          <br />
-                          Ingresa el código a continuación para continuar.
-                        </p>
+                  <div className="row g-4 justify-content-center">
+                    {!mustChangePassword && (
+                      <div className="col-lg-4">
+                        <div className="alert alert-info">
+                          <h6 className="alert-heading mb-2">Revisa tu bandeja</h6>
+                          <p className="mb-0">
+                            Enviamos un código temporal a <strong>{destinationMask}</strong>.
+                            <br />
+                            Ingresa el código a continuación para continuar.
+                          </p>
+                        </div>
+                        <button className="btn btn-link px-0" type="button" onClick={handleBackToMethods}>
+                          Usar otro método de verificación
+                        </button>
                       </div>
-                      <button className="btn btn-link px-0" type="button" onClick={handleBackToMethods}>
-                        Usar otro método de verificación
-                      </button>
-                    </div>
+                    )}
                     <div className="col-lg-8">
+                      {mustChangePassword && (
+                        <div className="alert alert-warning text-center">
+                          <h6 className="alert-heading mb-1">Primer inicio de sesión</h6>
+                          <p className="mb-0">
+                            Por tu seguridad, es necesario que establezcas una nueva contraseña.
+                          </p>
+                        </div>
+                      )}
                       <div className="row g-3">
-                        <div className="col-md-4">
-                          <label className="form-label" htmlFor="verification_code">
-                            Código de seguridad
-                          </label>
-                          <input
-                            id="verification_code"
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            className={`form-control form-control-sm${
-                              hasError('code') ? ' is-invalid' : ''
-                            }`}
-                            placeholder="Ingresa el código"
-                            value={code}
-                            onChange={(event) => {
-                              const sanitized = event.target.value.replace(/[^0-9A-Za-z]/g, '');
-                              setCode(sanitized);
-                              setErrors((prev: any) => ({ ...prev, code: undefined }));
-                            }}
-                          />
-                          <ErrorBackend errorsBackend={errors} name="code" />
-                          <div className="d-flex align-items-center mt-2 gap-2">
-                            <button
-                              className="btn btn-link px-0"
-                              type="button"
-                              onClick={handleResendCode}
-                              disabled={secondsToResend > 0}
-                            >
-                              Reenviar código
-                            </button>
-                            {secondsToResend > 0 && (
-                              <small className="text-muted">
-                                Podrás reenviar en {formatSeconds(secondsToResend)}
-                              </small>
-                            )}
+                        {!mustChangePassword && (
+                          <div className="col-md-4">
+                            <label className="form-label" htmlFor="verification_code">
+                              Código de seguridad
+                            </label>
+                            <input
+                              id="verification_code"
+                              type="text"
+                              inputMode="numeric"
+                              maxLength={6}
+                              className={`form-control form-control-sm${
+                                hasError('code') ? ' is-invalid' : ''
+                              }`}
+                              placeholder="Ingresa el código"
+                              value={code}
+                              onChange={(event) => {
+                                const sanitized = event.target.value.replace(/[^0-9A-Za-z]/g, '');
+                                setCode(sanitized);
+                                setErrors((prev: any) => ({ ...prev, code: undefined }));
+                              }}
+                            />
+                            <ErrorBackend errorsBackend={errors} name="code" />
+                            <div className="d-flex align-items-center mt-2 gap-2">
+                              <button
+                                className="btn btn-link px-0"
+                                type="button"
+                                onClick={handleResendCode}
+                                disabled={secondsToResend > 0}
+                              >
+                                Reenviar código
+                              </button>
+                              {secondsToResend > 0 && (
+                                <small className="text-muted">
+                                  Podrás reenviar en {formatSeconds(secondsToResend)}
+                                </small>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md-4">
-                          <label className="form-label" htmlFor="password_current">
-                            Contraseña actual
-                          </label>
-                          <input
-                            id="password_current"
-                            name="password_current"
-                            type="password"
-                            autoComplete="off"
-                            className={`form-control form-control-sm${
-                              hasError('password_current') ? ' is-invalid' : ''
-                            }`}
-                            value={formData.password_current}
-                            onChange={handleInputPasswords}
-                          />
-                          <ErrorBackend errorsBackend={errors} name="password_current" />
-                        </div>
-                        <div className="col-md-4">
+                        )}
+
+                        {!mustChangePassword && (
+                          <div className="col-md-4">
+                            <label className="form-label" htmlFor="password_current">
+                              Contraseña actual
+                            </label>
+                            <input
+                              id="password_current"
+                              name="password_current"
+                              type="password"
+                              autoComplete="off"
+                              className={`form-control form-control-sm${
+                                hasError('password_current') ? ' is-invalid' : ''
+                              }`}
+                              value={formData.password_current}
+                              onChange={handleInputPasswords}
+                            />
+                            <ErrorBackend errorsBackend={errors} name="password_current" />
+                          </div>
+                        )}
+
+                        <div className="col-md-6">
                           <label className="form-label" htmlFor="password">
                             Contraseña nueva
                           </label>
-                          <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="off"
-                            className={`form-control form-control-sm${
-                              hasError('password') ? ' is-invalid' : ''
-                            }`}
-                            value={formData.password}
-                            onChange={handleInputPasswords}
-                          />
+                          <div className="input-group">
+                            <input
+                              id="password"
+                              name="password"
+                              type={showPassword ? 'text' : 'password'}
+                              autoComplete="off"
+                              className={`form-control form-control-sm${
+                                hasError('password') ? ' is-invalid' : ''
+                              }`}
+                              value={formData.password}
+                              onChange={handleInputPasswords}
+                            />
+                            <button
+                              className="btn btn-outline-secondary"
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            </button>
+                          </div>
                           <ErrorBackend errorsBackend={errors} name="password" />
+                          <PasswordValidationIndicator validation={passwordValidation} />
                         </div>
-                        <div className="col-md-4">
+
+                        <div className="col-md-6">
                           <label className="form-label" htmlFor="password_confirmation">
                             Confirmar contraseña nueva
                           </label>
-                          <input
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            type="password"
-                            autoComplete="off"
-                            className={`form-control form-control-sm${
-                              hasError('password_confirmation') ? ' is-invalid' : ''
-                            }`}
-                            value={formData.password_confirmation}
-                            onChange={handleInputPasswords}
-                          />
+                          <div className="input-group">
+                            <input
+                              id="password_confirmation"
+                              name="password_confirmation"
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              autoComplete="off"
+                              className={`form-control form-control-sm${
+                                hasError('password_confirmation') ? ' is-invalid' : ''
+                              }`}
+                              value={formData.password_confirmation}
+                              onChange={handleInputPasswords}
+                            />
+                            <button
+                              className="btn btn-outline-secondary"
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                              <i className={`fa-solid ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            </button>
+                          </div>
                           <ErrorBackend errorsBackend={errors} name="password_confirmation" />
                         </div>
+
                         <div className="col-md-12">
                           <div className="form-check form-switch">
                             <input
@@ -436,12 +544,16 @@ export const ChangePasswordPage = () => {
                 )}
               </div>
               <div className="card-footer text-center">
-                {!verificationStep ? (
+                {!verificationStep && !mustChangePassword ? (
                   <p className="mb-0 text-muted">
                     Después de enviar el código, podrás definir una nueva contraseña segura.
                   </p>
                 ) : (
-                  <button onClick={handleSubmitChange} className="btn btn-primary">
+                  <button
+                    onClick={handleSubmitChange}
+                    className="btn btn-primary"
+                    disabled={!isPasswordValid || formData.password !== formData.password_confirmation}
+                  >
                     Actualizar contraseña
                   </button>
                 )}

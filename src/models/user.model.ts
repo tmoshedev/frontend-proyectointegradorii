@@ -14,5 +14,6 @@ export interface User {
   roles: any[];
   user_labels: UserLabel[];
   permissions: string[];
-  
+  email: string;
+  must_change_password?: boolean;
 }
