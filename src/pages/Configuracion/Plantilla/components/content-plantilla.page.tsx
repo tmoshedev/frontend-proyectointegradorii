@@ -80,7 +80,7 @@ export const ContentPlantillaBuyerComponent = (props: Props) => {
 }));
 
 const questionVariables = questions.map((q: any) => ({
-  label: `${q.texto} (Pregunta)`,
+  label: `${q.question} (Pregunta)`,
   variable: `{{respuesta_${q.id}}}`,
   group: 'question'
 }));
