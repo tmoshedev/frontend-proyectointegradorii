@@ -8,6 +8,7 @@ import { Pagination } from '../../utilities';
 interface Props {
   state: any;
   tableCss?: string;
+  data?: any;
   onClickButtonPersonalizado: (row: any, name: string) => void;
   onChangeEdit: (row: any) => void;
   onChangeDelete: (row: any) => void;
@@ -16,6 +17,7 @@ interface Props {
 
 export const PageBodyComponent = (props: Props) => {
   const dataTableState = useSelector((store: AppStore) => store.dataTable);
+  const data = props.data || dataTableState;
 
   const mtd_showHeader = (col: any) => {
     const type = col.type ?? '';

@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import PageBodyComponent from '../../components/page/page-body.component';
 import PageHeaderComponent from '../../components/page/page-hader.component';
-import { SweetAlert } from '../../utilities';
 import { useAccessUsers } from '../../hooks';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { ReporteConexiones } from './components/reporte-conexiones.component';
 
 export const UsuariosConectadosPage = () => {
   const [filterState, setFilterState] = useState({
@@ -15,6 +15,29 @@ export const UsuariosConectadosPage = () => {
   const [usersData, setUsersData] = useState<any[]>([]);
   const { getAccessUsers } = useAccessUsers();
   const { onlineUsers } = useWebSocket();
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await getAccessUsers(
+        '',
+        '1',
+        '',
+        '',
+        '',
+        filterState.page,
+        '100',
+        filterState.orderBy,
+        filterState.order,
+        true,
+        true
+      );
+      setUsersData((response as any).data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   const state = {
     page: {
@@ -73,7 +96,7 @@ export const UsuariosConectadosPage = () => {
         buttons: [
           {
             name: 'stats',
-            tooltip: 'Próximamente estadísticas de conectado',
+            tooltip: 'Estadísticas de conectado',
             text: '',
             css: 'me-3 text-info',
             icon: 'fa-solid fa-chart-line',
@@ -91,7 +114,8 @@ export const UsuariosConectadosPage = () => {
   const onClickButtonPersonalizado = (row: any, name: any) => {
     switch (name) {
       case 'stats':
-        SweetAlert.info('Próximamente estadísticas de conectado');
+        setSelectedUser(row);
+        setShowReportModal(true);
         break;
       default:
         break;
@@ -106,58 +130,33 @@ export const UsuariosConectadosPage = () => {
 
     setFilterState({ ...filterState, page: newPage });
 
-    const fetchUsers = async () => {
-      try {
-        const response = await getAccessUsers(
-          '',
-          '1',
-          '',
-          '',
-          '',
-          newPage,
-          '100',
-          filterState.orderBy,
-          filterState.order,
-          true,
-          true
-        );
-        setUsersData((response as any).data || []);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
     fetchUsers();
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await getAccessUsers(
-          '',
-          '1',
-          '',
-          '',
-          '',
-          filterState.page,
-          '',
-          filterState.orderBy,
-          filterState.order,
-          true,
-          true
-        );
-        setUsersData((response as any).data || []);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
     fetchUsers();
   }, []);
 
   useEffect(() => {
-    setUsersData(prev => prev.map(user => ({
-      ...user,
-      status: onlineUsers.includes(user.user_uuid) ? 'ONLINE' : 'OFFLINE'
-    })));
+    const onlineUserUuids = new Set(onlineUsers);
+    const usersDataUuids = new Set(usersData.map(u => u.user_uuid));
+
+    let shouldUpdate = false;
+    for (const uuid of onlineUserUuids) {
+      if (!usersDataUuids.has(uuid)) {
+        shouldUpdate = true;
+        break;
+      }
+    }
+
+    if (shouldUpdate) {
+      fetchUsers();
+    } else {
+      setUsersData(prev => prev.map(user => ({
+        ...user,
+        status: onlineUsers.includes(user.user_uuid) ? 'ONLINE' : 'OFFLINE'
+      })));
+    }
   }, [onlineUsers]);
 
   return (
@@ -182,6 +181,13 @@ export const UsuariosConectadosPage = () => {
           </div>
         </div>
       </div>
+      {selectedUser && (
+        <ReporteConexiones
+          show={showReportModal}
+          handleClose={() => setShowReportModal(false)}
+          user={selectedUser}
+        />
+      )}
     </div>
   );
 };

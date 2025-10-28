@@ -402,3 +402,16 @@ export interface ReportsCycleTimeResponse {
   advisors: ReportsCycleTimeAdvisorItem[];
   leads: ReportsCycleTimeLeadItem[];
 }
+
+export interface ReportsUserConnectionItem {
+  user_uuid: string;
+  session_start: string;
+  session_end: string;
+  user: {
+    names: string;
+    father_last_name: string;
+    mother_last_name: string;
+  }
+}
+
+export type ReportsUserConnectionResponse = ReportsUserConnectionItem[];
