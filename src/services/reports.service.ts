@@ -17,6 +17,7 @@ import {
   ReportsHitRateResponse,
   ReportsCycleTimeResponse,
   ReportsDailyLeadsResponse,
+  ReportsUserConnectionResponse,
 } from '../models';
 
 const REPORTS_BASE_URL = '/reports';
@@ -260,4 +261,14 @@ export const fetchCountByHourRange = async (
 ): Promise<ReportsApiResponse<{ count: number; date_from: string; date_to: string; start_hour: string; end_hour: string } | { hours: number[] }>> => {
   const params = buildFiltersParams(filters as ReportsCommonFilters & ParamsRecord);
   return apiInstance.get(`${REPORTS_BASE_URL}/leads/count-by-hour-range`, params);
+};
+
+export const fetchUserConnectionReport = async (
+  filters: ReportsCommonFilters & ParamsRecord = {}
+): Promise<ReportsApiResponse<ReportsUserConnectionResponse>> => {
+  const params = buildFiltersParams(filters);
+  return apiInstance.get<ReportsApiResponse<ReportsUserConnectionResponse>>(
+    `${REPORTS_BASE_URL}/users/connection-time`,
+    params
+  );
 };

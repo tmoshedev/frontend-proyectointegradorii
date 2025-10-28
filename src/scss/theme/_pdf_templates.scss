@@ -1,0 +1,220 @@
+.app-pdf-templates {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 5.7rem);
+  border-radius: 0.7rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  .app-pdf-template-header {
+    padding: 1.4rem 1.5rem;
+    background: linear-gradient(
+      to right,
+      var(--primary-color),
+      color-mix(in srgb, var(--primary-color) 70%, black 30%)
+    );
+    h1 {
+      color: white;
+    }
+    p {
+      color: #fff;
+      opacity: 0.9;
+    }
+  }
+  .app-pdf-template-content {
+    display: flex;
+    flex: 1;
+    background-color: #fff;
+    border-bottom-left-radius: 0.7rem;
+    border-bottom-right-radius: 0.7rem;
+    gap: 0rem;
+    min-height: 0;
+    .app-pdf-template-content-left {
+      flex: 0 0 320px;
+      background-color: rgb(249 250 251/1);
+      padding: 1rem 0 1rem 1rem;
+      border-right: 1px solid #dee2e6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-pdf-template-content-right {
+      flex: 1; /* Ocupa el espacio restante */
+      padding: 1rem;
+    }
+    .app-pdf-template-list {
+      flex: 1;
+      overflow-y: auto;
+      cursor: pointer;
+      margin-top: 1rem;
+      padding-right: 1rem;
+      .app-pdf-template-item {
+        padding: 1rem 0.5rem;
+        background: #fff;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        margin-bottom: 0.6rem;
+        &:last-child {
+          margin-bottom: 0;
+        }
+        p {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+}
+
+.app-pdf-template-item.active {
+  border-color: var(--primary-color) !important;
+  background: var(--primary01) !important;
+}
+
+@mixin skeleton-animation {
+  animation: skeleton-loading 1.5s infinite;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Skeleton específico para el componente de plantillas PDF
+.app-pdf-templates {
+  // Header skeleton
+  .app-pdf-template-header {
+    .skeleton-header-title {
+      @include skeleton-animation;
+      height: 2rem;
+      width: 60%;
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .skeleton-header-subtitle {
+      @include skeleton-animation;
+      height: 1rem;
+      width: 80%;
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+
+  // Content skeleton
+  .app-pdf-template-content {
+    .app-pdf-template-content-left {
+      .skeleton-section-title {
+        @include skeleton-animation;
+        height: 1.5rem;
+        width: 40%;
+        margin-bottom: 1rem;
+      }
+
+      .skeleton-add-button {
+        @include skeleton-animation;
+        height: 2rem;
+        width: 2rem;
+        border-radius: 4px;
+      }
+
+      .app-pdf-template-list {
+        .skeleton-template-item {
+          margin-bottom: 0.5rem;
+          padding: 1rem 0.5rem;
+          background: #fff;
+          border-radius: 0.5rem;
+          border: 1px solid #dee2e6;
+
+          .skeleton-template-name {
+            @include skeleton-animation;
+            height: 1.2rem;
+            width: 70%;
+            margin-bottom: 0.5rem;
+          }
+
+          .skeleton-template-type {
+            @include skeleton-animation;
+            height: 0.9rem;
+            width: 50%;
+          }
+        }
+      }
+    }
+
+    .app-pdf-template-content-right {
+      .skeleton-image {
+        @include skeleton-animation;
+        width: 50%;
+        height: 200px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .skeleton-select-text {
+        @include skeleton-animation;
+        height: 1.5rem;
+        width: 200px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// Versión alternativa con pulso más suave
+@mixin skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Clase alternativa si prefieres el efecto pulso
+.skeleton-pulse {
+  .skeleton-header-title,
+  .skeleton-header-subtitle,
+  .skeleton-section-title,
+  .skeleton-add-button,
+  .skeleton-template-name,
+  .skeleton-template-type,
+  .skeleton-image,
+  .skeleton-select-text {
+    @include skeleton-pulse;
+  }
+
+  .app-pdf-template-header {
+    .skeleton-header-title {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .skeleton-header-subtitle {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .app-pdf-templates {
+    .app-pdf-template-content {
+      flex-direction: column;
+
+      .app-pdf-template-content-left {
+        flex: none;
+      }
+    }
+  }
+}
