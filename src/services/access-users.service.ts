@@ -2,6 +2,7 @@ import { AccessUser } from '../models';
 import { AccessUserResponse } from '../models/responses';
 import apiInstance from './api';
 import { DataTable } from "../models";
+import { Role } from '../models';
 
 export const getAccessUsers = async (
   role_id: string,
@@ -61,6 +62,11 @@ export const getRoles = async (page: number, text: string, limit: string) => {
   const response = await apiInstance.get<DataTable>(
     `access-users/roles?page=${page}&text=${text}&limit=${limit}`,
   );
+  return response;
+};
+
+export const storeRole = async (role: Role) => {
+  const response = await apiInstance.post('/access-users/roles', role);
   return response;
 };
 

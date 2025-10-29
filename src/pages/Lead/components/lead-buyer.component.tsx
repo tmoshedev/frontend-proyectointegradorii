@@ -51,7 +51,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       return;
     }
     try {
-      const url = `https://backend-demo-crm.alitorres.com.pe/pdf-templates/${selectedPdfTemplate}/export/${lead.uuid}`;
+      const url = `http://backend-proyectointegradorii.test/pdf-templates/${selectedPdfTemplate}/export/${lead.uuid}`;
       const response = await fetch(url, { method: 'GET' });
       if (!response.ok) throw new Error('Error al generar el PDF');
       const blob = await response.blob();
@@ -143,6 +143,19 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             return acc;
           }, {} as { [key: string]: AnswerState });
           setAnswers(initialAnswers);
+        }
+        // 4. Cargar plantillas PDF
+        try {
+          const pdfResponse = await getPdfTemplates('', false) as PaginatedResponse<any>;
+          console.log('PDF Response:', pdfResponse);
+          if (pdfResponse && pdfResponse.data) {
+            setPdfTemplates(pdfResponse.data);
+            console.log('PDF Templates loaded:', pdfResponse.data);
+          } else {
+            console.log('No PDF data received');
+          }
+        } catch (pdfError) {
+          console.error('Error loading PDF templates:', pdfError);
         }
       } catch (err) {
         setError('Error al cargar los datos iniciales.');
@@ -585,7 +598,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             <Save size={16} className="me-2" />
             {loading ? 'Guardando...' : 'Guardar Respuestas'}
           </Button>
-          <Button variant="primary" onClick={() => setShowPdfModal(true)} disabled={pdfTemplates.length === 0}>
+          <Button variant="primary" onClick={() => setShowPdfModal(true)}>
             <i className="fa-solid fa-file-pdf"></i> Descargar PDF
           </Button>
         </div>
@@ -615,7 +628,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             <Button variant="secondary" onClick={() => setShowPdfModal(false)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={handleDownloadPdf} disabled={!selectedPdfTemplate}>
+            <Button variant="primary" onClick={handleDownloadPdf} >
               <i className="fa-solid fa-file-pdf"></i> Descargar
             </Button>
           </Modal.Footer>

@@ -5,9 +5,10 @@ import PageHeaderComponent from '../../../components/page/page-hader.component';
 import ModalComponent from '../../../components/shared/modal.component';
 import { useRoles } from "../../../hooks";
 import RolPermisosComponent from "./components/rol-permisos.component";
+import RolFormComponent from './components/rol-form.component';
 
 export const RolesPage = () => {
-  const { getRoles, permissionsAssign, permissionsNotAssign, updatePermissions } = useRoles();
+  const { getRoles, permissionsAssign, permissionsNotAssign, updatePermissions, createRole } = useRoles();
   const [loadedComponent, setLoadedComponent] = useState(false);
   /** Modal Window Resource */
   const [isModalWindowOpen, setIsModalWindowOpen] = useState(false);
@@ -15,6 +16,8 @@ export const RolesPage = () => {
     useState({
       title: "",
       size: "",
+      buttonSubmit: "",
+      onCloseModalForm: () => {},
     });
   const [componentModalWindow, setComponentModalWindow] = useState<any>(null);
   const [stateModalWindow, setStateModalWindow] = useState<boolean>(false);
@@ -32,7 +35,7 @@ export const RolesPage = () => {
       gridMenu: [],
       body: [],
       buttons: {
-        create: false,
+        create: true,
         create_header: false,
         edit: false,
         destroy: false,
@@ -74,7 +77,23 @@ export const RolesPage = () => {
   };
 
   //METODOS DEL RECURSO
-  const onClickAddResource = () => {};
+  const onClickAddResource = () => {
+    setIsModalWindowOpen(true);
+    setDataModalWindowResourceState({
+      title: "Crear Nuevo Rol",
+      size: "modal-md",
+      buttonSubmit: "Crear Rol",
+      onCloseModalForm: onCloseModaWindowlForm,
+    });
+    setComponentModalWindow(
+      <RolFormComponent
+        data={dataModalWindowResourceState}
+        createRole={createRole}
+        getRoles={getRoles}
+      />
+    );
+    setStateModalWindow(true);
+  };
   const onClickEditResource = () => {};
   const onClickDeleteResource = () => {};
 
@@ -93,6 +112,8 @@ export const RolesPage = () => {
     setDataModalWindowResourceState({
       title: "Permisos para el ROL " + row.name,
       size: "modal-lg",
+      buttonSubmit: "",
+      onCloseModalForm: () => {},
     });
     setComponentModalWindow(
       <RolPermisosComponent

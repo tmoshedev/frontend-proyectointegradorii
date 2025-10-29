@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch } from "react-redux";
 /**Models */
+import { Role } from "../models";
 /**Services */
 import * as accessService from "../services/access-users.service";
 /**Redux */
@@ -72,6 +73,17 @@ export function useRoles() {
     }
   };
 
+  //CREAR ROL
+  const createRole = async (role: Role) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await accessService.storeRole(role);
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   useEffect(() => {
     return () => {
       // Esto se ejecutará cuando el componente se desmonte.
@@ -84,5 +96,6 @@ export function useRoles() {
     permissionsNotAssign,
     permissionsAssign,
     updatePermissions,
+    createRole,
   };
 }
