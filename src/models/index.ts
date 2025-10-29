@@ -32,4 +32,5 @@ export * from './answer.model';
 export * from './pdf-template.model';
 export * from './pdf-template.model';
 export * from './reports.model';
+export * from './role.model';
 
