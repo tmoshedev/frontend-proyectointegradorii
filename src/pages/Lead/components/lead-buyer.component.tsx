@@ -50,7 +50,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       return;
     }
     try {
-      const url = `https://backend-demo-crm.alitorres.com.pe/pdf-templates/${selectedPdfTemplate}/export/${lead.uuid}`;
+      const url = `https://alitorres-backend.quantaxperia.com.pe/pdf-templates/${selectedPdfTemplate}/export/${lead.uuid}`;
       const response = await fetch(url, { method: 'GET' });
       if (!response.ok) throw new Error('Error al generar el PDF');
       const blob = await response.blob();
