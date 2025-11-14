@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLeads, useSidebarResponsive } from '../../hooks';
 import { LeadResponse } from '../../models/responses';
 import { useParams } from 'react-router-dom';
@@ -41,6 +41,7 @@ export const LeadPage = () => {
   const { getLead, getLeadHistorial } = useLeads();
   const dispatch = useDispatch();
   const { lead, stateViewHistorial } = useSelector((store: AppStore) => store.lead);
+    const getLeadRef = useRef(getLead);
   //CANCELAR ACTIVIDAD
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -71,6 +72,33 @@ export const LeadPage = () => {
 
   const rolActual = localStorage.getItem('rolActual') || '';
 
+  useEffect(() => {
+    getLeadRef.current = getLead;
+  }, [getLead]);
+
+  const syncLeadData = useCallback(() => {
+    if (!uuid) {
+      return;
+    }
+
+    getLeadRef.current(uuid, true)
+      .then((response: LeadResponse) => {
+        dispatch(
+          setLeadFullData({
+            lead: response.lead,
+            lead_historial: response.lead_historial,
+            count_historial: response.count_historial,
+            projects_available: response.projects_available,
+            labels_available: response.labels_available,
+            users: response.users,
+            activities: response.activities,
+          })
+        );
+      })
+      .catch(error => {
+        console.error('No se pudo sincronizar el lead en tiempo real:', error);
+      });
+  }, [uuid, dispatch]);
 
   const changeHistorialView = (view: string) => {
     const stateView = view === '' ? stateViewHistorial : view;
@@ -130,25 +158,82 @@ export const LeadPage = () => {
   };
 
   useEffect(() => {
-    getLead(uuid ?? '', true).then((response: LeadResponse) => {
-      dispatch(
-        setLeadFullData({
-          lead: response.lead,
-          lead_historial: response.lead_historial,
-          count_historial: response.count_historial,
-          projects_available: response.projects_available,
-          labels_available: response.labels_available,
-          users: response.users,
-          activities: response.activities,
-        })
-      );
-    });
+    syncLeadData();
 
-    // Limpia el estado al desmontar
     return () => {
       dispatch(clearLeadState());
     };
-  }, []);
+  }, [syncLeadData, dispatch]);
+
+  useEffect(() => {
+    if (!uuid) {
+      return;
+    }
+
+    const extractLeadUuid = (data: any): string | undefined => {
+      if (!data) {
+        return undefined;
+      }
+      if (typeof data === 'string') {
+        return data;
+      }
+      if (typeof data === 'object') {
+        const rawValue = (
+          data.lead_uuid ||
+          data.uuid ||
+          data.leadUuid ||
+          data.leadUUID ||
+          data.lead_id ||
+          data.leadId ||
+          data.lead?.uuid ||
+          data.lead?.lead_uuid ||
+          data.note?.lead_uuid ||
+          data.activity?.lead_uuid ||
+          undefined
+        );
+        return typeof rawValue === 'undefined' || rawValue === null ? undefined : String(rawValue);
+      }
+      return undefined;
+    };
+
+    const handleRefresh = () => {
+      syncLeadData();
+    };
+
+    const handleRealtimeEvent = (event: Event) => {
+      const detail = (event as CustomEvent<any>).detail;
+      if (!detail) {
+        return;
+      }
+
+      const eventName = typeof detail.event === 'string' ? detail.event.toUpperCase() : '';
+      if (!eventName.includes('LEAD')) {
+        return;
+      }
+
+      const payload = detail.payload ?? detail.data ?? detail.meta ?? {};
+      const relatedUuid =
+        extractLeadUuid(payload) ||
+        extractLeadUuid(detail) ||
+        extractLeadUuid(payload?.lead) ||
+        extractLeadUuid(payload?.note) ||
+        extractLeadUuid(payload?.activity);
+
+      if (relatedUuid && relatedUuid !== uuid) {
+        return;
+      }
+
+      syncLeadData();
+    };
+
+    window.addEventListener('ws:refresh-leads', handleRefresh);
+    window.addEventListener('ws:realtime-event', handleRealtimeEvent);
+
+    return () => {
+      window.removeEventListener('ws:refresh-leads', handleRefresh);
+      window.removeEventListener('ws:realtime-event', handleRealtimeEvent);
+    };
+  }, [uuid, syncLeadData]);
 
   return (
     <div

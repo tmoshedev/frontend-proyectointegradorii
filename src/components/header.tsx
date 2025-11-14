@@ -5,6 +5,7 @@ import { AppStore } from '../redux/store';
 import { useLogin } from '../hooks';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import * as accessUsersService from '../services/access-users.service';
 
 interface HeaderProps {
@@ -15,7 +16,7 @@ interface HeaderProps {
 export const Header = (props: HeaderProps) => {
   const authState = useSelector((state: AppStore) => state.auth);
   const { handleLogout } = useLogin();
-  const { isConnected, connectedUsers, onlineUsers } = useWebSocket();
+  const { isConnected, onlineUsers, requestRefresh, triggerGlobalReload } = useWebSocket();
   const [users, setUsers] = useState<any[]>([]);
   const roleActualName = localStorage.getItem('rolActualName') || '';
 
@@ -44,6 +45,38 @@ export const Header = (props: HeaderProps) => {
     return 'U'; // Si no hay datos, usa 'U' por defecto
   };
 
+  
+  const ensureConnected = () => {
+    if (!isConnected) {
+      toast.error('No hay conexión con el servidor en tiempo real.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleRequestRefreshAll = () => {
+    if (!ensureConnected()) {
+      return;
+    }
+    requestRefresh({ excludeSender: true });
+    toast.success('Solicitud de actualización enviada a todos los usuarios.');
+  };
+
+  const handleGlobalReload = () => {
+    if (!ensureConnected()) {
+      return;
+    }
+    const requesterName = [authState.user.names, authState.user.father_last_name]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+
+    triggerGlobalReload({
+      reason: requesterName ? `Recarga solicitada por ${requesterName}` : 'Recarga global solicitada',
+      excludeSender: false,
+    });
+    toast.warning('Se solicitó una recarga global para todos los usuarios.');
+  };
   return (
     <header className="app-header">
       <div className="main-header-container container-fluid">
@@ -135,6 +168,32 @@ export const Header = (props: HeaderProps) => {
                 <span className={`badge ${isConnected ? 'bg-success' : 'bg-danger'} fs-12`}>
                   {isConnected ? 'Conectado' : 'Desconectado'}
                 </span>
+              </div>
+              <div className="header-element d-flex align-items-center ms-2">
+                <button
+                  type="button"
+                  className="btn btn-success btn-icon btn-xs text-white"
+                  disabled={!isConnected}
+                  aria-label="Refresco suave"
+                  data-tooltip-id="tooltip-component"
+                  data-tooltip-content="Actualizar para todos (refresco suave)"
+                  onClick={handleRequestRefreshAll}
+                >
+                  <i className="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+              <div className="header-element d-flex align-items-center ms-2">
+                <button
+                  type="button"
+                  className="btn btn-danger btn-icon btn-xs text-white"
+                  disabled={!isConnected}
+                  aria-label="Refresco global"
+                  data-tooltip-id="tooltip-component"
+                  data-tooltip-content="Forzar recarga global (F5 para todos)"
+                  onClick={handleGlobalReload}
+                >
+                  <i className="fa-solid fa-bolt"></i>
+                </button>
               </div>
               <div className="header-element d-lg-flex">
                 <a
