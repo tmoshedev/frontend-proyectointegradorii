@@ -1,6 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
-import { usePdfTemplates } from '../../../hooks/usePdfTemplate';
 import { Modal } from 'react-bootstrap';
+import { usePdfTemplates } from '../../../hooks/usePdfTemplate';
 import { Form, Button, Alert, Card, Spinner, ListGroup, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { Save } from 'lucide-react';
@@ -17,10 +17,10 @@ interface Props {
   changeHistorialView: (view: string) => void;
 }
 
-// Nueva estructura para el estado de las answers
+// Nueva estructura para el estado de las respuestas
 interface AnswerState {
   value: any;
-  answer_id: number | null; // ID de la answer si ya existe
+  answer_id: number | null; // ID de la respuesta si ya existe
 }
 
 export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
@@ -39,7 +39,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<QuestionCategory | null>(null);
   const [answers, setAnswers] = useState<{ [key: string]: AnswerState }>({});
 
-  
   // PDF Templates
   const [pdfTemplates, setPdfTemplates] = useState<any[]>([]);
   const [selectedPdfTemplate, setSelectedPdfTemplate] = useState<string>('');
@@ -72,7 +71,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       try {
         setLoading(true);
         // 1. Cargar categorías
-        const categoryResponse = await getQuestionCategory('', '', 1, '100', 'order', 'asc', false) as PaginatedResponse<QuestionCategory>;
+        const categoryResponse = await getQuestionCategory('', '', 1, '100', 'orden', 'asc', false) as PaginatedResponse<QuestionCategory>;
         let sortedCategories: QuestionCategory[] = [];
         if (categoryResponse && categoryResponse.data) {
           sortedCategories = categoryResponse.data.sort((a, b) => a.order - b.order);
@@ -82,7 +81,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         let loadedQuestions: Question[] = [];
         if (sortedCategories.length > 0) {
           setSelectedCategory(sortedCategories[0]);
-          const response = await getQuestion(String(sortedCategories[0].id), '', '', 1, '100', 'order', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
+          const response = await getQuestion(String(sortedCategories[0].id), '', '', 1, '100', 'orden', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
           if (response && response.data) {
             loadedQuestions = response.data.sort((a, b) => a.order - b.order);
             setQuestions(loadedQuestions);
@@ -90,7 +89,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
             setQuestions([]);
           }
         }
-        // 3. Cargar answers y normalizar usando las preguntas
+        // 3. Cargar respuestas y normalizar usando las preguntas
         const answerResponse = await getAnswer(String(lead.id), '', '', 1, '500', 'id', 'asc', false) as PaginatedResponse<Answer>;
         if (answerResponse && answerResponse.data) {
           const initialAnswers = answerResponse.data.reduce((acc, ans) => {
@@ -167,6 +166,12 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
 
     if (lead?.id) {
       fetchInitialData();
+      // Cargar plantillas PDF usando el hook
+      getPdfTemplates('', true).then((response: any) => {
+        const data = response?.data || [];
+        setPdfTemplates(data);
+        if (data.length > 0) setSelectedPdfTemplate(data[0].uuid);
+      });
     }
   }, [lead]);
 
@@ -175,7 +180,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
     try {
       setLoading(true);
       setSelectedCategory(category);
-      const response = await getQuestion(String(category.id), '', '', 1, '100', 'order', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
+      const response = await getQuestion(String(category.id), '', '', 1, '100', 'orden', 'asc', false, false, 'type_question') as PaginatedResponse<Question>;
       let loadedQuestions: Question[] = [];
       if (response && response.data) {
         loadedQuestions = response.data.sort((a, b) => a.order - b.order);
@@ -183,7 +188,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       } else {
         setQuestions([]);
       }
-      // Cargar y normalizar answers para las preguntas de la categoría seleccionada
+      // Cargar y normalizar respuestas para las preguntas de la categoría seleccionada
       const answerResponse = await getAnswer(String(lead.id), '', '', 1, '500', 'id', 'asc', false) as PaginatedResponse<Answer>;
       if (answerResponse && answerResponse.data) {
         const initialAnswers = answerResponse.data.reduce((acc, ans) => {
@@ -305,42 +310,42 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       const question = questions.find(q => String(q.id) === String(questionId));
 
       if (question && question.code_type === 'IMAGE' && answerState.value instanceof File) {
-        // Guardar solo el nombre del archivo como answer
-        const answer = answerState.value.name;
+        // Guardar solo el nombre del archivo como respuesta
+        const respuesta = answerState.value.name;
         if (answerState.answer_id) {
-          promises.push(updateAnswer(answerState.answer_id, answer));
+          promises.push(updateAnswer(answerState.answer_id, respuesta));
         } else {
-          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), answer));
+          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
         }
       } else {
-        let answer: string;
+        let respuesta: string;
         if (typeof answerState.value === 'object' && answerState.value !== null && !(answerState.value instanceof File)) {
-          answer = JSON.stringify(answerState.value);
+          respuesta = JSON.stringify(answerState.value);
         } else if (typeof answerState.value === 'boolean') {
-          answer = answerState.value ? 'true' : 'false';
+          respuesta = answerState.value ? 'true' : 'false';
         } else {
-          answer = String(answerState.value);
+          respuesta = String(answerState.value);
         }
         if (answerState.answer_id) {
-          promises.push(updateAnswer(answerState.answer_id, answer));
+          promises.push(updateAnswer(answerState.answer_id, respuesta));
         } else {
-          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), answer));
+          promises.push(storeAnswer(questionId, String(lead.id), String(user.id), respuesta));
         }
       }
     });
 
     if (promises.length === 0) {
-      SweetAlert.info('Sin Cambios', 'No hay nuevas answers o cambios para guardar.');
+      SweetAlert.info('Sin Cambios', 'No hay nuevas respuestas o cambios para guardar.');
       setLoading(false);
       return;
     }
 
     try {
       await Promise.all(promises);
-      SweetAlert.success('Éxito', 'answers guardadas correctamente.');
+      SweetAlert.success('Éxito', 'Respuestas guardadas correctamente.');
     } catch (err) {
-      console.error('Error al guardar las answers:', err);
-      SweetAlert.error('Error', 'Ocurrió un error al guardar las answers. Inténtalo de nuevo.');
+      console.error('Error al guardar las respuestas:', err);
+      SweetAlert.error('Error', 'Ocurrió un error al guardar las respuestas. Inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -355,25 +360,25 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
 
 
 
-    // --- LÓGICA MEJORADA PARA OBTENER LAS options ---
-    const getOptions = (options: string | string[] | null): string[] => {
-      if (!options) {
+    // --- LÓGICA MEJORADA PARA OBTENER LAS OPCIONES ---
+    const getOptions = (opciones: string | string[] | null): string[] => {
+      if (!opciones) {
         return [];
       }
       // Si ya es un array (el backend lo envía como JSON), lo usamos directamente.
-      if (Array.isArray(options)) {
-        return options;
+      if (Array.isArray(opciones)) {
+        return opciones;
       }
       // Si es una cadena, lo dividimos.
-      if (typeof options === 'string') {
-        return options.split(',').map(opt => opt.trim());
+      if (typeof opciones === 'string') {
+        return opciones.split(',').map(opt => opt.trim());
       }
       return [];
     };
 
     switch (question.code_type) {
       case 'TEXT':
-        return <Form.Control type="text" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="answer corta..." />;
+        return <Form.Control type="text" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Respuesta corta..." />;
 
       case 'TEXTAREA':
         return <Form.Control as="textarea" rows={3} value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Párrafo..." />;
@@ -412,7 +417,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       }
 
       case 'CHECKBOX': {
-        // Lógica de options con 'Otro' por defecto
+        // Lógica de opciones con 'Otro' por defecto
         let checkOptions = Array.isArray(question.options)
           ? question.options
           : (typeof question.options === 'string' ? question.options.split(',').map(opt => opt.trim()) : []);
@@ -421,7 +426,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
           checkOptions = [...checkOptions, 'Otro'];
         }
 
-        // Normalizar los valores seleccionados para que coincidan con las options
+        // Normalizar los valores seleccionados para que coincidan con las opciones
         const selectedValuesRaw = answerValue?.selected || [];
         // Convertir todo a minúsculas y sin espacios para comparar
         const normalize = (str: string) => str.trim().toLowerCase();
@@ -440,7 +445,7 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
                 onChange={() => handleAnswerChange(questionIdStr, optionText, 'CHECKBOX')}
               />
             ))}
-            {/* Si 'Otro' está seleccionado, mostrar el input de question */}
+            {/* Si 'Otro' está seleccionado, mostrar el input de texto */}
             {selectedValues.includes(normalize('Otro')) && (
               <Form.Control
                 type="text"
@@ -455,53 +460,53 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
       }
 
       case 'RADIO': {
-  // options + 'Otro'
-  let radioOptions = Array.isArray(question.options)
-    ? question.options
-    : (typeof question.options === 'string' ? question.options.split(',').map(opt => opt.trim()) : []);
-  // Normaliza todas las options para evitar problemas de mayúsculas/minúsculas
-  const normalize = (str: string) => str.trim().toLowerCase();
-  if (!radioOptions.some(opt => normalize(opt) === 'otro')) {
-    radioOptions = [...radioOptions, 'Otro'];
-  }
-  // Extraer valor seleccionado y valor de 'Otro'
-  let selectedValue = '';
-  let otherValue = '';
-  if (typeof answerValue === 'object' && answerValue !== null) {
-    selectedValue = answerValue.selected ?? answerValue.SELECTED ?? '';
-    otherValue = answerValue.otherValue ?? answerValue.OTHERVALUE ?? '';
-  } else {
-    selectedValue = answerValue ?? '';
-  }
-  // Normaliza el valor seleccionado para comparar correctamente
-  const isOtroSelected = normalize(selectedValue) === 'otro';
+        // Opciones + 'Otro'
+        let radioOptions = Array.isArray(question.options)
+          ? question.options
+          : (typeof question.options === 'string' ? question.options.split(',').map(opt => opt.trim()) : []);
+        // Normaliza todas las opciones para evitar problemas de mayúsculas/minúsculas
+        const normalize = (str: string) => str.trim().toLowerCase();
+        if (!radioOptions.some(opt => normalize(opt) === 'otro')) {
+          radioOptions = [...radioOptions, 'Otro'];
+        }
+        // Extraer valor seleccionado y valor de 'Otro'
+        let selectedValue = '';
+        let otherValue = '';
+        if (typeof answerValue === 'object' && answerValue !== null) {
+          selectedValue = answerValue.selected ?? answerValue.SELECTED ?? '';
+          otherValue = answerValue.otherValue ?? answerValue.OTHERVALUE ?? '';
+        } else {
+          selectedValue = answerValue ?? '';
+        }
+        // Normaliza el valor seleccionado para comparar correctamente
+        const isOtroSelected = normalize(selectedValue) === 'otro';
 
-  return (
-    <div>
-      {radioOptions.map((optionText) => (
-        <Form.Check
-          key={`${question.id}-${optionText}`}
-          type="radio"
-          name={`question-${question.id}`}
-          id={`question-${question.id}-${optionText.replace(/\s+/g, '-')}`}
-          label={optionText}
-          checked={normalize(selectedValue) === normalize(optionText)}
-          onChange={() => handleAnswerChange(questionIdStr, { selected: optionText, otherValue: '' }, 'RADIO')}
-        />
-      ))}
-      {/* Si 'Otro' está seleccionado, mostrar el input de question */}
-      {isOtroSelected && (
-        <Form.Control
-          type="text"
-          className="mt-2"
-          placeholder="Por favor, especifique"
-          value={otherValue}
-          onChange={(e) => handleAnswerChange(questionIdStr, { selected: 'Otro', otherValue: e.target.value }, 'RADIO')}
-        />
-      )}
-    </div>
-  );
-}
+        return (
+          <div>
+            {radioOptions.map((optionText) => (
+              <Form.Check
+                key={`${question.id}-${optionText}`}
+                type="radio"
+                name={`question-${question.id}`}
+                id={`question-${question.id}-${optionText.replace(/\s+/g, '-')}`}
+                label={optionText}
+                checked={normalize(selectedValue) === normalize(optionText)}
+                onChange={() => handleAnswerChange(questionIdStr, { selected: optionText, otherValue: '' }, 'RADIO')}
+              />
+            ))}
+            {/* Si 'Otro' está seleccionado, mostrar el input de texto */}
+            {isOtroSelected && (
+              <Form.Control
+                type="text"
+                className="mt-2"
+                placeholder="Por favor, especifique"
+                value={otherValue}
+                onChange={(e) => handleAnswerChange(questionIdStr, { selected: 'Otro', otherValue: e.target.value }, 'RADIO')}
+              />
+            )}
+          </div>
+        );
+      }
 
       case 'NUMBER':
         return <Form.Control type="number" value={answerValue ?? ''} onChange={(e) => handleAnswerChange(questionIdStr, e.target.value)} placeholder="Escriba un número..." />;
@@ -550,49 +555,47 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
 
   return (
     <div className="timeline_tabs__content">
-    <Card className="lead-actividad">
-      <Card.Body>
-        <Row>
-          <Col md={4} >
-            <h5 className="fw-bold">CATEGORIAS</h5>
-            <hr />
-            <ListGroup>
-              {categories.map(category => (
-                <ListGroup.Item key={category.id} action active={selectedCategory?.id === category.id} onClick={() => handleCategoryClick(category)} className="d-flex justify-content-between align-items-start">
-                  <span style={{ textTransform: 'uppercase' }}>{category.name}</span>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Col>
-          <Col md={5} className='lead-actividad__right'>
-            {loading && questions.length === 0 ? (
-              <div className="d-flex justify-content-center align-items-center p-5">
-                <Spinner animation="border" size="sm" />
-                <span className="ms-3">Cargando preguntas...</span>
-              </div>
-            ) : (
-              <>
-                {questions.length > 0 ? (
-                  <Form>
-                    {questions.map(question => (
-                      <Form.Group key={question.id} className="mb-4">
-                        <Form.Label className="fw-bold">{question.question}</Form.Label>
-                        {renderQuestionInput(question)}
-                      </Form.Group>
-                    ))}
-                  </Form>
-                ) : (
-                  <Alert variant="light">No hay preguntas en esta categoría.</Alert>
-                )}
-              </>
-            )}
-          </Col>
-        </Row>
-        
-      </Card.Body>
-      
-    </Card>
-    <div className="lead-actividad__left-footer">
+      <Card className="lead-actividad">
+        <Card.Body>
+          <Row>
+            <Col md={4} >
+              <h5 className="fw-bold">CATEGORIAS</h5>
+              <hr />
+              <ListGroup>
+                {categories.map(category => (
+                  <ListGroup.Item key={category.id} action active={selectedCategory?.id === category.id} onClick={() => handleCategoryClick(category)} className="d-flex justify-content-between align-items-start">
+                    <span style={{ textTransform: 'uppercase' }}>{category.name}</span>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Col>
+            <Col md={5} className='lead-actividad__right'>
+              {loading && questions.length === 0 ? (
+                <div className="d-flex justify-content-center align-items-center p-5">
+                  <Spinner animation="border" size="sm" />
+                  <span className="ms-3">Cargando preguntas...</span>
+                </div>
+              ) : (
+                <>
+                  {questions.length > 0 ? (
+                    <Form>
+                      {questions.map(question => (
+                        <Form.Group key={question.id} className="mb-4">
+                          <Form.Label className="fw-bold">{question.question}</Form.Label>
+                          {renderQuestionInput(question)}
+                        </Form.Group>
+                      ))}
+                    </Form>
+                  ) : (
+                    <Alert variant="light">No hay preguntas en esta categoría.</Alert>
+                  )}
+                </>
+              )}
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+      <div className="lead-actividad__left-footer">
         <div className="lead-actividad__left-footer-right d-flex align-items-center gap-2">
           <Button variant="success" onClick={submitAnswers} disabled={loading}>
             <Save size={16} className="me-2" />
@@ -635,7 +638,6 @@ export const LeadBuyerComponent = ({ changeHistorialView }: Props) => {
         </Modal>
       </div>
     </div>
-    
   );
 };
 

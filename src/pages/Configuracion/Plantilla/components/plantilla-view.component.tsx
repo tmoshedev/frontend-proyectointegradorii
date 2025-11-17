@@ -10,7 +10,7 @@ interface Props {
   data: any;
 }
 export const PlantillaViewComponent = (props: Props) => {
-  const pdfUrl = `https://backend-demo-crm.alitorres.com.pe/pdf-templates/${props.data.row.uuid}/preview`;
+  const pdfUrl = `https://alitorres-backend.quantaxperia.com.pe/pdf-templates/${props.data.row.uuid}/preview`;
 
   return (
     <div className="form-scrollable" style={{ height: 'calc(100vh - 3.5rem)' }}>

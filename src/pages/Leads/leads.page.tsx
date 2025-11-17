@@ -1,4 +1,4 @@
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { useLeads, useLeadStatus, useSidebarResponsive } from '../../hooks';
 import KanbanBoardComponent from './components/kanban-board.component';
 import ImportarLeadComponent from './components/importar-lead.component';
@@ -74,6 +74,8 @@ export const LeadsPage = () => {
   const { getLeads } = useLeads();
   const { getLeadStatus, getLeadByEtapa } = useLeadStatus();
   const navigate = useNavigate();
+    const refreshHandlerRef = useRef<() => void>(() => {});
+
 
   //FILTROS MODAL
   const TODOS_LOS_FILTROS = {
@@ -357,6 +359,55 @@ export const LeadsPage = () => {
       recargarDatosTabla(filtrosAplicados, nivelesAplicados, 1);
     }
   };
+
+  
+  refreshHandlerRef.current = () => {
+    onAplicarFiltros(filtros, nivelesInteres, labels, campaigns, users, terminoBusqueda);
+  };
+
+  useEffect(() => {
+    const handleRefreshLeadsEvent = () => {
+      refreshHandlerRef.current();
+    };
+
+    const handleRealtimeEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<any>;
+      const detail = customEvent.detail;
+      if (!detail) {
+        return;
+      }
+
+      const eventName = typeof detail.event === 'string' ? detail.event.toUpperCase() : '';
+      const scope = typeof detail.scope === 'string' ? detail.scope.toUpperCase() : '';
+      const collection = typeof detail.collection === 'string' ? detail.collection.toUpperCase() : '';
+      const target = typeof detail.target === 'string' ? detail.target.toUpperCase() : '';
+      const payloadEntity = typeof detail.payload?.entity === 'string'
+        ? detail.payload.entity.toUpperCase()
+        : typeof detail.payload?.target === 'string'
+          ? detail.payload.target.toUpperCase()
+          : '';
+
+      const shouldRefresh =
+        eventName.startsWith('LEAD_') ||
+        collection.includes('LEAD') ||
+        scope.includes('LEAD') ||
+        target.includes('LEAD') ||
+        payloadEntity.includes('LEAD') ||
+        detail.refresh?.leads === true;
+
+      if (shouldRefresh) {
+        refreshHandlerRef.current();
+      }
+    };
+
+    window.addEventListener('ws:refresh-leads', handleRefreshLeadsEvent);
+    window.addEventListener('ws:realtime-event', handleRealtimeEvent);
+
+    return () => {
+      window.removeEventListener('ws:refresh-leads', handleRefreshLeadsEvent);
+      window.removeEventListener('ws:realtime-event', handleRealtimeEvent);
+    };
+  }, []);
 
   const handleNivelInteresChange = (nivel: string) => {
     const nuevosNiveles = nivelesInteres.includes(nivel)

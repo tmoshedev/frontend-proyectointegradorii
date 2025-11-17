@@ -30,6 +30,8 @@ export const PlantillasDocumentosPage = () => {
     header: '',
     content: '',
     footer: '',
+    templatable_type: '',
+    templatable_id: '',
     uuid: '',
   });
   //Modal vista
@@ -96,8 +98,8 @@ export const PlantillasDocumentosPage = () => {
       header: '',
       content: '',
       footer: '',
-      //templatable_type: '',
-     // templatable_id: '',
+      templatable_type: '',
+      templatable_id: '',
       uuid: '',
     });
   };

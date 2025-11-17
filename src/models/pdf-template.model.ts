@@ -6,7 +6,7 @@ export interface PdfTemplate {
   header: string;
   content: string;
   footer: string;
-  //templatable_type: string;
- // templatable_id: string;
+  templatable_type: string;
+  templatable_id: string;
   uuid: string;
 }
