@@ -101,30 +101,6 @@ export const ProjectFormComponent = (props: Props) => {
             <ErrorBackend errorsBackend={errors} name="name" />
           </div>
 
-          {/**IMAGEN */}
-          <div className="form-group col-md-12">
-            {props.data.type == "store" ? (
-              <label htmlFor="image" className="form-label">
-                Imagen <span className="text-danger">*</span>
-              </label>
-            ) : (
-              <label htmlFor="image" className="form-label">
-                Actualizar imagen
-              </label>
-            )}
-            <input
-              id="image"
-              name="image"
-              onChange={handleFileChange}
-              type="file"
-              accept="image/*"
-              className={
-                "form-control form-control-sm" +
-                (formik.errors.image && formik.touched.image ? " is-invalid" : "")
-              }
-            />
-            <ErrorValidate state={formik.errors.image} />
-          </div>
 
           <div className="col-md-12 mt-2" style={{ fontSize: '10px' }}>
             <span className="text-danger">*</span>
