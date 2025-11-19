@@ -338,7 +338,7 @@ export const ProjectsPage = () => {
           content={
             <ProjectFormComponent
               data={{ ...dataModalResourceState, type_Project_id: selectedTypeProject }}
-              storeProject={(name: string, image: string) => storeProject(selectedTypeProject, name, image)}
+              storeProject={(name: string) => storeProject(selectedTypeProject, name)}
               updateProject={updateProject}
             />
           }

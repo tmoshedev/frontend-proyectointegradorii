@@ -8,14 +8,13 @@ import { FIELD_LIMITS, getMaxLengthMessage } from '../../../../constants/validat
 
 interface Props {
   data: any;
-  storeProject: any;
-  updateProject: any;
+  storeProject: (name: string) => Promise<any>;
+  updateProject: (id: number, name: string) => Promise<any>;
 }
 
 export const ProjectFormComponent = (props: Props) => {
   const formData = props.data.row || {
     name: '',
-    image: '',
     type_project_id: '',
   };
 
@@ -23,19 +22,19 @@ export const ProjectFormComponent = (props: Props) => {
 
   const validationSchema = Yup.object({
     name: Yup.string()
-      .max(FIELD_LIMITS.project.name, getMaxLengthMessage('el proyecto', FIELD_LIMITS.project.name))
+      .max(
+        FIELD_LIMITS.project.name,
+        getMaxLengthMessage('el proyecto', FIELD_LIMITS.project.name)
+      )
       .required('El nombre del proyecto es obligatorio'),
-    image: Yup.mixed().required('La imagen es obligatoria'),
   });
-
-  const [preview, setPreview] = useState<string | null>(null);
   const formik = useFormik({
     initialValues: formData,
     validationSchema: validationSchema,
     onSubmit: () => {
       if (props.data.type === 'store') {
         props
-          .storeProject(formik.values.name, formik.values.image)
+          .storeProject(formik.values.name)
           .then(() => {
             SweetAlert.success('Mensaje', 'Proyecto creado correctamente.');
             props.data.onCloseModalForm();
@@ -45,7 +44,7 @@ export const ProjectFormComponent = (props: Props) => {
           });
       } else if (props.data.type == 'edit') {
         props
-          .updateProject(props.data.row.id, formik.values.name, formik.values.image)
+          .updateProject(props.data.row.id, formik.values.name)
           .then(() => {
             SweetAlert.success('Mensaje', 'Proyecto actualizado correctamente.');
             props.data.onCloseModalForm();
@@ -62,19 +61,6 @@ export const ProjectFormComponent = (props: Props) => {
     const sanitizedValue = value.slice(0, FIELD_LIMITS.project.name);
     formik.setFieldValue(name, sanitizedValue);
   };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = event.target.files as FileList;
-    const image = selectedFiles?.[0];
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      formik.setFieldValue("image", e.target?.result);
-    };
-
-    reader.readAsDataURL(image);
-  };
-
 
   return (
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>

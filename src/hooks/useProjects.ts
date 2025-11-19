@@ -50,13 +50,12 @@ export function useProjects() {
   };
 
   //STORE
-  const storeProject = async (type_project_id: string, name: string, image: string) => {
+  const storeProject = async (type_project_id: string, name: string) => {
     dispatch(setLoading(true));
     try {
       const response = await projectsService.storeProject(
         type_project_id || '',
-        name || '',
-        image || ''
+        name || ''
       );
       const typedResponse = response as { project: Project };
       dispatch(dataTable_addResource(typedResponse.project));
@@ -67,13 +66,12 @@ export function useProjects() {
   };
 
   //UPDATE
-  const updateProject = async (id: number, name: string, image: string) => {
+  const updateProject = async (id: number, name: string) => {
     dispatch(setLoading(true));
     try {
       const response = await projectsService.updateProject(
         id,
-        name || '',
-        image || ''
+        name || ''
       );
       const typedResponse = response as { project: Project };
       dispatch(dataTable_updateResource(typedResponse.project));

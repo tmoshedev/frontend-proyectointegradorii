@@ -1,10 +1,9 @@
 import apiInstance from './api';
 
-export const storeProject = async (type_project_id: string, name: string, image: string) => {
+export const storeProject = async (type_project_id: string, name: string) => {
   const form = {
     type_project_id,
     name,
-    image,
   };
   const response = await apiInstance.post(`/projects`, {
     project: form,
@@ -12,10 +11,9 @@ export const storeProject = async (type_project_id: string, name: string, image:
   return response;
 };
 
-export const updateProject = async (id: number, name: string, image: string) => {
+export const updateProject = async (id: number, name: string) => {
   const form = {
     name,
-    image,
   };
   const response = await apiInstance.patch(`/projects/${id}`, {
     project: form,
