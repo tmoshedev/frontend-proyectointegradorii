@@ -68,7 +68,7 @@ export function useAccessUsers() {
   };
 
   //UPDATE
-  const updateAccessUser = async (user: AccessUser) => {
+  const updateAccessUser = async (user: Partial<AccessUser>) => {
     dispatch(setLoading(true));
     try {
       const response = await accessUsersService.updateAccessUser(user);

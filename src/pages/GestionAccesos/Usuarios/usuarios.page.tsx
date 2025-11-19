@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PageBodyComponent from '../../../components/page/page-body.component';
 import PageHeaderComponent from '../../../components/page/page-hader.component';
 import { useAccessUsers, useApis } from '../../../hooks';
 import FilterAccessUserComponent from './components/filter-access-user.component';
 import ModalComponent from '../../../components/shared/modal.component';
 import AccessUserFormComponent from './components/access-user-form.component';
+import UpdateUserRoleComponent from './components/update-user-role.component';
 import { SweetAlert } from '../../../utilities';
+import { isRoleActive } from '../../../utilities/role.utils';
 
 interface DataModalState {
   type: string;
@@ -49,6 +51,50 @@ export const UsuariosPage = () => {
     requirements: [],
     onCloseModalForm: () => {},
   });
+  const [isOpenRoleModal, setIsOpenRoleModal] = useState(false);
+  const [isRoleModalState, setIsRoleModalState] = useState(false);
+  const [selectedUserForRole, setSelectedUserForRole] = useState<any | null>(null);
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+
+  const availableRoles = useMemo(() => {
+    const rolesSource = (requirements as any)?.roles ?? requirements;
+    if (!Array.isArray(rolesSource)) {
+      return [];
+    }
+
+    return rolesSource.filter((role: any) => isRoleActive(role?.state));
+  }, [requirements]);
+
+  const resolveRoleIdFromRow = (row: any): string => {
+    if (!row) {
+      return '';
+    }
+
+    if (row.role_id) {
+      return String(row.role_id);
+    }
+
+    if (Array.isArray(row.roles_detail) && row.roles_detail.length > 0) {
+      return String(row.roles_detail[0].id);
+    }
+
+    if (Array.isArray(row.roles) && row.roles.length === 1) {
+      const roleName = String(row.roles[0]).toLowerCase();
+      const matchedRole = availableRoles.find(
+        (role: any) => String(role.name ?? '').toLowerCase() === roleName
+      );
+      if (matchedRole) {
+        return String(matchedRole.id);
+      }
+    }
+
+    return '';
+  };
+
+  const roleModalInitialRoleId = useMemo(
+    () => resolveRoleIdFromRow(selectedUserForRole),
+    [selectedUserForRole, availableRoles]
+  );
 
   const state = {
     page: {
@@ -152,6 +198,18 @@ export const UsuariosPage = () => {
               values: {},
             },
           },
+          {
+            name: 'update_role',
+            tooltip: 'Actualizar rol',
+            text: '',
+            css: 'me-3 text-primary',
+            icon: 'fa-solid fa-user-gear',
+            play: {
+              type: 'alls',
+              name: 'state',
+              values: {},
+            },
+          },
         ],
       },
     },
@@ -181,6 +239,9 @@ export const UsuariosPage = () => {
           row.names
         );
         break;
+      case 'update_role':
+        handleOpenRoleModal(row);
+        break;
       default:
         break;
     }
@@ -205,6 +266,50 @@ export const UsuariosPage = () => {
     resetPasswordAccessUser(id).then(() => {
       SweetAlert.success('Contraseña reseteada correctamente.');
     });
+  };
+
+  const handleOpenRoleModal = (row: any) => {
+    setSelectedUserForRole(row);
+    setIsOpenRoleModal(true);
+    setIsRoleModalState(true);
+  };
+
+  const handleCloseRoleModal = () => {
+    setIsRoleModalState(false);
+  };
+
+  const handleRoleModalClosed = () => {
+    setIsOpenRoleModal(false);
+    setSelectedUserForRole(null);
+  };
+
+  const handleSubmitRoleUpdate = async (roleId: string) => {
+    if (!roleId) {
+      SweetAlert.warning('Validación', 'Selecciona un rol para continuar.');
+      return;
+    }
+
+    if (!selectedUserForRole?.id) {
+      SweetAlert.error('Error', 'No se pudo identificar al usuario seleccionado.');
+      return;
+    }
+
+    setIsUpdatingRole(true);
+    try {
+      await updateAccessUser({
+        id: selectedUserForRole.id,
+        role_id: roleId,
+      });
+      SweetAlert.success('Mensaje', 'Rol actualizado correctamente.');
+      setIsRoleModalState(false);
+    } catch (error: any) {
+      SweetAlert.error(
+        'Error',
+        error?.response?.data?.message || 'No se pudo actualizar el rol del usuario.'
+      );
+    } finally {
+      setIsUpdatingRole(false);
+    }
   };
 
   const onChangePage = (page: number, type: string) => {
@@ -355,6 +460,25 @@ export const UsuariosPage = () => {
           </div>
         </div>
       </div>
+      {isOpenRoleModal && selectedUserForRole && (
+        <ModalComponent
+          stateModal={isRoleModalState}
+          typeModal={'static'}
+          onClose={handleRoleModalClosed}
+          title="Actualizar rol del usuario"
+          size="modal-md"
+          content={
+            <UpdateUserRoleComponent
+              user={selectedUserForRole}
+              roles={availableRoles}
+              initialRoleId={roleModalInitialRoleId}
+              onSubmit={handleSubmitRoleUpdate}
+              onCancel={handleCloseRoleModal}
+              isSubmitting={isUpdatingRole}
+            />
+          }
+        />
+      )}
       {isOpenModal && (
         <ModalComponent
           stateModal={isStateModal}

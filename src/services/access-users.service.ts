@@ -28,7 +28,7 @@ export const storeAccessUser = async (user: AccessUser) => {
   return response;
 };
 
-export const updateAccessUser = async (user: AccessUser) => {
+export const updateAccessUser = async (user: Partial<AccessUser>) => {
   const response = await apiInstance.patch<AccessUserResponse>(`/access-users`, {
     user,
   });
