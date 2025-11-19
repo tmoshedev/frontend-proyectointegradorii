@@ -117,7 +117,7 @@ export const LoginPage = () => {
                     <div className="form-group d-flex justify-content-center my-4">
                       <ReCAPTCHA
                         ref={captchaRef}
-                        sitekey="6LcW5w8sAAAAAOLOH5WiUxVdJWHETipXiPhlIIOT" // ¡Importante! Reemplaza esto
+                        sitekey="6Lcf0wwsAAAAAGbOIWwU-Z0w7mHP6eyjqNtKroKI" // ¡Importante! Reemplaza esto
                         onChange={(token) => setCaptcha(token)}
                         onExpired={() => setCaptcha(null)}
                       />
