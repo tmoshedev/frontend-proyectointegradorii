@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ChangeEvent, useMemo } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { ErrorValidate, SweetAlert } from '../../../../utilities';
@@ -10,23 +11,36 @@ interface Props {
 }
 
 export const RolFormComponent = (props: Props) => {
-  const formData = {
-    code: '',
-    name: '',
-  };
+  const initialValues = useMemo(
+    () => ({
+      name: '',
+    }),
+    [],
+  );
 
   const formik = useFormik({
-    initialValues: formData,
+    initialValues,
     validationSchema: Yup.object({
-      code: Yup.string().required('El código es obligatorio'),
-      name: Yup.string().required('El nombre es obligatorio'),
+      name: Yup.string()
+        .trim()
+        .required('El nombre es obligatorio'),
     }),
     onSubmit: () => {
+      const trimmedName = formik.values.name.trim();
+      const normalizedCode = trimmedName
+        .normalize('NFD')
+        .replace(/[^\x00-\x7F]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9 ]/g, ' ')
+        .trim()
+        .replace(/\s+/g, '_');
+      const roleCode = normalizedCode || `ROLE_${Date.now()}`;
+
       props
-        .createRole(formik.values)
+        .createRole({ code: roleCode, name: trimmedName })
         .then(() => {
           SweetAlert.success('Mensaje', 'Rol creado correctamente.');
-          props.getRoles(1, "", "", true);
+          props.getRoles(1, "", "", true, true);
           props.data.onCloseModalForm();
         })
         .catch((error: any) => {
@@ -35,7 +49,7 @@ export const RolFormComponent = (props: Props) => {
     },
   });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     formik.setFieldValue(event.target.name, event.target.value);
   };
 
@@ -43,29 +57,8 @@ export const RolFormComponent = (props: Props) => {
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
       <div className="modal-body">
         <div className="row">
-          {/* Código */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" htmlFor="code">
-              Código<span className="text-danger">*</span>
-            </label>
-            <input
-              autoComplete="off"
-              onChange={handleInputChange}
-              value={formik.values.code ?? ''}
-              name="code"
-              id="code"
-              type="text"
-              className={
-                'form-control form-control-sm' +
-                (formik.errors.code && formik.touched.code ? ' is-invalid' : '')
-              }
-              placeholder="Ej. SALES_AGENT"
-            />
-            <ErrorValidate state={formik.errors.code} />
-          </div>
-
           {/* Nombre */}
-          <div className="col-md-6 mb-3">
+          <div className="col-md-12 mb-3">
             <label className="form-label" htmlFor="name">
               Nombre<span className="text-danger">*</span>
             </label>
@@ -80,7 +73,7 @@ export const RolFormComponent = (props: Props) => {
                 'form-control form-control-sm' +
                 (formik.errors.name && formik.touched.name ? ' is-invalid' : '')
               }
-              placeholder="Ej. AGENTE DE VENTAS"
+              placeholder="Ej. Agente de Ventas"
             />
             <ErrorValidate state={formik.errors.name} />
           </div>

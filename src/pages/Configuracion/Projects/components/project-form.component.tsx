@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { ErrorBackend, ErrorValidate, SweetAlert } from '../../../../utilities';
 import { ChangeEvent, useState } from 'react';
 // import { ColorPicker } from '../../../../components/shared/ColorPicker';
+import { FIELD_LIMITS, getMaxLengthMessage } from '../../../../constants/validation';
 
 interface Props {
   data: any;
@@ -21,7 +22,9 @@ export const ProjectFormComponent = (props: Props) => {
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('El nombre del proyecto es obligatorio'),
+    name: Yup.string()
+      .max(FIELD_LIMITS.project.name, getMaxLengthMessage('el proyecto', FIELD_LIMITS.project.name))
+      .required('El nombre del proyecto es obligatorio'),
     image: Yup.mixed().required('La imagen es obligatoria'),
   });
 
@@ -55,7 +58,9 @@ export const ProjectFormComponent = (props: Props) => {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(event.target.name, event.target.value);
+    const { name, value } = event.target;
+    const sanitizedValue = value.slice(0, FIELD_LIMITS.project.name);
+    formik.setFieldValue(name, sanitizedValue);
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +92,7 @@ export const ProjectFormComponent = (props: Props) => {
               name="name"
               id="name"
               type="text"
+              maxLength={FIELD_LIMITS.project.name}
               className={`form-control form-control-sm todo-mayuscula ${
                 formik.touched.name && formik.errors.name ? 'is-invalid' : ''
               }`}

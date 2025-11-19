@@ -16,6 +16,7 @@ import Select from 'react-select';
 import moment from 'moment';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/l10n/es';
+import { isRoleActive } from '../../../../utilities/role.utils';
 
 interface Props {
   data: any;
@@ -241,6 +242,37 @@ export const AccessUserFormComponent = (props: Props) => {
       }
     },
   });
+
+  const activeRoles = useMemo(
+    () => (props.data.requirements?.roles ?? []).filter((role: any) => isRoleActive(role?.state)),
+    [props.data.requirements?.roles]
+  );
+
+  useEffect(() => {
+    if (!formik.values.role_id) {
+      return;
+    }
+
+    const roleStillActive = activeRoles.some(
+      (role: any) => String(role.id) === String(formik.values.role_id)
+    );
+
+    if (!roleStillActive) {
+      formik.setFieldValue('role_id', '');
+    }
+  }, [activeRoles, formik.values.role_id, formik.setFieldValue]);
+
+  useEffect(() => {
+    if (props.data.type === 'edit') {
+      const rolesDetail = props.data.row?.roles_detail;
+      if (Array.isArray(rolesDetail) && rolesDetail.length === 0) {
+        SweetAlert.warning(
+          'Rol requerido',
+          'Este usuario ya no tiene un rol activo asignado. Debes seleccionar uno antes de guardar.',
+        );
+      }
+    }
+  }, [props.data.row, props.data.type]);
 
   const normalizedEmailCurrent = (formik.values.email ?? '').trim().toLowerCase();
   const currentLocalPhone = sanitizePhone(formik.values.cellphone);
@@ -559,7 +591,7 @@ export const AccessUserFormComponent = (props: Props) => {
                 }
               >
                 <option value="">Seleccionar</option>
-                {props.data.requirements?.roles?.map((role: any) => (
+                {activeRoles.map((role: any) => (
                   <option key={role.id} value={role.id}>
                     {role.name}
                   </option>

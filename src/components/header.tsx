@@ -7,6 +7,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import * as accessUsersService from '../services/access-users.service';
+import CanCheck from '../resources/can';
 
 interface HeaderProps {
   openToggled: () => void;
@@ -19,6 +20,7 @@ export const Header = (props: HeaderProps) => {
   const { isConnected, onlineUsers, requestRefresh, triggerGlobalReload } = useWebSocket();
   const [users, setUsers] = useState<any[]>([]);
   const roleActualName = localStorage.getItem('rolActualName') || '';
+  const canListAccessUsers = CanCheck('access-users-index');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -29,8 +31,12 @@ export const Header = (props: HeaderProps) => {
         console.error('Error fetching users:', error);
       }
     };
-    fetchUsers();
-  }, []);
+    if (canListAccessUsers) {
+      fetchUsers();
+    } else {
+      setUsers([]);
+    }
+  }, [canListAccessUsers]);
   const logout = () => {
     handleLogout();
   };
@@ -195,40 +201,43 @@ export const Header = (props: HeaderProps) => {
                   <i className="fa-solid fa-bolt"></i>
                 </button>
               </div>
-              <div className="header-element d-lg-flex">
-                <a
-                  role="button"
-                  className="header-link dropdown-toggle position-relative"
-                  data-bs-auto-close="outside"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i className="ri-user-line fs-20"></i>
-                  {onlineUsers.length > 0 && (
-                    <span className="badge bg-success position-absolute top-0 start-100 translate-middle">
-                      {onlineUsers.length}
-                    </span>
-                  )}
-                </a>
-                <div className="main-header-dropdown dropdown-menu dropdown-menu-end" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  <ul className="list-unstyled mb-0">
-                    {users.slice(0, 100).map(user => (
-                      <li key={user.id} className="dropdown-item d-flex align-items-center">
-                        <div className="me-2">
-                          <span className={`badge ${onlineUsers.includes(user.user_uuid) ? 'bg-success' : 'bg-danger'}`}>●</span>
-                        </div>
-                        <div>
-                          <div className="fw-medium">{user.names} {user.father_last_name}</div>
-                          <small className="text-muted">{user.email}</small>
-                        </div>
-                      </li>
-                    ))}
-                    {users.length === 0 && (
-                      <li className="dropdown-item text-muted">No hay usuarios disponibles</li>
+              {canListAccessUsers && (
+                <div className="header-element d-lg-flex">
+                  <a
+                    role="button"
+                    className="header-link dropdown-toggle position-relative"
+                    data-bs-auto-close="outside"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="ri-user-line fs-20"></i>
+                    {onlineUsers.length > 0 && (
+                      <span className="badge bg-success position-absolute top-0 start-100 translate-middle">
+                        {onlineUsers.length}
+                      </span>
                     )}
-                  </ul>
+                  </a>
+                  <div className="main-header-dropdown dropdown-menu dropdown-menu-end" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    <ul className="list-unstyled mb-0">
+                      {users.slice(0, 100).map(user => (
+                        <li key={user.id} className="dropdown-item d-flex align-items-center">
+                          <div className="me-2">
+                            <span className={`badge ${onlineUsers.includes(user.user_uuid) ? 'bg-success' : 'bg-danger'}`}>●</span>
+                          </div>
+                          <div>
+                            <div className="fw-medium">{user.names} {user.father_last_name}</div>
+                            <small className="text-muted">{user.email}</small>
+                          </div>
+                        </li>
+                      ))}
+                      {users.length === 0 && (
+                        <li className="dropdown-item text-muted">No hay usuarios disponibles</li>
+                      )}
+                    </ul>
+                  </div>
                 </div>
-              </div></>
+              )}
+            </>
           )}
 
           <div className="header-element main-profile-user">

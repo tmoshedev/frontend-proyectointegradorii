@@ -32,10 +32,16 @@ export const updateCampaign = async (campaign: Campaign) => {
   return response;
 };
 
-export const stateCampaign = async (campaign: Campaign) => {
+export const stateCampaign = async (campaignId: number | string) => {
+  const parsedId = Number(campaignId);
+
+  if (!Number.isFinite(parsedId)) {
+    throw new Error('El identificador de la campaña debe ser un número.');
+  }
+
   const response = await apiInstance.patch<CampaignResponse>(`/campaigns/state`, {
     campaign: {
-      id: campaign,
+      id: parsedId,
     },
   });
   return response;

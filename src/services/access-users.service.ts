@@ -58,15 +58,28 @@ export const getRequirements = async () => {
   return response;
 };
 
-export const getRoles = async (page: number, text: string, limit: string) => {
+export const getRoles = async (
+  page: number,
+  text: string,
+  limit: string,
+  includeInactive: boolean = true,
+) => {
+  const includeInactiveFlag = includeInactive ? 1 : 0;
   const response = await apiInstance.get<DataTable>(
-    `access-users/roles?page=${page}&text=${text}&limit=${limit}`,
+    `/access-users/roles?page=${page}&text=${text}&limit=${limit}&include_inactive=${includeInactiveFlag}`,
   );
   return response;
 };
 
 export const storeRole = async (role: Role) => {
   const response = await apiInstance.post('/access-users/roles', role);
+  return response;
+};
+
+export const updateRoleState = async (roleId: number, state: boolean) => {
+  const response = await apiInstance.patch(`/access-users/roles/${roleId}/state`, {
+    state,
+  });
   return response;
 };
 

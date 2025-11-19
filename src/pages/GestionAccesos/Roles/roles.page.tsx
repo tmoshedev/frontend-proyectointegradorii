@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PageBodyComponent from '../../../components/page/page-body.component';
 import PageHeaderComponent from '../../../components/page/page-hader.component';
 import ModalComponent from '../../../components/shared/modal.component';
 import { useRoles } from "../../../hooks";
 import RolPermisosComponent from "./components/rol-permisos.component";
 import RolFormComponent from './components/rol-form.component';
+import { SweetAlert } from "../../../utilities";
+import CanCheck from "../../../resources/can";
+import type { Role } from "../../../models";
+import { isRoleActive } from '../../../utilities/role.utils';
 
 export const RolesPage = () => {
-  const { getRoles, permissionsAssign, permissionsNotAssign, updatePermissions, createRole } = useRoles();
+  const { getRoles, permissionsAssign, permissionsNotAssign, updatePermissions, createRole, toggleRoleState } = useRoles();
   const [loadedComponent, setLoadedComponent] = useState(false);
   /** Modal Window Resource */
   const [isModalWindowOpen, setIsModalWindowOpen] = useState(false);
@@ -24,11 +28,55 @@ export const RolesPage = () => {
 
   //STATE
 
-  const state = {
+  const handleRoleStateChange = useCallback(async (role: Role, nextState: boolean) => {
+    const roleId = typeof role.id === 'string' ? parseInt(role.id, 10) : role.id;
+    if (!roleId || Number.isNaN(roleId)) {
+      SweetAlert.error("Error", "El identificador del rol no es válido.");
+      return;
+    }
+
+    try {
+      const response = await toggleRoleState(roleId, nextState);
+      const responseData = (response as any)?.data;
+
+      if (responseData?.detached_users && responseData.detached_users > 0) {
+        SweetAlert.warning(
+          "Reasignación requerida",
+          `Se desvincularon ${responseData.detached_users} usuario(s) de este rol. Debes asignar un nuevo rol antes de que puedan continuar trabajando.`,
+        );
+      } else {
+        SweetAlert.success(
+          "Rol actualizado",
+          `El rol ${role.name} ahora está ${nextState ? "activo" : "bloqueado"}.`,
+        );
+      }
+    } catch (error: any) {
+      const message = error?.response?.data?.message ?? "No se pudo actualizar el estado del rol.";
+      SweetAlert.error("Error", message);
+    } finally {
+      await getRoles(1, "", "", false, true);
+    }
+  }, [getRoles, toggleRoleState]);
+
+  const renderRoleState = useCallback((row: Role) => {
+    const isActive = isRoleActive(row.state);
+    const roleId = typeof row.id === 'string' ? parseInt(row.id, 10) : row.id;
+    const hasValidId = typeof roleId === 'number' && !Number.isNaN(roleId);
+    return (
+      <div className="d-flex align-items-center gap-2">
+        <span className={`badge ${isActive ? 'bg-success' : 'bg-danger'}`}>
+          {isActive ? 'Activo' : 'Bloqueado'}
+        </span>
+        
+      </div>
+    );
+  }, [handleRoleStateChange]);
+
+  const tableState = useMemo(() => ({
     page: {
       title: "Lista de roles",
       icon: "ri-group-line",
-      model: "access-users",
+      model: "access-roles",
       header: {
         menu: ["Gestión de accesos", "Usuarios"],
       },
@@ -48,16 +96,20 @@ export const RolesPage = () => {
         widthAccion: "",
         cols: [
           {
-            name: "code",
-            alias: "Código",
-            roles: [],
-          },
-          {
             name: "name",
             alias: "Nombre",
             roles: [],
           },
+          {
+            name: "state",
+            alias: "Estado",
+            render: renderRoleState,
+          },
         ],
+        rowClass: (row: Role) => {
+          const isActive = isRoleActive(row.state);
+          return isActive ? '' : 'table-warning';
+        },
         buttons: [
           {
             name: "permisos",
@@ -65,16 +117,53 @@ export const RolesPage = () => {
             text: "",
             css: "me-3 text-primary",
             icon: "fa-solid fa-user-lock",
+            permission: "access-roles-edit",
             play: {
               type: "alls",
               name: "state",
               values: {},
             },
           },
+          {
+            name: "desactivar",
+            tooltip: "Bloquear rol",
+            text: "",
+            css: "me-3 text-danger",
+            icon: "fa-solid fa-user-slash",
+            permission: "access-roles-edit",
+            play: {
+              type: "states",
+              name: "state",
+              values: {
+                true: true,
+                false: false,
+                1: true,
+                0: false,
+              },
+            },
+          },
+          {
+            name: "activar",
+            tooltip: "Activar rol",
+            text: "",
+            css: "me-3 text-success",
+            icon: "fa-solid fa-user-check",
+            permission: "access-roles-edit",
+            play: {
+              type: "states",
+              name: "state",
+              values: {
+                true: false,
+                false: true,
+                1: false,
+                0: true,
+              },
+            },
+          },
         ],
       },
     },
-  };
+  }), [renderRoleState]);
 
   //METODOS DEL RECURSO
   const onClickAddResource = () => {
@@ -101,6 +190,12 @@ export const RolesPage = () => {
     switch (name) {
       case "permisos":
         onPermisos(row);
+        break;
+      case "desactivar":
+        handleRoleStateChange(row, false);
+        break;
+      case "activar":
+        handleRoleStateChange(row, true);
         break;
       default:
         break;
@@ -143,7 +238,7 @@ export const RolesPage = () => {
   //DATA INICIAL
   useEffect(() => {
     const dataInicial = () => {
-      getRoles(1, "", "", true).then(() => {
+      getRoles(1, "", "", true, true).then(() => {
         setLoadedComponent(true);
       });
     };
@@ -158,14 +253,14 @@ export const RolesPage = () => {
         <div className="row">
           <div className="col-12">
             <div className="card">
-          <PageHeaderComponent state={state} onModalResource={onClickAddResource} />
+          <PageHeaderComponent state={tableState} onModalResource={onClickAddResource} />
           <div className="card-body pt-1">
                     <PageBodyComponent
                       onChangeDelete={onClickDeleteResource}
                       onClickButtonPersonalizado={onClickButtonPersonalizado}
                       onChangeEdit={onClickEditResource}
                       onChangePage={onChangePage}
-                      state={state}
+                      state={tableState}
                       tableCss="table-resource"
                     />
                   </div>

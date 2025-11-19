@@ -22,6 +22,7 @@ interface DataModalState {
 
 const DefaultLayout = () => {
   const loadingState = useSelector((store: AppStore) => store.loading);
+  const userState = useSelector((store: AppStore) => store.auth.user);
   const location = useLocation();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isStateModal, setIsStateModal] = useState(false);
@@ -137,9 +138,34 @@ const DefaultLayout = () => {
       <Tooltip id="tooltip-component" place="bottom" style={{ zIndex: 9999 }} html={undefined} />
       <ToastContainer />
       <Header openToggled={openToggled} onCambiarRol={onCambiarRol} />
-      <Sidebar />
-      <Outlet />
-      <div onClick={closeSidebar} id="responsive-overlay"></div>
+      {userState?.pendingRoleAssignment ? (
+        <main className="main-content app-content">
+          <div className="container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-xxl-6 col-xl-7 col-lg-8 col-md-9">
+                <div className="card text-center my-5">
+                  <div className="card-body py-5">
+                    <i className="ri-shield-keyhole-line display-4 text-warning mb-3"></i>
+                    <h4 className="fw-bold mb-3">Rol en espera de asignación</h4>
+                    <p className="text-muted mb-4">
+                      Tu rol actual fue deshabilitado. Mientras un administrador te asigna un nuevo rol, no podrás acceder a los módulos del sistema.
+                    </p>
+                    <p className="text-muted mb-4">
+                      Si crees que se trata de un error, comunícate con el equipo de soporte.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      ) : (
+        <>
+          <Sidebar />
+          <Outlet />
+          <div onClick={closeSidebar} id="responsive-overlay"></div>
+        </>
+      )}
       {loadingState.isLoading && <LoadingState />}
 
       {isOpenModal && (

@@ -154,11 +154,11 @@ export const ChangePasswordPage = () => {
       });
     }
 
-    options.push({
+    /*options.push({
       id: 'alternate_email',
       label: 'Usar otro correo temporal',
       helper: 'Enviaremos el código solo por esta vez a un correo diferente.',
-    });
+    });*/
 
     return options;
   }, [primaryEmail, phone]);
@@ -391,9 +391,9 @@ export const ChangePasswordPage = () => {
                             Ingresa el código a continuación para continuar.
                           </p>
                         </div>
-                        <button className="btn btn-link px-0" type="button" onClick={handleBackToMethods}>
+                        {/*<button className="btn btn-link px-0" type="button" onClick={handleBackToMethods}>
                           Usar otro método de verificación
-                        </button>
+                        </button>*/}
                       </div>
                     )}
                     <div className="col-lg-8">
@@ -521,7 +521,7 @@ export const ChangePasswordPage = () => {
                           <ErrorBackend errorsBackend={errors} name="password_confirmation" />
                         </div>
 
-                        <div className="col-md-12">
+                        {/*<div className="col-md-12">
                           <div className="form-check form-switch">
                             <input
                               className="form-check-input"
@@ -537,7 +537,7 @@ export const ChangePasswordPage = () => {
                           <small className="text-muted d-block mt-1">
                             Recomendado si usaste tu cuenta en computadoras compartidas.
                           </small>
-                        </div>
+                        </div>*/}
                       </div>
                     </div>
                   </div>

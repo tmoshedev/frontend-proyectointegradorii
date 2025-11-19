@@ -75,7 +75,7 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             <AlignJustify height={20} />
           </button>
           
-          {rolActual === 'ADMINISTRATOR' && (
+          {CanCheck('leads-baja') && (
             <button
               data-tooltip-id="tooltip-component"
               data-tooltip-content={'Base de datos leads'}
@@ -98,14 +98,18 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
           </button>
         </div>
         
-        {<button
+        {CanCheck('leads-store') && (
+        
+        <button
           onClick={() => props.handleModalLeadForm('STORE')}
           className="btn btn-primary btn-sm ms-2"
         >
           <Plus height={20} /> Lead
-        </button>}
+        </button>
+        )}
         
-        {rolActual === 'ADMINISTRATOR' && (
+       
+          {CanCheck('leads-distrubir') && (
           <button
             onClick={() => props.handleStateView('DISTRIBUIR')}
             className="btn btn-info btn-sm ms-2"
@@ -113,13 +117,16 @@ export const LeadHeaderComponent = (props: LeadHeaderComponentProps) => {
             <Share2 height={20} /> Distribuir Leads
           </button>
         )}
-        {rolActual === 'ADMINISTRATOR' && (
+        
+        
+        {CanCheck('leads-import') && (
         <button
           onClick={() => props.handleStateView('IMPORTAR')}
           className="btn btn-success btn-sm ms-2"
         >
           <CloudDownload height={20} /> Importar Leads
-        </button>)}
+        </button>
+        )}
       </div>
 
       <div className="d-flex justify-content-center align-items-center">

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Role } from './role.model';
 export interface AccessUser {
   email: string;
   personal_email: string;
@@ -12,6 +13,7 @@ export interface AccessUser {
   role_id?: string;
   state?: string;
   roles: any[];
+  roles_detail?: Role[];
   ubigeo_domicilio?: string;
   direccion?: string;
   fecha_nacimiento?: string;

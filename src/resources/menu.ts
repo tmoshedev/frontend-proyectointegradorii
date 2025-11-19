@@ -5,7 +5,7 @@ interface MenuItem {
   permission?: string;
   permissions?: string[];
   submenu?: MenuItem[];
-  rolesPermitidos: string[];
+  rolesPermitidos?: string[];
 }
 
 const Menu: MenuItem[] = [
@@ -21,13 +21,13 @@ const Menu: MenuItem[] = [
     path: '/campaigns',
     icon: 'ri-megaphone-line',
     permission: 'campaigns-index',
-    rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
+    rolesPermitidos: ['ALLS'],
   },
   {
     name: 'Calendario',
     path: '/calendar',
     icon: 'ri-calendar-2-line',
-    permission: 'home-index',
+    permission: 'calendar-index',
     rolesPermitidos: ['ALLS'],
   },
   {
@@ -35,7 +35,7 @@ const Menu: MenuItem[] = [
     path: '/my-teams',
     icon: 'ri-user-heart-line',
     permission: 'teams-index',
-    rolesPermitidos: ['SALES_SUPERVISOR', 'COMMERCIAL_LEADER','DEVELOPER', 'CEO', 'ADMINISTRATOR' ],
+    rolesPermitidos: ['ALLS'],
   },
   {
     name: 'Leads',
@@ -56,14 +56,14 @@ const Menu: MenuItem[] = [
     path: '/reportes',
     icon: 'ri-file-chart-line',
     permission: 'reportes-index',
-    rolesPermitidos: ['ADMINISTRATOR','DEVELOPER'],
+    rolesPermitidos:['ALLS'],
   },
   {
     name: 'Gestión accesos',
     icon: 'ri-group-line',
     permissions: ['access-users-index'],
     path: '',
-    rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
+    rolesPermitidos: ['ALLS'],
     submenu: [
       {
         name: 'Usuarios',
@@ -75,7 +75,7 @@ const Menu: MenuItem[] = [
         name: 'Roles',
         path: '/access-roles',
         permission: 'access-roles-index',
-        rolesPermitidos: ['ADMINISTRATOR' ,'DEVELOPER', 'CEO' ],
+        rolesPermitidos: ['ALLS'],
       },
       {
         name: 'Usuarios Conectados',
@@ -90,7 +90,7 @@ const Menu: MenuItem[] = [
     path: '/settings',
     icon: 'ri-settings-2-line',
     permission: 'settings-index',
-    rolesPermitidos: ['DEVELOPER', 'CEO', 'ADMINISTRATOR'],
+    rolesPermitidos: ['ALLS'],
   },
   {
     name: 'Cambiar contraseña',

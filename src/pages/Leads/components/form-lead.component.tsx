@@ -8,6 +8,11 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { LeadFormRequest } from '../../../models/requests';
 import { useLeads } from '../../../hooks';
 import moment from 'moment';
+import {
+  FIELD_LIMITS,
+  getMaxLengthMessage,
+  sanitizeCellphoneValue,
+} from '../../../constants/validation';
 
 interface Props {
   data: any;
@@ -40,9 +45,33 @@ export const LeadFormComponent = (props: Props) => {
 
   const validationSchema = Yup.object({
     channel_id: Yup.string().required('Campo requerido'),
-    names: Yup.string().required('Campo requerido'),
-    cellphone: Yup.string().required('Campo requerido'),
+    document_number: Yup.string().max(
+      FIELD_LIMITS.lead.documentNumber,
+      getMaxLengthMessage('DNI', FIELD_LIMITS.lead.documentNumber)
+    ),
+    names: Yup.string()
+      .max(FIELD_LIMITS.lead.names, getMaxLengthMessage('nombres', FIELD_LIMITS.lead.names))
+      .required('Campo requerido'),
+    last_names: Yup.string().max(
+      FIELD_LIMITS.lead.lastNames,
+      getMaxLengthMessage('apellidos', FIELD_LIMITS.lead.lastNames)
+    ),
+    city: Yup.string().max(
+      FIELD_LIMITS.lead.city,
+      getMaxLengthMessage('ciudad', FIELD_LIMITS.lead.city)
+    ),
+    cellphone: Yup.string()
+      .max(FIELD_LIMITS.lead.cellphone, getMaxLengthMessage('celular', FIELD_LIMITS.lead.cellphone))
+      .required('Campo requerido'),
   });
+
+  const fieldMaxLengths: Record<string, number> = {
+    document_number: FIELD_LIMITS.lead.documentNumber,
+    names: FIELD_LIMITS.lead.names,
+    last_names: FIELD_LIMITS.lead.lastNames,
+    city: FIELD_LIMITS.lead.city,
+    cellphone: FIELD_LIMITS.lead.cellphone,
+  };
 
   const formik = useFormik({
     initialValues: formData,
@@ -57,6 +86,11 @@ export const LeadFormComponent = (props: Props) => {
           })
           .catch((error: any) => {
             if (error.response) {
+              const backendMessage =
+                error.response.data?.message ||
+                error.response.data?.errors?.lead?.[0] ||
+                'Error al guardar el lead';
+              SweetAlert.warning('Mensaje', backendMessage);
               setErrors(error.response.data.errors);
             } else {
               SweetAlert.error('Error', 'Error al guardar el lead');
@@ -67,7 +101,15 @@ export const LeadFormComponent = (props: Props) => {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(event.target.name, event.target.value);
+    const { name, value } = event.target;
+    const limit = fieldMaxLengths[name];
+    const sanitizedValue =
+      name === 'cellphone'
+        ? sanitizeCellphoneValue(value)
+        : limit
+        ? value.slice(0, limit)
+        : value;
+    formik.setFieldValue(name, sanitizedValue);
   };
 
   const handleInputChangeSelect = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -166,6 +208,7 @@ export const LeadFormComponent = (props: Props) => {
               name="document_number"
               id="document_number"
               type="text"
+              maxLength={FIELD_LIMITS.lead.documentNumber}
               className={
                 'todo-mayuscula form-control form-control-sm' +
                 (formik.errors.document_number && formik.touched.document_number
@@ -173,7 +216,7 @@ export const LeadFormComponent = (props: Props) => {
                   : '')
               }
             />
-            <ErrorValidate state={formik.errors.cellphone} />
+            <ErrorValidate state={formik.errors.document_number} />
           </div>
           {/* Nombres */}
           <div className="col-md-12 mb-3">
@@ -187,6 +230,7 @@ export const LeadFormComponent = (props: Props) => {
               name="names"
               id="names"
               type="text"
+              maxLength={FIELD_LIMITS.lead.names}
               className={
                 'todo-mayuscula form-control form-control-sm' +
                 (formik.errors.names && formik.touched.names ? ' is-invalid' : '')
@@ -206,8 +250,13 @@ export const LeadFormComponent = (props: Props) => {
               name="last_names"
               id="last_names"
               type="text"
-              className={'todo-mayuscula form-control form-control-sm'}
+              maxLength={FIELD_LIMITS.lead.lastNames}
+              className={
+                'todo-mayuscula form-control form-control-sm' +
+                (formik.errors.last_names && formik.touched.last_names ? ' is-invalid' : '')
+              }
             />
+            <ErrorValidate state={formik.errors.last_names} />
           </div>
           {/* Celular */}
           <div className="col-md-12 mb-3">
@@ -221,6 +270,7 @@ export const LeadFormComponent = (props: Props) => {
               name="cellphone"
               id="cellphone"
               type="text"
+              maxLength={FIELD_LIMITS.lead.cellphone}
               className={
                 'todo-mayuscula form-control form-control-sm' +
                 (formik.errors.cellphone && formik.touched.cellphone ? ' is-invalid' : '')
@@ -240,8 +290,13 @@ export const LeadFormComponent = (props: Props) => {
               name="city"
               id="city"
               type="text"
-              className={'todo-mayuscula form-control form-control-sm'}
+              maxLength={FIELD_LIMITS.lead.city}
+              className={
+                'todo-mayuscula form-control form-control-sm' +
+                (formik.errors.city && formik.touched.city ? ' is-invalid' : '')
+              }
             />
+            <ErrorValidate state={formik.errors.city} />
           </div>
 
           {/*Asignarme lead a mi usuario*/}

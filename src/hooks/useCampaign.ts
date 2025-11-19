@@ -73,10 +73,10 @@ export function useCampaigns() {
     }
   };
 
-  const stateCampaign = async (campaign: Campaign) => {
+  const stateCampaign = async (campaignId: number | string) => {
     dispatch(setLoading(true));
     try {
-      const response = await campaignsService.stateCampaign(campaign);
+      const response = await campaignsService.stateCampaign(campaignId);
       dispatch(dataTable_updateResource(response.campaign));
       return response;
     } finally {

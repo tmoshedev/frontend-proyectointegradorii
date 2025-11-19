@@ -155,7 +155,14 @@ export const CampaignsPage = () => {
   };
 
   const handleDelete = (id: any, text: string) => {
-    stateCampaign(id).then(() => {
+    const campaignId = Number(id);
+
+    if (!Number.isFinite(campaignId)) {
+      SweetAlert.error('La campaña seleccionada no tiene un identificador válido.');
+      return;
+    }
+
+    stateCampaign(campaignId).then(() => {
       SweetAlert.success(text);
     });
   };

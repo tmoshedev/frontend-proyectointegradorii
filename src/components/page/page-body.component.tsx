@@ -34,8 +34,11 @@ export const PageBodyComponent = (props: Props) => {
   };
 
   const mtd_showTd = (row: any, col: any) => {
-  if (col.play) {
-    let html = null;
+    if (typeof col.render === 'function') {
+      return col.render(row);
+    }
+    if (col.play) {
+      let html = null;
     switch (col.play.type) {
       case 'states':
         html = (
@@ -146,7 +149,14 @@ export const PageBodyComponent = (props: Props) => {
               </tr>
             )}
             {dataTableState.data.map((row: any, index: number) => (
-              <tr key={'row_' + index}>
+              <tr
+                key={'row_' + index}
+                className={
+                  typeof props.state.table.body.rowClass === 'function'
+                    ? props.state.table.body.rowClass(row)
+                    : ''
+                }
+              >
                 {props.state.table.body.cols.map(
                   (col: any, index: number) =>
                     mtd_showHeader(col) && <td key={'col_' + index}>{mtd_showTd(row, col)}</td>
@@ -155,6 +165,7 @@ export const PageBodyComponent = (props: Props) => {
                   {props.state.table.body.buttons &&
                     props.state.table.body.buttons.map(
                       (button: any, index: number) =>
+                        (!button.permission || CanCheck(button.permission)) &&
                         button.play &&
                         mtd_showButton(row, button.play) &&
                         (button.play.type == 'dropdowns' ? (

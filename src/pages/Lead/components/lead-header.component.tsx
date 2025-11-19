@@ -321,7 +321,7 @@ export const LeadHeaderComponent = (props: Props) => {
             </div>
           </div>
         )}
-        {rolActual === 'ADMINISTRATOR' && lead.final_state == null && (
+        {CanCheck('leads-manage') && lead.final_state == null && (
           <div className="d-flex ms-2">
             {/*<button
               onClick={() => onLeadState('GANADO')}

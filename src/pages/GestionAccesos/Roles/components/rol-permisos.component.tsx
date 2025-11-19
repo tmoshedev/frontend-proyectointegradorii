@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SweetAlert } from "../../../../utilities";
+import { filterOptionalPermissions } from '../../../../utilities/permission.utils';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface RolPermisosComponentProps {
@@ -47,11 +48,11 @@ export const RolPermisosComponent = (props: RolPermisosComponentProps) => {
     );
     if (type == "ASIGNADOS") {
       props.permissionsAssign(props.role.id).then((response: any) => {
-        setPermissions(response.data);
+        setPermissions(filterOptionalPermissions(response.data));
       });
     } else {
       props.permissionsNotAssign(props.role.id).then((response: any) => {
-        setPermissions(response.data);
+        setPermissions(filterOptionalPermissions(response.data));
       });
     }
   };
@@ -73,7 +74,7 @@ export const RolPermisosComponent = (props: RolPermisosComponentProps) => {
   useEffect(() => {
     const dataInicial = () => {
       props.permissionsAssign(props.role.id).then((response: any) => {
-        setPermissions(response.data);
+        setPermissions(filterOptionalPermissions(response.data));
         setLoadedComponent(true);
       });
     };

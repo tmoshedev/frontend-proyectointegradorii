@@ -180,7 +180,7 @@ const TwoFactorAuthPage = () => {
                       )}
                     </div>
 
-                    <div className="mt-2 text-center">
+                    {/*<div className="mt-2 text-center">
                       {!showNewEmailInput ? (
                         <button
                           type="button"
@@ -226,7 +226,7 @@ const TwoFactorAuthPage = () => {
                       <p className="text-muted text-center mt-3">
                         Intentos restantes: {MAX_RESEND_ATTEMPTS - resendAttempts}
                       </p>
-                    )}
+                    )}*/}
                   </form>
                 </div>
               </div>

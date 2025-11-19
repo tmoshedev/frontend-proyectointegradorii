@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { ErrorBackend, ErrorValidate, SweetAlert } from '../../../../utilities';
 import { ChangeEvent, useState } from 'react';
+import { FIELD_LIMITS, getMaxLengthMessage } from '../../../../constants/validation';
 
 interface Props {
   data: any;
@@ -19,7 +20,12 @@ export const TypeProjectFormComponent = (props: Props) => {
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('El nombre del tipo de proyecto es obligatorio'),
+    name: Yup.string()
+      .max(
+        FIELD_LIMITS.project.name,
+        getMaxLengthMessage('el tipo de proyecto', FIELD_LIMITS.project.name)
+      )
+      .required('El nombre del tipo de proyecto es obligatorio'),
   });
 
   const formik = useFormik({
@@ -51,7 +57,9 @@ export const TypeProjectFormComponent = (props: Props) => {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(event.target.name, event.target.value);
+    const { name, value } = event.target;
+    const sanitizedValue = value.slice(0, FIELD_LIMITS.project.name);
+    formik.setFieldValue(name, sanitizedValue);
   };
 
   return (
@@ -70,6 +78,7 @@ export const TypeProjectFormComponent = (props: Props) => {
               name="name"
               id="name"
               type="text"
+              maxLength={FIELD_LIMITS.project.name}
               className={`form-control form-control-sm todo-mayuscula ${
                 formik.touched.name && formik.errors.name ? 'is-invalid' : ''
               }`}

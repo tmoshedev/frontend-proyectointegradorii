@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { ErrorBackend, ErrorValidate, SweetAlert } from '../../../../utilities';
 import { ChangeEvent, useState } from 'react';
-import { ColorPicker } from '../../../../components/shared/ColorPicker';
+import { FIELD_LIMITS, getMaxLengthMessage } from '../../../../constants/validation';
 
 interface Props {
   data: any;
@@ -20,7 +20,9 @@ export const TypeLabelFormComponent = (props: Props) => {
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('El nombre del Tipo de etiqueta es obligatorio'),
+    name: Yup.string()
+      .max(FIELD_LIMITS.label.name, getMaxLengthMessage('el tipo de etiqueta', FIELD_LIMITS.label.name))
+      .required('El nombre del Tipo de etiqueta es obligatorio'),
   });
 
   const formik = useFormik({
@@ -52,7 +54,9 @@ export const TypeLabelFormComponent = (props: Props) => {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(event.target.name, event.target.value);
+    const { name, value } = event.target;
+    const sanitizedValue = value.slice(0, FIELD_LIMITS.label.name);
+    formik.setFieldValue(name, sanitizedValue);
   };
 
   return (
@@ -71,6 +75,7 @@ export const TypeLabelFormComponent = (props: Props) => {
               name="name"
               id="name"
               type="text"
+              maxLength={FIELD_LIMITS.label.name}
               className={`form-control form-control-sm todo-mayuscula ${
                 formik.touched.name && formik.errors.name ? 'is-invalid' : ''
               }`}

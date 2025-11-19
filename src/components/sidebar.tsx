@@ -25,7 +25,6 @@ export const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const userState = useSelector((state: AppStore) => state.auth.user);
   const roleActualName = localStorage.getItem('rolActualName') || '';
-  const roleActual = localStorage.getItem('rolActual') || '';
 
   // Verificar si la ruta actual pertenece a un submenú
   useEffect(() => {
@@ -109,16 +108,6 @@ export const Sidebar = () => {
         <nav className="main-menu-container nav nav-pills flex-column sub-open active">
           <ul className="main-menu">
             {Menu.map((menuItem, index) => {
-              const rolesValidos = menuItem.rolesPermitidos?.map((r) => r.toUpperCase()) ?? [];
-
-              if (
-                menuItem.rolesPermitidos &&
-                !rolesValidos.includes('ALLS') &&
-                !rolesValidos.includes(roleActual.toUpperCase())
-              ) {
-                return null;
-              }
-
               return (
                 <li
                   className={`slide ${menuItem.submenu ? 'has-sub' : ''} ${

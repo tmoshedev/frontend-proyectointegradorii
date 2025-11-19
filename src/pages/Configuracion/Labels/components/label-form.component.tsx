@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { ErrorBackend, ErrorValidate, SweetAlert } from '../../../../utilities';
 import { ChangeEvent, useState } from 'react';
 import { ColorPicker } from '../../../../components/shared/ColorPicker';
+import { FIELD_LIMITS, getMaxLengthMessage } from '../../../../constants/validation';
 
 interface Props {
   data: any;
@@ -21,7 +22,9 @@ export const LabelFormComponent = (props: Props) => {
   const [errors, setErrors] = useState<any>({});
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('El nombre de la etiqueta es obligatorio'),
+    name: Yup.string()
+      .max(FIELD_LIMITS.label.name, getMaxLengthMessage('la etiqueta', FIELD_LIMITS.label.name))
+      .required('El nombre de la etiqueta es obligatorio'),
     color: Yup.string().required('El color es obligatorio'),
   });
 
@@ -54,7 +57,9 @@ export const LabelFormComponent = (props: Props) => {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    formik.setFieldValue(event.target.name, event.target.value);
+    const { name, value } = event.target;
+    const sanitizedValue = value.slice(0, FIELD_LIMITS.label.name);
+    formik.setFieldValue(name, sanitizedValue);
   };
 
   return (
@@ -73,6 +78,7 @@ export const LabelFormComponent = (props: Props) => {
               name="name"
               id="name"
               type="text"
+              maxLength={FIELD_LIMITS.label.name}
               className={`form-control form-control-sm todo-mayuscula ${
                 formik.touched.name && formik.errors.name ? 'is-invalid' : ''
               }`}

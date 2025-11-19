@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { UserLabel } from '.';
+import { Role } from './role.model';
 
 export interface User {
   id: number;
@@ -12,8 +13,10 @@ export interface User {
   father_last_name: string;
   mother_last_name: string;
   roles: any[];
+  roles_detail?: Role[];
   user_labels: UserLabel[];
   permissions: string[];
   email: string;
   must_change_password?: boolean;
+  pendingRoleAssignment?: boolean;
 }

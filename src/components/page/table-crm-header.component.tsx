@@ -101,15 +101,17 @@ export const TableCRMHeaderComponent = (props: Props) => {
               )}
             </div>
           )}
+          {CanCheck('leads-store') && props.view_imports && (
           <button className="btn btn-primary btn-sm" onClick={props.onAddResource}>
             <Plus height={20} /> {props.name_resource}
           </button>
+          )}
           {CanCheck('leads-distrubir') && props.view_distributes && (
             <button onClick={props.onDistributes} className="btn btn-info btn-sm d-ocultar-menu">
               <Share2 height={20} /> Distribuir {props.name_plural_resource}
             </button>
           )}
-          {CanCheck('leads-distrubir') && props.view_distributes && (
+          {CanCheck('leads-import') && props.view_distributes && (
             <button onClick={props.onImports} className="btn btn-success btn-sm d-ocultar-menu">
               <CloudDownload height={20} /> Importar {props.name_plural_resource}
             </button>
