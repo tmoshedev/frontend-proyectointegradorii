@@ -13,10 +13,11 @@ export const getAccessUsers = async (
   page: number,
   limit: string,
   orderBy: string,
-  order: string
+  order: string,
+  roleless: string
 ) => {
   const response = await apiInstance.get(
-    `/access-users?role_id=${role_id}&state=${state}&user_uuid=${user_uuid}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}`
+    `/access-users?role_id=${role_id}&state=${state}&user_uuid=${user_uuid}&text=${text}&type=${type}&page=${page}&limit=${limit}&orderBy=${orderBy}&order=${order}&roleless=${roleless}`
   );
   return response;
 };
@@ -31,6 +32,14 @@ export const storeAccessUser = async (user: AccessUser) => {
 export const updateAccessUser = async (user: Partial<AccessUser>) => {
   const response = await apiInstance.patch<AccessUserResponse>(`/access-users`, {
     user,
+  });
+  return response;
+};
+
+export const updateAccessUserRole = async (userId: number, roleId: number | string) => {
+  const response = await apiInstance.patch<AccessUserResponse>(`/access-users/role`, {
+    user_id: userId,
+    role_id: roleId,
   });
   return response;
 };

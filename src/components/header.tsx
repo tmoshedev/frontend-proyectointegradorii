@@ -25,7 +25,7 @@ export const Header = (props: HeaderProps) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await accessUsersService.getAccessUsers('', '1','','', '', 1, '100', '', '');
+        const response = await accessUsersService.getAccessUsers('', '1','','', '', 1, '100', '', '', '');
         setUsers((response as any).data || []);
       } catch (error) {
         console.error('Error fetching users:', error);

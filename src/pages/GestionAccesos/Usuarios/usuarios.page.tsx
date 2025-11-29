@@ -31,12 +31,14 @@ export const UsuariosPage = () => {
     limit: '',
     orderBy: '',
     order: '',
+    roleless: '',
   });
   const {
     getAccessUsers,
     getRequirements,
     storeAccessUser,
     updateAccessUser,
+    updateAccessUserRole,
     stateAccessUser,
     resetPasswordAccessUser,
   } = useAccessUsers();
@@ -296,10 +298,7 @@ export const UsuariosPage = () => {
 
     setIsUpdatingRole(true);
     try {
-      await updateAccessUser({
-        id: selectedUserForRole.id,
-        role_id: roleId,
-      });
+      await updateAccessUserRole(selectedUserForRole.id, roleId);
       SweetAlert.success('Mensaje', 'Rol actualizado correctamente.');
       setIsRoleModalState(false);
     } catch (error: any) {
@@ -330,6 +329,7 @@ export const UsuariosPage = () => {
       filterState.limit,
       filterState.orderBy,
       filterState.order,
+      filterState.roleless,
       true,
       true
     );
@@ -347,8 +347,9 @@ export const UsuariosPage = () => {
       limit: '',
       orderBy: '',
       order: '',
+      roleless: '',
     });
-    getAccessUsers('', '','',  '','', 1, '', '', '', true, true);
+    getAccessUsers('', '','',  '','', 1, '', '', '', '', true, true);
   };
 
   const handleFilterSearch = (newFilters: any, state: boolean) => {
@@ -363,6 +364,7 @@ export const UsuariosPage = () => {
       newFilters.limit,
       newFilters.orderBy,
       newFilters.order,
+      newFilters.roleless,
       state,
       true
     );
@@ -422,6 +424,7 @@ export const UsuariosPage = () => {
         filterState.limit,
         filterState.orderBy,
         filterState.order,
+        filterState.roleless,
         true,
         true
       );

@@ -41,6 +41,21 @@ export const FilterAccessUserComponent = (props: Props) => {
           ))}
         </select>
       </div>
+      <div className="col-md-3">
+        <label className="form-label" htmlFor="roleless">
+          <i className="fa-regular fa-circle-question"></i> Usuarios sin rol
+        </label>
+        <select
+          name="roleless"
+          id="roleless"
+          value={props.filterState.roleless}
+          onChange={handleSelectChange}
+          className="form-select form-select-sm"
+        >
+          <option value="">Todos</option>
+          <option value="true">Solo sin rol</option>
+        </select>
+      </div>
       {/* Buscar */}
       <div className="col-md-6">
         <label htmlFor="text" className="form-label">

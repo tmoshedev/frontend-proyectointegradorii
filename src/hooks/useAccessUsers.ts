@@ -28,6 +28,7 @@ export function useAccessUsers() {
     limit: string,
     orderBy: string,
     order: string,
+    roleless: string,
     loading: boolean,
     updateTable: boolean = false
   ) => {
@@ -42,7 +43,8 @@ export function useAccessUsers() {
         page,
         limit,
         orderBy,
-        order
+        order,
+        roleless
       );
 
       if (updateTable) {
@@ -72,6 +74,17 @@ export function useAccessUsers() {
     dispatch(setLoading(true));
     try {
       const response = await accessUsersService.updateAccessUser(user);
+      dispatch(dataTable_updateResource(response.access_user));
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const updateAccessUserRole = async (userId: number, roleId: string | number) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await accessUsersService.updateAccessUserRole(userId, roleId);
       dispatch(dataTable_updateResource(response.access_user));
       return response;
     } finally {
@@ -125,6 +138,7 @@ export function useAccessUsers() {
     getAccessUsers,
     storeAccessUser,
     updateAccessUser,
+    updateAccessUserRole,
     stateAccessUser,
     resetPasswordAccessUser,
     getRequirements,

@@ -30,6 +30,7 @@ export const UsuariosConectadosPage = () => {
         '100',
         filterState.orderBy,
         filterState.order,
+        '',
         true,
         true
       );
