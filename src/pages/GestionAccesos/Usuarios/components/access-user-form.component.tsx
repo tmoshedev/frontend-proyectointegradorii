@@ -172,9 +172,10 @@ export const AccessUserFormComponent = (props: Props) => {
       const localPhone = sanitizePhone(formik.values.cellphone);
       const fullPhoneWithCountry = buildPhoneWithCountry(phoneCountryCode, formik.values.cellphone ?? '');
 
+      const emailUnchanged = normalizedEmail === initialEmail;
       const emailVerifiedForSubmit =
         props.data.type === 'edit'
-          ? (initialEmailVerified && normalizedEmail === initialEmail) ||
+          ? emailUnchanged ||
             (emailVerification.verified && normalizedEmail === lastVerifiedEmail)
           : emailVerification.verified && normalizedEmail === lastVerifiedEmail;
       if (!emailVerifiedForSubmit) {
@@ -247,9 +248,10 @@ export const AccessUserFormComponent = (props: Props) => {
   }, [props.data.row, props.data.type]);
 
   const normalizedEmailCurrent = (formik.values.email ?? '').trim().toLowerCase();
+  const emailUnchanged = normalizedEmailCurrent === initialEmail;
   const emailIsVerified =
     props.data.type === 'edit'
-      ? (initialEmailVerified && normalizedEmailCurrent === initialEmail) ||
+      ? emailUnchanged ||
         (emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail)
       : emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail;
 
