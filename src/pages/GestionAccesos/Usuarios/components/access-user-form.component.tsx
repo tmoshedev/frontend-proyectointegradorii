@@ -150,18 +150,7 @@ export const AccessUserFormComponent = (props: Props) => {
   );
 
   const [phoneCountryCode, setPhoneCountryCode] = useState(derivedCountryCode);
-  const initialPhoneDigits = buildPhoneWithCountry(derivedCountryCode, derivedLocalPhone);
   const initialPhoneVerified = props.data.type === 'edit' && Boolean(initialFormData.cellphone_verified);
-  const [phoneVerification, setPhoneVerification] = useState<VerificationState>({
-    sent: false,
-    verified: initialPhoneVerified,
-    seconds: 0,
-    verificationId: undefined,
-  });
-  const [phoneCode, setPhoneCode] = useState('');
-  const [lastVerifiedPhone, setLastVerifiedPhone] = useState(
-    initialPhoneVerified ? initialPhoneDigits : ''
-  );
 
   const getValidationSchema = (type: string) => {
     return Yup.object({
@@ -193,35 +182,15 @@ export const AccessUserFormComponent = (props: Props) => {
         return;
       }
 
-      const phoneVerifiedForSubmit =
-        !localPhone ||
-        (phoneVerification.verified && fullPhoneWithCountry === lastVerifiedPhone);
-      if (!phoneVerifiedForSubmit) {
-        SweetAlert.warning(
-          'Validación',
-          'Debes verificar el número de celular antes de continuar.'
-        );
-        return;
-      }
-
       const payload: AccessUser = {
         ...formik.values,
         email: normalizedEmail,
         cellphone: fullPhoneWithCountry,
         email_verified: emailVerifiedForSubmit,
-        cellphone_verified:
-          Boolean(localPhone) &&
-          phoneVerification.verified &&
-          fullPhoneWithCountry === lastVerifiedPhone,
+        cellphone_verified: Boolean(formik.values.cellphone_verified ?? initialPhoneVerified),
         email_verification_id: emailVerifiedForSubmit
           ? emailVerification.verificationId
           : undefined,
-        cellphone_verification_id:
-          Boolean(localPhone) &&
-          phoneVerification.verified &&
-          fullPhoneWithCountry === lastVerifiedPhone
-            ? phoneVerification.verificationId
-            : undefined,
         // Este campo adicional permite conservar el prefijo elegido en el backend si está soportado.
         cellphone_country_code: phoneCountryCode,
       };
@@ -275,24 +244,16 @@ export const AccessUserFormComponent = (props: Props) => {
   }, [props.data.row, props.data.type]);
 
   const normalizedEmailCurrent = (formik.values.email ?? '').trim().toLowerCase();
-  const currentLocalPhone = sanitizePhone(formik.values.cellphone);
-  const currentFullPhone = buildPhoneWithCountry(phoneCountryCode, formik.values.cellphone ?? '');
-
   const emailIsVerified =
     emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail;
-  const phoneIsVerified =
-    !currentLocalPhone ||
-    (phoneVerification.verified && currentFullPhone === lastVerifiedPhone);
 
   const submitTooltip =
     props.data.type === 'store' && !emailIsVerified
       ? 'Verifica el correo del usuario para continuar'
-      : props.data.type === 'store' && Boolean(currentLocalPhone) && !phoneIsVerified
-      ? 'Verifica el número de celular del usuario para continuar'
       : undefined;
 
   const isSubmitDisabled =
-    props.data.type === 'store' && (!emailIsVerified || (Boolean(currentLocalPhone) && !phoneIsVerified));
+    props.data.type === 'store' && !emailIsVerified;
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     formik.setFieldValue(event.target.name, event.target.value);
@@ -423,93 +384,6 @@ export const AccessUserFormComponent = (props: Props) => {
     }
   };
 
-  const handleSendPhoneVerification = async () => {
-    const rawPhone = formik.values.cellphone?.toString().trim();
-    if (!rawPhone) {
-      SweetAlert.warning('Validación', 'Ingresa un número de celular.');
-      return;
-    }
-
-    const sanitizedPhone = sanitizePhone(rawPhone);
-    if (sanitizedPhone.length < LOCAL_PHONE_LENGTH) {
-      SweetAlert.warning('Validación', 'Ingresa un número de celular válido.');
-      return;
-    }
-
-    formik.setFieldValue('cellphone', sanitizedPhone, false);
-
-    try {
-      const fullPhone = buildPhoneWithCountry(phoneCountryCode, sanitizedPhone);
-      const response = await sendContactVerificationCode('cellphone', fullPhone);
-      SweetAlert.success('Verificación enviada', response.message);
-      setPhoneVerification({
-        sent: true,
-        verified: false,
-        seconds: response.expires_in || 60,
-        verificationId: response.verification_id,
-      });
-      setPhoneCode('');
-    } catch (error: any) {
-      SweetAlert.error(
-        'Error',
-        error.response?.data?.message || 'No se pudo enviar el código al número proporcionado.'
-      );
-    }
-  };
-
-  const handleConfirmPhoneVerification = async () => {
-    if (!phoneVerification.sent) {
-      SweetAlert.warning('Validación', 'Primero solicita el código para el celular.');
-      return;
-    }
-
-    if (!phoneCode) {
-      SweetAlert.warning('Validación', 'Ingresa el código enviado al celular.');
-      return;
-    }
-
-    const localPhone = sanitizePhone(formik.values.cellphone);
-    if (!localPhone) {
-      SweetAlert.warning('Validación', 'Ingresa un número de celular válido.');
-      return;
-    }
-
-    if (!phoneVerification.verificationId) {
-      SweetAlert.warning('Validación', 'Solicita un nuevo código antes de validar.');
-      return;
-    }
-
-    try {
-      const fullPhone = buildPhoneWithCountry(phoneCountryCode, localPhone);
-      const response = await verifyContactVerificationCode(
-        'cellphone',
-        fullPhone,
-        phoneCode,
-        phoneVerification.verificationId
-      );
-      if (response.verified) {
-        SweetAlert.success('Celular verificado', response.message);
-        setPhoneVerification({
-          sent: true,
-          verified: true,
-          seconds: 0,
-          verificationId: phoneVerification.verificationId,
-        });
-        setLastVerifiedPhone(fullPhone);
-      } else {
-        SweetAlert.error(
-          'Verificación',
-          response.message || 'El código ingresado no es válido o ha expirado.'
-        );
-      }
-    } catch (error: any) {
-      SweetAlert.error(
-        'Error',
-        error.response?.data?.message || 'No se pudo validar el código del celular.'
-      );
-    }
-  };
-
   useEffect(() => {
     if (!emailVerification.sent || emailVerification.seconds <= 0) return;
     const timer = setTimeout(() => {
@@ -540,35 +414,8 @@ export const AccessUserFormComponent = (props: Props) => {
   }, [formik.values.email, emailVerification.verified, lastVerifiedEmail]);
 
   useEffect(() => {
-    if (!phoneVerification.sent || phoneVerification.seconds <= 0) return;
-    const timer = setTimeout(() => {
-      setPhoneVerification((prev) => ({ ...prev, seconds: prev.seconds - 1 }));
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [phoneVerification.sent, phoneVerification.seconds]);
-
-  useEffect(() => {
     setPhoneCountryCode(derivedCountryCode);
-    const existingFullPhone = buildPhoneWithCountry(derivedCountryCode, initialFormData.cellphone ?? '');
-    const verified = props.data.type === 'edit' && Boolean(initialFormData.cellphone_verified);
-    setLastVerifiedPhone(verified ? existingFullPhone : '');
-    setPhoneVerification({ sent: false, verified, seconds: 0, verificationId: undefined });
-    setPhoneCode('');
-  }, [
-    props.data.type,
-    derivedCountryCode,
-    initialFormData.cellphone,
-    initialFormData.cellphone_verified,
-  ]);
-
-  useEffect(() => {
-    if (!phoneVerification.verified) return;
-    const currentFullPhone = buildPhoneWithCountry(phoneCountryCode, formik.values.cellphone ?? '');
-    if (currentFullPhone !== lastVerifiedPhone) {
-      setPhoneVerification({ sent: false, verified: false, seconds: 0, verificationId: undefined });
-      setPhoneCode('');
-    }
-  }, [formik.values.cellphone, phoneVerification.verified, lastVerifiedPhone, phoneCountryCode]);
+  }, [derivedCountryCode]);
 
   return (
     <form className="form-scrollable" onSubmit={formik.handleSubmit}>
@@ -788,57 +635,6 @@ export const AccessUserFormComponent = (props: Props) => {
               />
             </div>
             <ErrorBackend errorsBackend={errors} name="cellphone" />
-            <div className="d-flex align-items-center gap-2 mt-2 flex-wrap">
-              <button
-                type="button"
-                className="btn btn-outline-primary btn-sm"
-                onClick={handleSendPhoneVerification}
-                disabled={
-                  !formik.values.cellphone ||
-                  (phoneVerification.sent && phoneVerification.seconds > 0 && !phoneVerification.verified)
-                }
-              >
-                {phoneVerification.sent ? 'Reenviar código' : 'Enviar código'}
-              </button>
-              {phoneVerification.sent && !phoneVerification.verified && (
-                <small className="text-muted">
-                  Podrás reenviar en {formatSeconds(phoneVerification.seconds)}
-                </small>
-              )}
-              {phoneIsVerified && <span className="badge bg-success">Celular verificado</span>}
-            </div>
-            {phoneVerification.sent && !phoneVerification.verified && (
-              <div className="mt-2">
-                <label className="form-label" htmlFor="cellphone_code">
-                  Código de verificación
-                </label>
-                <div className="input-group input-group-sm">
-                  <input
-                    id="cellphone_code"
-                    type="text"
-                    className="form-control"
-                    value={phoneCode}
-                    maxLength={6}
-                    onChange={(event) =>
-                      setPhoneCode(event.target.value.replace(/[^0-9A-Za-z]/g, ''))
-                    }
-                    placeholder="Código recibido"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-success"
-                    onClick={handleConfirmPhoneVerification}
-                  >
-                    Validar
-                  </button>
-                </div>
-              </div>
-            )}
-            {props.data.type === 'store' && Boolean(currentLocalPhone) && !phoneIsVerified && (
-              <small className="text-muted d-block mt-2">
-                Verifica el celular para habilitar la creación del usuario.
-              </small>
-            )}
           </div>
           {/* city de domicilio [city / Provincia / Departamento] */}
           <div className="col-md-6 mb-3">
