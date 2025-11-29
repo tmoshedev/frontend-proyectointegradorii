@@ -173,7 +173,10 @@ export const AccessUserFormComponent = (props: Props) => {
       const fullPhoneWithCountry = buildPhoneWithCountry(phoneCountryCode, formik.values.cellphone ?? '');
 
       const emailVerifiedForSubmit =
-        emailVerification.verified && normalizedEmail === lastVerifiedEmail;
+        props.data.type === 'edit'
+          ? (initialEmailVerified && normalizedEmail === initialEmail) ||
+            (emailVerification.verified && normalizedEmail === lastVerifiedEmail)
+          : emailVerification.verified && normalizedEmail === lastVerifiedEmail;
       if (!emailVerifiedForSubmit) {
         SweetAlert.warning(
           'Validación',
@@ -245,7 +248,10 @@ export const AccessUserFormComponent = (props: Props) => {
 
   const normalizedEmailCurrent = (formik.values.email ?? '').trim().toLowerCase();
   const emailIsVerified =
-    emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail;
+    props.data.type === 'edit'
+      ? (initialEmailVerified && normalizedEmailCurrent === initialEmail) ||
+        (emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail)
+      : emailVerification.verified && normalizedEmailCurrent === lastVerifiedEmail;
 
   const submitTooltip =
     props.data.type === 'store' && !emailIsVerified
