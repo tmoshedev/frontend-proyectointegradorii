@@ -44,6 +44,14 @@ export const updateAccessUserRole = async (userId: number, roleId: number | stri
   return response;
 };
 
+export const updateAccessUserRoles = async (userId: number, roleIds: Array<number | string>) => {
+  const response = await apiInstance.patch<AccessUserResponse>(`/access-users/roles`, {
+    user_id: userId,
+    role_ids: roleIds,
+  });
+  return response;
+};
+
 export const stateAccessUser = async (user: AccessUser) => {
   const response = await apiInstance.patch<AccessUserResponse>(`/access-users/state`, {
     user: {

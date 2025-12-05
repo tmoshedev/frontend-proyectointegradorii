@@ -92,6 +92,17 @@ export function useAccessUsers() {
     }
   };
 
+  const updateAccessUserRoles = async (userId: number, roleIds: Array<string | number>) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await accessUsersService.updateAccessUserRoles(userId, roleIds);
+      dispatch(dataTable_updateResource(response.access_user));
+      return response;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const stateAccessUser = async (user: AccessUser) => {
     dispatch(setLoading(true));
     try {
@@ -139,6 +150,7 @@ export function useAccessUsers() {
     storeAccessUser,
     updateAccessUser,
     updateAccessUserRole,
+    updateAccessUserRoles,
     stateAccessUser,
     resetPasswordAccessUser,
     getRequirements,
