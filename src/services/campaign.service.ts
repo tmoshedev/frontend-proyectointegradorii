@@ -41,9 +41,9 @@ export const updateCampaign = async (campaign: Campaign) => {
 };
 
 export const stateCampaign = async (campaignId: number | string) => {
-  const parsedId = Number(campaignId);
+  const parsedId = Number.parseInt(String(campaignId), 10);
 
-  if (!Number.isFinite(parsedId) || parsedId <= 0) {
+  if (!Number.isInteger(parsedId) || parsedId <= 0) {
     throw new Error('El identificador de la campaña debe ser un número entero mayor a 0.');
   }
 
