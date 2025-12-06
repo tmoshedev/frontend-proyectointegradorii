@@ -49,6 +49,11 @@ export const CampaignFormComponent = (props: Props) => {
             setErrors(error.response.data.errors);
           });
       } else if (props.data.type == 'edit') {
+        const campaignId = Number((formik.values as any)?.id);
+        if (!Number.isFinite(campaignId) || campaignId <= 0) {
+          SweetAlert.error('Validación', 'La campaña no tiene un identificador válido para actualizar.');
+          return;
+        }
         props
           .updateCampaign(formik.values)
           .then(() => {
@@ -56,7 +61,11 @@ export const CampaignFormComponent = (props: Props) => {
             props.data.onCloseModalForm();
           })
           .catch((error: any) => {
-            setErrors(error.response.data.errors);
+            setErrors(error?.response?.data?.errors ?? {});
+            const backendMsg = error?.response?.data?.message;
+            if (backendMsg) {
+              SweetAlert.error('Error', backendMsg);
+            }
           });
       }
     },

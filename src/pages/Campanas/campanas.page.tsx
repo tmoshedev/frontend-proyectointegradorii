@@ -157,14 +157,19 @@ export const CampaignsPage = () => {
   const handleDelete = (id: any, text: string) => {
     const campaignId = Number(id);
 
-    if (!Number.isFinite(campaignId)) {
+    if (!Number.isFinite(campaignId) || campaignId <= 0) {
       SweetAlert.error('La campaña seleccionada no tiene un identificador válido.');
       return;
     }
 
-    stateCampaign(campaignId).then(() => {
-      SweetAlert.success(text);
-    });
+    stateCampaign(campaignId)
+      .then(() => {
+        SweetAlert.success(text);
+      })
+      .catch((error: any) => {
+        const backendMessage = error?.response?.data?.message;
+        SweetAlert.error('Error', backendMessage || error?.message || 'No se pudo actualizar el estado.');
+      });
   };
   const handleCancelDelete = () => {};
   const onChangePage = (page: number, type: string) => {

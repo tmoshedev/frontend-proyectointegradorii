@@ -167,7 +167,11 @@ export const LeadHeaderComponent = (props: Props) => {
         }
       })
       .catch((error) => {
-        SweetAlert.error('Error al actualizar el asesor.', error.message);
+        const backendMessage = error?.response?.data?.message;
+        SweetAlert.error(
+          'Error al actualizar el asesor.',
+          backendMessage || error.message || 'No se pudo actualizar el asesor.'
+        );
       });
   };
 

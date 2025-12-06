@@ -26,8 +26,16 @@ export const storeCampaign = async (campaign: Campaign) => {
 };
 
 export const updateCampaign = async (campaign: Campaign) => {
-  const response = await apiInstance.patch<CampaignResponse>(`/campaigns`, {
-    campaign,
+  const parsedId = Number((campaign as any)?.id);
+
+  if (!Number.isFinite(parsedId) || parsedId <= 0) {
+    throw new Error('El identificador de la campaña debe ser un número entero mayor a 0.');
+  }
+
+  const { id, ...payload } = campaign as any;
+
+  const response = await apiInstance.patch<CampaignResponse>(`/campaigns/${parsedId}`, {
+    campaign: payload,
   });
   return response;
 };
@@ -35,8 +43,8 @@ export const updateCampaign = async (campaign: Campaign) => {
 export const stateCampaign = async (campaignId: number | string) => {
   const parsedId = Number(campaignId);
 
-  if (!Number.isFinite(parsedId)) {
-    throw new Error('El identificador de la campaña debe ser un número.');
+  if (!Number.isFinite(parsedId) || parsedId <= 0) {
+    throw new Error('El identificador de la campaña debe ser un número entero mayor a 0.');
   }
 
   const response = await apiInstance.patch<CampaignResponse>(`/campaigns/state`, {

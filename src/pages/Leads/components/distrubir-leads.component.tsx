@@ -75,6 +75,11 @@ export const DistribuirLeadComponent = (props: Props) => {
     }
   };
 
+  const getErrorMessage = (error: any) => {
+    const backendMessage = error?.response?.data?.message;
+    return backendMessage || error?.message || 'Ocurrió un error al distribuir los leads.';
+  };
+
   const onDistribuirLeads = () => {
     if (leadsSeleccionados.length === 0) {
       SweetAlert.warning('Mensaje', 'Debe seleccionar al menos un lead para distribuir.');
@@ -111,7 +116,7 @@ export const DistribuirLeadComponent = (props: Props) => {
         setUsuarios(response.users);
       })
       .catch((error) => {
-        SweetAlert.error('Error', error.message || 'Ocurrió un error al distribuir los leads.');
+        SweetAlert.error('Error', getErrorMessage(error));
       });
   };
 

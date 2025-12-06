@@ -25,14 +25,16 @@ export const LeadAsesorEditComponent = (props: Props) => {
     initialValues: formData,
     validationSchema: validationSchema,
     onSubmit: () => {
-      updateLeadAsesor(formData.lead_uuid, formik.values.assigned_to, true).then(
-        (response: any) => {
+      updateLeadAsesor(formData.lead_uuid, formik.values.assigned_to, true)
+        .then((response: any) => {
           SweetAlert.success('Mensaje', 'Asesor actualizado correctamente');
           props.data.onCloseModalForm();
-          // props.updateLeadLocal(response.lead);
           props.onRefreshLeads();
-        }
-      );
+        })
+        .catch((error: any) => {
+          const backendMessage = error?.response?.data?.message;
+          SweetAlert.error('Error', backendMessage || error?.message || 'No se pudo actualizar el asesor.');
+        });
     },
   });
 
